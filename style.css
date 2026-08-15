@@ -43,6 +43,13 @@
   box-sizing: border-box;
 }
 
+/* Correção: elementos com hidden devem permanecer ocultos,
+   mesmo quando possuem display definido por outras regras. */
+
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
