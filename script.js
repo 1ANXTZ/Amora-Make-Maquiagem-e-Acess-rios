@@ -1,7 +1,10 @@
+# script.js
+
+```javascript
 /* =========================================================
    AMORA MAKE — script.js
    Produtos, categorias, busca, filtros, menu mobile,
-   carrinho, login, cadastro, perfil e Supabase.
+   carrinho, autenticação Supabase, perfil e endereço.
    ========================================================= */
 
 
@@ -12,38 +15,22 @@
 const SUPABASE_URL =
   "https://xcwjqbqinnvnyiktyjbj.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY =
+const SUPABASE_ANON_KEY =
   "sb_publishable_I8MW1Q8ovLLKI-Gb-MavTg_UankO-md";
 
-let supabase = null;
+let supabaseClient = null;
 
+if (window.supabase) {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
-/* =========================================================
-   INICIALIZAÇÃO DO SUPABASE
-   ========================================================= */
-
-async function initSupabase() {
-  try {
-    const { createClient } =
-      await import(
-        "https://esm.sh/@supabase/supabase-js@2"
-      );
-
-    supabase = createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
-
-    console.log("Supabase conectado.");
-
-    await loadCurrentUser();
-
-  } catch (error) {
-    console.error(
-      "Erro ao conectar ao Supabase:",
-      error
-    );
-  }
+  console.log("Supabase conectado.");
+} else {
+  console.error(
+    "Supabase não foi carregado. Verifique o script do Supabase no index.html."
+  );
 }
 
 
@@ -52,7 +39,6 @@ async function initSupabase() {
    ========================================================= */
 
 const ICONS = {
-
   batom: `
     <svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true">
       <rect x="22" y="8" width="20" height="14" rx="4"
@@ -193,7 +179,6 @@ const CATEGORY_LABELS = {
    ========================================================= */
 
 const PRODUCTS = [
-
   {
     id: "p01",
     name: "Esponja Chanfrada",
@@ -201,7 +186,6 @@ const PRODUCTS = [
     price: 5.00,
     image: "images/produtos/esponja-chanfrada.jpeg"
   },
-
   {
     id: "p02",
     name: "Fixador Fix Matte",
@@ -209,7 +193,6 @@ const PRODUCTS = [
     price: 15.00,
     image: "images/produtos/fixador-fix-matte.jpeg"
   },
-
   {
     id: "p03",
     name: "Máscara de Cílios Alonga e Define",
@@ -217,7 +200,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/mascara-de-cilios-alonga-e-define.jpeg"
   },
-
   {
     id: "p04",
     name: "Lip Oil Sweet Hello Kitty",
@@ -225,7 +207,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/lip-oil-sweet-hello-kitty.jpeg"
   },
-
   {
     id: "p05",
     name: "Lip Oil Raios de Sol",
@@ -233,7 +214,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/lip-oil-raios-de-sol.jpeg"
   },
-
   {
     id: "p06",
     name: "Demaquilante Aquatic Awe",
@@ -241,7 +221,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/demaquilante-aquatic-awe.jpeg"
   },
-
   {
     id: "p07",
     name: "Demaquilante Sunset Coral",
@@ -249,7 +228,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/demaquilante-sunset-coral.jpeg"
   },
-
   {
     id: "p08",
     name: "Perfume Capilar Atração Fatal",
@@ -257,7 +235,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/perfume-capilar-atracao-fatal.jpeg"
   },
-
   {
     id: "p09",
     name: "Perfume Capilar Desejo Secreto",
@@ -265,7 +242,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/perfume-capilar-desejo-secreto.jpeg"
   },
-
   {
     id: "p10",
     name: "Delineador Líquido Super Poderes",
@@ -273,7 +249,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/delineador-liquido-super-poderes.jpeg"
   },
-
   {
     id: "p11",
     name: "Folhas Antioliosidade",
@@ -281,7 +256,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/folhas-anti-oleosidade.jpeg"
   },
-
   {
     id: "p12",
     name: "Esfoliante Labial Honey Scrub Vivai",
@@ -289,7 +263,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/esfoliante-labial-honey-scrub-vivai.jpeg"
   },
-
   {
     id: "p13",
     name: "Pó Compacto Efeito Aveludado",
@@ -297,7 +270,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/po-compacto-efeito-aveludado.jpeg"
   },
-
   {
     id: "p14",
     name: "Par de Cílios 6D",
@@ -305,7 +277,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/par-de-cilios-6d.jpeg"
   },
-
   {
     id: "p15",
     name: "Batom Bala Matte Lovely",
@@ -313,7 +284,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/batom-bala-matte-lovely.jpeg"
   },
-
   {
     id: "p16",
     name: "Pincel para Esfumar",
@@ -321,7 +291,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/pincel-p-esfumar.jpeg"
   },
-
   {
     id: "p17",
     name: "Pincel para Corretivo Língua de Gato",
@@ -329,7 +298,6 @@ const PRODUCTS = [
     price: 10.00,
     image: "images/produtos/pincel-p-corretivo-lingua-de-gato.jpeg"
   },
-
   {
     id: "p18",
     name: "Elástico para Cabelo",
@@ -337,7 +305,6 @@ const PRODUCTS = [
     price: 5.00,
     image: "images/produtos/elastico-p-cabelo.jpeg"
   },
-
   {
     id: "p19",
     name: "Kit com 2 Esponjas para Pó",
@@ -345,7 +312,6 @@ const PRODUCTS = [
     price: 5.00,
     image: "images/produtos/kit-c-2-esponjas-p-po.jpeg"
   },
-
   {
     id: "p20",
     name: "Máscara Facial Peel Off Total Black",
@@ -353,7 +319,6 @@ const PRODUCTS = [
     price: 5.00,
     image: "images/produtos/mascara-facial-peel-off-total-black.jpeg"
   },
-
   {
     id: "p21",
     name: "Hidratante Facial Rosa Mosqueta",
@@ -361,7 +326,6 @@ const PRODUCTS = [
     price: 5.00,
     image: "images/produtos/hidratante-facial-rosa-mosqueta.jpeg"
   },
-
   {
     id: "p22",
     name: "Mini Batom Princesa",
@@ -369,13 +333,8 @@ const PRODUCTS = [
     price: 5.00,
     image: "images/produtos/mini-batom-princesa.jpeg"
   }
-
 ];
 
-
-/* =========================================================
-   CATEGORIAS EM DESTAQUE
-   ========================================================= */
 
 const FEATURED_CATEGORIES = [
   "maquiagem",
@@ -390,49 +349,89 @@ const FEATURED_CATEGORIES = [
 
 
 /* =========================================================
+   ESTADO
+   ========================================================= */
+
+const state = {
+  filter: "todos",
+  query: "",
+  cart: [],
+  user: null,
+  profile: null
+};
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const elements = {
+  catGrid: document.getElementById("catGrid"),
+  productGrid: document.getElementById("productGrid"),
+  offersGrid: document.getElementById("offersGrid"),
+
+  emptyState: document.getElementById("emptyState"),
+  filterLabel: document.getElementById("filterLabel"),
+
+  searchForm: document.getElementById("searchForm"),
+  searchInput: document.getElementById("searchInput"),
+
+  menuToggle: document.getElementById("menuToggle"),
+  mobileMenu: document.getElementById("mobileMenu"),
+  overlay: document.getElementById("overlay"),
+
+  userBtn: document.getElementById("userBtn"),
+  userDropdown: document.getElementById("userDropdown"),
+
+  cartBtn: document.getElementById("cartBtn"),
+  cartCloseBtn: document.getElementById("cartCloseBtn"),
+  cartDrawer: document.getElementById("cartDrawer"),
+  cartOverlay: document.getElementById("cartOverlay"),
+
+  cartCount: document.getElementById("cartCount"),
+  cartItemsList: document.getElementById("cartItemsList"),
+  cartEmptyMsg: document.getElementById("cartEmptyMsg"),
+  cartFooter: document.getElementById("cartFooter"),
+  cartSubtotal: document.getElementById("cartSubtotal"),
+  checkoutBtn: document.getElementById("checkoutBtn"),
+
+  toast: document.getElementById("toast"),
+  anoAtual: document.getElementById("anoAtual")
+};
+
+
+/* =========================================================
    HELPERS
    ========================================================= */
 
 function formatBRL(value) {
-
-  return Number(value).toLocaleString(
-    "pt-BR",
-    {
-      style: "currency",
-      currency: "BRL"
-    }
-  );
-
+  return Number(value).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
 }
 
 
 function normalizeText(value) {
-
   return String(value)
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
-
 }
 
 
 function getProductIcon(category) {
-
   return ICONS[category] || ICONS.maquiagem;
-
 }
 
 
 function getCategoryLabel(category) {
-
   return CATEGORY_LABELS[category] || "Maquiagem";
-
 }
 
 
 function getProductImage(product) {
-
   if (!product.image) {
     return getProductIcon(product.category);
   }
@@ -445,172 +444,7 @@ function getProductImage(product) {
       decoding="async"
     >
   `;
-
 }
-
-
-/* =========================================================
-   ESTADO
-   ========================================================= */
-
-const state = {
-
-  filter: "todos",
-
-  query: "",
-
-  cart: JSON.parse(
-    localStorage.getItem("amora_cart") || "[]"
-  ),
-
-  user: null,
-
-  profile: null,
-
-  address: null
-
-};
-
-
-/* =========================================================
-   REFERÊNCIAS DOM
-   ========================================================= */
-
-const elements = {
-
-  catGrid:
-    document.getElementById("catGrid"),
-
-  productGrid:
-    document.getElementById("productGrid"),
-
-  offersGrid:
-    document.getElementById("offersGrid"),
-
-  emptyState:
-    document.getElementById("emptyState"),
-
-  filterLabel:
-    document.getElementById("filterLabel"),
-
-  searchForm:
-    document.getElementById("searchForm"),
-
-  searchInput:
-    document.getElementById("searchInput"),
-
-  menuToggle:
-    document.getElementById("menuToggle"),
-
-  mobileMenu:
-    document.getElementById("mobileMenu"),
-
-  overlay:
-    document.getElementById("overlay"),
-
-  userBtn:
-    document.getElementById("userBtn"),
-
-  userBtnLabel:
-    document.getElementById("userBtnLabel"),
-
-  userDropdown:
-    document.getElementById("userDropdown"),
-
-  cartBtn:
-    document.getElementById("cartBtn"),
-
-  cartCloseBtn:
-    document.getElementById("cartCloseBtn"),
-
-  cartDrawer:
-    document.getElementById("cartDrawer"),
-
-  cartOverlay:
-    document.getElementById("cartOverlay"),
-
-  cartCount:
-    document.getElementById("cartCount"),
-
-  cartItemsList:
-    document.getElementById("cartItemsList"),
-
-  cartEmptyMsg:
-    document.getElementById("cartEmptyMsg"),
-
-  cartFooter:
-    document.getElementById("cartFooter"),
-
-  cartSubtotal:
-    document.getElementById("cartSubtotal"),
-
-  checkoutBtn:
-    document.getElementById("checkoutBtn"),
-
-  toast:
-    document.getElementById("toast"),
-
-  anoAtual:
-    document.getElementById("anoAtual"),
-
-  loginModal:
-    document.getElementById("loginModal"),
-
-  loginForm:
-    document.getElementById("loginForm"),
-
-  registerForm:
-    document.getElementById("registerForm"),
-
-  loginEmail:
-    document.getElementById("loginEmail"),
-
-  loginPassword:
-    document.getElementById("loginPassword"),
-
-  registerName:
-    document.getElementById("registerName"),
-
-  registerEmail:
-    document.getElementById("registerEmail"),
-
-  registerPassword:
-    document.getElementById("registerPassword"),
-
-  registerPasswordConfirm:
-    document.getElementById("registerPasswordConfirm"),
-
-  profileName:
-    document.getElementById("profileName"),
-
-  profileEmail:
-    document.getElementById("profileEmail"),
-
-  profileCep:
-    document.getElementById("profileCep"),
-
-  profileStreet:
-    document.getElementById("profileStreet"),
-
-  profileNumber:
-    document.getElementById("profileNumber"),
-
-  profileComplement:
-    document.getElementById("profileComplement"),
-
-  profileNeighborhood:
-    document.getElementById("profileNeighborhood"),
-
-  profileCity:
-    document.getElementById("profileCity"),
-
-  profileState:
-    document.getElementById("profileState"),
-
-  mobileMenuClose:
-    document.getElementById("mobileMenuClose")
-
-};
 
 
 /* =========================================================
@@ -620,36 +454,27 @@ const elements = {
 let toastTimer = null;
 
 function showToast(message) {
-
   if (!elements.toast) {
     alert(message);
     return;
   }
 
   elements.toast.textContent = message;
-
   elements.toast.hidden = false;
 
   requestAnimationFrame(() => {
-
     elements.toast.classList.add("show");
-
   });
 
   clearTimeout(toastTimer);
 
   toastTimer = setTimeout(() => {
-
     elements.toast.classList.remove("show");
 
     setTimeout(() => {
-
       elements.toast.hidden = true;
-
     }, 220);
-
   }, 2400);
-
 }
 
 
@@ -658,32 +483,24 @@ function showToast(message) {
    ========================================================= */
 
 function renderCategoryCards() {
-
   if (!elements.catGrid) return;
 
   elements.catGrid.innerHTML =
-    FEATURED_CATEGORIES
-      .map(category => `
+    FEATURED_CATEGORIES.map(category => `
+      <button
+        type="button"
+        class="cat-card"
+        data-filter="${category}"
+      >
+        <span class="cat-card-icon">
+          ${getProductIcon(category)}
+        </span>
 
-        <button
-          type="button"
-          class="cat-card"
-          data-filter="${category}"
-        >
-
-          <span class="cat-card-icon">
-            ${getProductIcon(category)}
-          </span>
-
-          <span class="cat-card-name">
-            ${getCategoryLabel(category)}
-          </span>
-
-        </button>
-
-      `)
-      .join("");
-
+        <span class="cat-card-name">
+          ${getCategoryLabel(category)}
+        </span>
+      </button>
+    `).join("");
 }
 
 
@@ -692,14 +509,11 @@ function renderCategoryCards() {
    ========================================================= */
 
 function createProductCard(product) {
-
-  const isInCart =
-    state.cart.some(
-      item => item.id === product.id
-    );
+  const isInCart = state.cart.some(
+    item => item.id === product.id
+  );
 
   return `
-
     <article class="product-card">
 
       <div class="product-media">
@@ -717,11 +531,9 @@ function createProductCard(product) {
         </h3>
 
         <div class="product-price-row">
-
           <span class="product-price">
             ${formatBRL(product.price)}
           </span>
-
         </div>
 
         <button
@@ -739,16 +551,12 @@ function createProductCard(product) {
       </div>
 
     </article>
-
   `;
-
 }
 
 
 function getFilteredProducts() {
-
-  const query =
-    normalizeText(state.query);
+  const query = normalizeText(state.query);
 
   return PRODUCTS.filter(product => {
 
@@ -756,40 +564,30 @@ function getFilteredProducts() {
       state.filter === "todos" ||
       product.category === state.filter;
 
-    const searchableText =
-      normalizeText(
-        `${product.name} ${getCategoryLabel(product.category)}`
-      );
+    const searchableText = normalizeText(
+      `${product.name} ${getCategoryLabel(product.category)}`
+    );
 
     const matchesQuery =
       !query ||
       searchableText.includes(query);
 
     return matchesFilter && matchesQuery;
-
   });
-
 }
 
 
 function updateFilterLabel(total) {
-
   if (!elements.filterLabel) return;
 
   if (state.query) {
-
     elements.filterLabel.textContent =
-      `${total} produto${
-        total === 1 ? "" : "s"
-      } encontrado${
-        total === 1 ? "" : "s"
-      }`;
+      `${total} produto${total === 1 ? "" : "s"} encontrado${total === 1 ? "" : "s"}`;
 
     return;
   }
 
   if (state.filter === "todos") {
-
     elements.filterLabel.textContent =
       `Mostrando todos os ${PRODUCTS.length} produtos`;
 
@@ -797,55 +595,35 @@ function updateFilterLabel(total) {
   }
 
   elements.filterLabel.textContent =
-    `Mostrando ${total} produto${
-      total === 1 ? "" : "s"
-    } em ${getCategoryLabel(state.filter)}`;
-
+    `Mostrando ${total} produto${total === 1 ? "" : "s"} em ${getCategoryLabel(state.filter)}`;
 }
 
 
 function renderProducts() {
-
   if (!elements.productGrid) return;
 
-  const products =
-    getFilteredProducts();
+  const products = getFilteredProducts();
 
   elements.productGrid.innerHTML =
-    products
-      .map(createProductCard)
-      .join("");
+    products.map(createProductCard).join("");
 
   if (elements.emptyState) {
-
     elements.emptyState.hidden =
       products.length !== 0;
-
   }
 
-  updateFilterLabel(
-    products.length
-  );
-
+  updateFilterLabel(products.length);
 }
 
 
-/* =========================================================
-   OFERTAS
-   ========================================================= */
-
 function renderOffers() {
-
   if (!elements.offersGrid) return;
 
   const featuredProducts =
     PRODUCTS.slice(0, 6);
 
   elements.offersGrid.innerHTML =
-    featuredProducts
-      .map(createProductCard)
-      .join("");
-
+    featuredProducts.map(createProductCard).join("");
 }
 
 
@@ -854,31 +632,24 @@ function renderOffers() {
    ========================================================= */
 
 function setFilter(filter) {
-
-  state.filter =
-    filter || "todos";
+  state.filter = filter || "todos";
 
   updateActiveFilters();
-
   renderProducts();
 
   const productsSection =
     document.getElementById("produtos");
 
   if (productsSection) {
-
     productsSection.scrollIntoView({
       behavior: "smooth",
       block: "start"
     });
-
   }
-
 }
 
 
 function updateActiveFilters() {
-
   document
     .querySelectorAll("[data-filter]")
     .forEach(element => {
@@ -887,23 +658,15 @@ function updateActiveFilters() {
         element.dataset.filter;
 
       if (
-        element.matches(
-          ".category-nav-list a"
-        ) ||
-        element.matches(
-          ".mobile-menu a"
-        )
+        element.matches(".category-nav-list a") ||
+        element.matches(".mobile-menu a")
       ) {
-
         element.classList.toggle(
           "active",
           filter === state.filter
         );
-
       }
-
     });
-
 }
 
 
@@ -912,7 +675,6 @@ function updateActiveFilters() {
    ========================================================= */
 
 function handleSearch(event) {
-
   event.preventDefault();
 
   state.query =
@@ -926,14 +688,11 @@ function handleSearch(event) {
     document.getElementById("produtos");
 
   if (productsSection) {
-
     productsSection.scrollIntoView({
       behavior: "smooth",
       block: "start"
     });
-
   }
-
 }
 
 
@@ -941,143 +700,94 @@ function handleSearch(event) {
    CARRINHO
    ========================================================= */
 
-function saveCart() {
-
-  localStorage.setItem(
-    "amora_cart",
-    JSON.stringify(state.cart)
-  );
-
-}
-
-
 function openCart() {
-
   if (!elements.cartDrawer) return;
 
   closeUserDropdown();
-
   closeMobileMenu();
 
-  elements.cartDrawer.hidden =
-    false;
+  elements.cartDrawer.hidden = false;
 
   if (elements.cartOverlay) {
-
-    elements.cartOverlay.hidden =
-      false;
-
+    elements.cartOverlay.hidden = false;
   }
 
   if (elements.cartBtn) {
-
     elements.cartBtn.setAttribute(
       "aria-expanded",
       "true"
     );
-
   }
 
-  document.body.style.overflow =
-    "hidden";
+  document.body.style.overflow = "hidden";
 
   renderCart();
-
 }
 
 
 function closeCart() {
-
   if (!elements.cartDrawer) return;
 
-  elements.cartDrawer.hidden =
-    true;
+  elements.cartDrawer.hidden = true;
 
   if (elements.cartOverlay) {
-
-    elements.cartOverlay.hidden =
-      true;
-
+    elements.cartOverlay.hidden = true;
   }
 
   if (elements.cartBtn) {
-
     elements.cartBtn.setAttribute(
       "aria-expanded",
       "false"
     );
-
   }
 
-  document.body.style.overflow =
-    "";
-
+  document.body.style.overflow = "";
 }
 
 
 function toggleCart() {
-
   if (!elements.cartDrawer) return;
 
   if (elements.cartDrawer.hidden) {
-
     openCart();
-
   } else {
-
     closeCart();
-
   }
-
 }
 
 
 function addToCart(productId) {
-
   const product =
-    PRODUCTS.find(
-      item => item.id === productId
-    );
+    PRODUCTS.find(item => item.id === productId);
 
   if (!product) return;
 
   const existingItem =
-    state.cart.find(
-      item => item.id === productId
-    );
+    state.cart.find(item => item.id === productId);
 
   if (existingItem) {
-
     existingItem.quantity += 1;
-
   } else {
-
     state.cart.push({
       id: product.id,
       quantity: 1
     });
-
   }
 
   saveCart();
 
   updateCartCount();
-
   renderCart();
-
   renderProducts();
-
   renderOffers();
 
   showToast(
     `${product.name} foi adicionado ao carrinho.`
   );
-
 }
 
 
 function removeFromCart(productId) {
-
   state.cart =
     state.cart.filter(
       item => item.id !== productId
@@ -1086,25 +796,16 @@ function removeFromCart(productId) {
   saveCart();
 
   updateCartCount();
-
   renderCart();
-
   renderProducts();
-
   renderOffers();
-
 }
 
 
-function changeQuantity(
-  productId,
-  amount
-) {
-
+function changeQuantity(productId, amount) {
   const item =
     state.cart.find(
-      cartItem =>
-        cartItem.id === productId
+      cartItem => cartItem.id === productId
     );
 
   if (!item) return;
@@ -1112,28 +813,20 @@ function changeQuantity(
   item.quantity += amount;
 
   if (item.quantity <= 0) {
-
     removeFromCart(productId);
-
     return;
-
   }
 
   saveCart();
 
   updateCartCount();
-
   renderCart();
-
   renderProducts();
-
   renderOffers();
-
 }
 
 
 function updateCartCount() {
-
   if (!elements.cartCount) return;
 
   const totalItems =
@@ -1145,12 +838,10 @@ function updateCartCount() {
 
   elements.cartCount.textContent =
     totalItems;
-
 }
 
 
 function calculateCartSubtotal() {
-
   return state.cart.reduce(
     (total, item) => {
 
@@ -1163,151 +854,1665 @@ function calculateCartSubtotal() {
       if (!product) return total;
 
       return total +
-        product.price *
-        item.quantity;
+        product.price * item.quantity;
 
     },
     0
   );
-
 }
 
 
 function renderCart() {
-
   if (!elements.cartItemsList) return;
 
   const hasItems =
     state.cart.length > 0;
 
   if (elements.cartEmptyMsg) {
-
     elements.cartEmptyMsg.hidden =
       hasItems;
-
   }
 
   if (!hasItems) {
 
-    elements.cartItemsList.innerHTML =
-      "";
+    elements.cartItemsList.innerHTML = "";
 
     if (elements.cartFooter) {
-
-      elements.cartFooter.hidden =
-        true;
-
+      elements.cartFooter.hidden = true;
     }
 
     if (elements.cartSubtotal) {
-
       elements.cartSubtotal.textContent =
         formatBRL(0);
-
     }
 
     updateCartCount();
 
     return;
-
   }
 
   elements.cartItemsList.innerHTML =
-    state.cart
-      .map(item => {
+    state.cart.map(item => {
 
-        const product =
-          PRODUCTS.find(
-            productItem =>
-              productItem.id === item.id
-          );
+      const product =
+        PRODUCTS.find(
+          productItem =>
+            productItem.id === item.id
+        );
 
-        if (!product) return "";
+      if (!product) return "";
 
-        const itemTotal =
-          product.price *
-          item.quantity;
+      const itemTotal =
+        product.price * item.quantity;
 
-        return `
+      return `
+        <div class="cart-item">
 
-          <div class="cart-item">
+          <div class="cart-item-media">
+            ${getProductImage(product)}
+          </div>
 
-            <div class="cart-item-media">
-              ${getProductImage(product)}
-            </div>
+          <div>
 
-            <div>
+            <p class="cart-item-name">
+              ${product.name}
+            </p>
 
-              <p class="cart-item-name">
-                ${product.name}
-              </p>
+            <p class="cart-item-price">
+              ${formatBRL(itemTotal)}
+            </p>
 
-              <p class="cart-item-price">
-                ${formatBRL(itemTotal)}
-              </p>
+            <div class="cart-item-qty">
 
-              <div class="cart-item-qty">
+              <button
+                type="button"
+                class="qty-btn"
+                data-qty-minus="${product.id}"
+              >
+                −
+              </button>
 
-                <button
-                  type="button"
-                  class="qty-btn"
-                  data-qty-minus="${product.id}"
-                  aria-label="Diminuir quantidade"
-                >
-                  −
-                </button>
+              <span>
+                ${item.quantity}
+              </span>
 
-                <span>
-                  ${item.quantity}
-                </span>
-
-                <button
-                  type="button"
-                  class="qty-btn"
-                  data-qty-plus="${product.id}"
-                  aria-label="Aumentar quantidade"
-                >
-                  +
-                </button>
-
-              </div>
+              <button
+                type="button"
+                class="qty-btn"
+                data-qty-plus="${product.id}"
+              >
+                +
+              </button>
 
             </div>
-
-            <button
-              type="button"
-              class="cart-item-remove"
-              data-remove-cart="${product.id}"
-            >
-              Remover
-            </button>
 
           </div>
 
-        `;
+          <button
+            type="button"
+            class="cart-item-remove"
+            data-remove-cart="${product.id}"
+          >
+            Remover
+          </button>
 
-      })
-      .join("");
+        </div>
+      `;
+
+    }).join("");
 
   const subtotal =
     calculateCartSubtotal();
 
   if (elements.cartSubtotal) {
-
     elements.cartSubtotal.textContent =
       formatBRL(subtotal);
-
   }
 
   if (elements.cartFooter) {
-
-    elements.cartFooter.hidden =
-      false;
-
+    elements.cartFooter.hidden = false;
   }
 
   updateCartCount();
+}
 
+
+function saveCart() {
+  localStorage.setItem(
+    "amora_make_cart",
+    JSON.stringify(state.cart)
+  );
+}
+
+
+function loadCart() {
+  try {
+
+    const saved =
+      localStorage.getItem(
+        "amora_make_cart"
+      );
+
+    if (!saved) return;
+
+    const parsed =
+      JSON.parse(saved);
+
+    if (Array.isArray(parsed)) {
+      state.cart = parsed;
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao carregar carrinho:",
+      error
+    );
+
+    state.cart = [];
+  }
+}
+
+
+/* =========================================================
+   MENU MOBILE
+   ========================================================= */
+
+function openMobileMenu() {
+  if (!elements.mobileMenu) return;
+
+  closeUserDropdown();
+  closeCart();
+
+  elements.mobileMenu.hidden = false;
+
+  if (elements.overlay) {
+    elements.overlay.hidden = false;
+  }
+
+  if (elements.menuToggle) {
+    elements.menuToggle.setAttribute(
+      "aria-expanded",
+      "true"
+    );
+  }
+
+  document.body.style.overflow =
+    "hidden";
+}
+
+
+function closeMobileMenu() {
+  if (!elements.mobileMenu) return;
+
+  elements.mobileMenu.hidden = true;
+
+  if (elements.overlay) {
+    elements.overlay.hidden = true;
+  }
+
+  if (elements.menuToggle) {
+    elements.menuToggle.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+  }
+
+  if (
+    !elements.cartDrawer ||
+    elements.cartDrawer.hidden
+  ) {
+    document.body.style.overflow = "";
+  }
+}
+
+
+function toggleMobileMenu() {
+  if (!elements.mobileMenu) return;
+
+  if (elements.mobileMenu.hidden) {
+    openMobileMenu();
+  } else {
+    closeMobileMenu();
+  }
+}
+
+
+/* =========================================================
+   CONTA / LOGIN
+   ========================================================= */
+
+function openUserDropdown() {
+  if (!elements.userDropdown) return;
+
+  closeMobileMenu();
+  closeCart();
+
+  elements.userDropdown.hidden =
+    false;
+
+  if (elements.userBtn) {
+    elements.userBtn.setAttribute(
+      "aria-expanded",
+      "true"
+    );
+  }
+
+  updateUserDropdown();
+}
+
+
+function closeUserDropdown() {
+  if (!elements.userDropdown) return;
+
+  elements.userDropdown.hidden =
+    true;
+
+  if (elements.userBtn) {
+    elements.userBtn.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+  }
+}
+
+
+function toggleUserDropdown() {
+  if (!elements.userDropdown) return;
+
+  if (elements.userDropdown.hidden) {
+    openUserDropdown();
+  } else {
+    closeUserDropdown();
+  }
+}
+
+
+/* =========================================================
+   CRIA ÁREA DE LOGIN DINAMICAMENTE
+   ========================================================= */
+
+function updateUserDropdown() {
+  if (!elements.userDropdown) return;
+
+  if (!state.user) {
+
+    elements.userDropdown.innerHTML = `
+      <div class="user-dropdown-inner">
+
+        <p class="user-dropdown-title">
+          Área da cliente
+        </p>
+
+        <p class="user-dropdown-text">
+          Entre na sua conta ou crie seu cadastro.
+        </p>
+
+        <button
+          type="button"
+          class="btn btn-primary btn-small btn-full"
+          data-login-action="login"
+        >
+          Entrar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-ghost btn-small btn-full"
+          data-login-action="signup"
+        >
+          Criar conta
+        </button>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const name =
+    state.profile?.nome ||
+    state.user.user_metadata?.nome ||
+    state.user.email ||
+    "Cliente";
+
+  elements.userDropdown.innerHTML = `
+    <div class="user-dropdown-inner">
+
+      <p class="user-dropdown-title">
+        Olá, ${escapeHTML(name)}
+      </p>
+
+      <p class="user-dropdown-text">
+        Sua conta está conectada.
+      </p>
+
+      <button
+        type="button"
+        class="btn btn-primary btn-small btn-full"
+        data-login-action="profile"
+      >
+        Meu perfil
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-ghost btn-small btn-full"
+        data-login-action="logout"
+      >
+        Sair da conta
+      </button>
+
+    </div>
+  `;
+}
+
+
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   MODAL DE AUTENTICAÇÃO
+   ========================================================= */
+
+function createAuthModal() {
+
+  if (document.getElementById("authModal")) {
+    return;
+  }
+
+  const modal =
+    document.createElement("div");
+
+  modal.id = "authModal";
+  modal.className = "auth-modal";
+  modal.hidden = true;
+
+  modal.innerHTML = `
+    <div
+      class="auth-modal-overlay"
+      data-auth-close
+    ></div>
+
+    <div
+      class="auth-modal-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="authModalTitle"
+    >
+
+      <button
+        type="button"
+        class="auth-modal-close"
+        aria-label="Fechar"
+        data-auth-close
+      >
+        ×
+      </button>
+
+      <h2 id="authModalTitle">
+        Entrar
+      </h2>
+
+      <p
+        class="auth-modal-description"
+        id="authModalDescription"
+      >
+        Entre na sua conta Amora Make.
+      </p>
+
+      <form id="authForm">
+
+        <div
+          class="auth-name-field"
+          id="authNameField"
+          hidden
+        >
+
+          <label for="authName">
+            Nome
+          </label>
+
+          <input
+            type="text"
+            id="authName"
+            autocomplete="name"
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="authEmail">
+            E-mail
+          </label>
+
+          <input
+            type="email"
+            id="authEmail"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+
+        <div>
+
+          <label for="authPassword">
+            Senha
+          </label>
+
+          <input
+            type="password"
+            id="authPassword"
+            autocomplete="current-password"
+            minlength="6"
+            required
+          >
+
+        </div>
+
+
+        <div
+          class="auth-address-fields"
+          id="authAddressFields"
+          hidden
+        >
+
+          <h3>
+            Endereço de entrega
+          </h3>
+
+          <div>
+
+            <label for="authCep">
+              CEP
+            </label>
+
+            <input
+              type="text"
+              id="authCep"
+              autocomplete="postal-code"
+              inputmode="numeric"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label for="authRua">
+              Rua
+            </label>
+
+            <input
+              type="text"
+              id="authRua"
+              autocomplete="street-address"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label for="authNumero">
+              Número
+            </label>
+
+            <input
+              type="text"
+              id="authNumero"
+              autocomplete="address-line2"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label for="authComplemento">
+              Complemento
+            </label>
+
+            <input
+              type="text"
+              id="authComplemento"
+              autocomplete="off"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label for="authBairro">
+              Bairro
+            </label>
+
+            <input
+              type="text"
+              id="authBairro"
+              autocomplete="address-level3"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label for="authCidade">
+              Cidade
+            </label>
+
+            <input
+              type="text"
+              id="authCidade"
+              autocomplete="address-level2"
+            >
+
+          </div>
+
+
+          <div>
+
+            <label for="authEstado">
+              Estado
+            </label>
+
+            <input
+              type="text"
+              id="authEstado"
+              maxlength="2"
+              autocomplete="address-level1"
+            >
+
+          </div>
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-full"
+          id="authSubmit"
+        >
+          Entrar
+        </button>
+
+      </form>
+
+
+      <button
+        type="button"
+        class="auth-switch"
+        id="authSwitch"
+      >
+        Ainda não tenho uma conta
+      </button>
+
+
+      <p
+        class="auth-message"
+        id="authMessage"
+        aria-live="polite"
+      ></p>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  setupAuthModalEvents();
+}
+
+
+let authMode = "login";
+
+
+function openAuthModal(mode = "login") {
+
+  createAuthModal();
+
+  authMode = mode;
+
+  const modal =
+    document.getElementById("authModal");
+
+  if (!modal) return;
+
+  modal.hidden = false;
+
+  updateAuthModal();
+
+  document.body.style.overflow =
+    "hidden";
+}
+
+
+function closeAuthModal() {
+
+  const modal =
+    document.getElementById("authModal");
+
+  if (!modal) return;
+
+  modal.hidden = true;
+
+  document.body.style.overflow = "";
+}
+
+
+function updateAuthModal() {
+
+  const title =
+    document.getElementById("authModalTitle");
+
+  const description =
+    document.getElementById("authModalDescription");
+
+  const nameField =
+    document.getElementById("authNameField");
+
+  const addressFields =
+    document.getElementById("authAddressFields");
+
+  const submit =
+    document.getElementById("authSubmit");
+
+  const switchButton =
+    document.getElementById("authSwitch");
+
+  if (!title) return;
+
+
+  if (authMode === "signup") {
+
+    title.textContent =
+      "Criar conta";
+
+    description.textContent =
+      "Crie sua conta e salve seu endereço de entrega.";
+
+    nameField.hidden = false;
+
+    addressFields.hidden = false;
+
+    submit.textContent =
+      "Criar minha conta";
+
+    switchButton.textContent =
+      "Já tenho uma conta";
+
+    return;
+  }
+
+
+  title.textContent =
+    "Entrar";
+
+  description.textContent =
+    "Entre na sua conta Amora Make.";
+
+  nameField.hidden = true;
+
+  addressFields.hidden = true;
+
+  submit.textContent =
+    "Entrar";
+
+  switchButton.textContent =
+    "Ainda não tenho uma conta";
+}
+
+
+function setupAuthModalEvents() {
+
+  const modal =
+    document.getElementById("authModal");
+
+  if (!modal) return;
+
+
+  modal.addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target.matches(
+          "[data-auth-close]"
+        )
+      ) {
+        closeAuthModal();
+      }
+
+    }
+  );
+
+
+  const switchButton =
+    document.getElementById(
+      "authSwitch"
+    );
+
+  if (switchButton) {
+
+    switchButton.addEventListener(
+      "click",
+      () => {
+
+        authMode =
+          authMode === "login"
+            ? "signup"
+            : "login";
+
+        updateAuthModal();
+
+      }
+    );
+
+  }
+
+
+  const form =
+    document.getElementById(
+      "authForm"
+    );
+
+  if (form) {
+
+    form.addEventListener(
+      "submit",
+      handleAuthSubmit
+    );
+
+  }
+}
+
+
+/* =========================================================
+   LOGIN / CADASTRO
+   ========================================================= */
+
+async function handleAuthSubmit(event) {
+
+  event.preventDefault();
+
+  if (!supabaseClient) {
+
+    showAuthMessage(
+      "Supabase não está conectado."
+    );
+
+    return;
+  }
+
+
+  const email =
+    document
+      .getElementById("authEmail")
+      ?.value
+      .trim();
+
+  const password =
+    document
+      .getElementById("authPassword")
+      ?.value;
+
+
+  if (!email || !password) {
+
+    showAuthMessage(
+      "Preencha e-mail e senha."
+    );
+
+    return;
+  }
+
+
+  if (authMode === "login") {
+
+    await loginUser(
+      email,
+      password
+    );
+
+    return;
+  }
+
+
+  await signupUser(
+    email,
+    password
+  );
+}
+
+
+/* =========================================================
+   CRIAR CONTA
+   ========================================================= */
+
+async function signupUser(
+  email,
+  password
+) {
+
+  const submit =
+    document.getElementById(
+      "authSubmit"
+    );
+
+  if (submit) {
+    submit.disabled = true;
+    submit.textContent =
+      "Criando conta...";
+  }
+
+
+  try {
+
+    const nome =
+      document
+        .getElementById("authName")
+        ?.value
+        .trim();
+
+
+    if (!nome) {
+
+      showAuthMessage(
+        "Informe seu nome."
+      );
+
+      return;
+    }
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            nome
+          }
+        }
+      });
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (!data.user) {
+      throw new Error(
+        "Não foi possível criar o usuário."
+      );
+    }
+
+
+    state.user =
+      data.user;
+
+
+    /*
+     * Caso o projeto esteja configurado
+     * para exigir confirmação de e-mail,
+     * o usuário ainda não estará autenticado.
+     */
+
+    if (!data.session) {
+
+      showAuthMessage(
+        "Conta criada! Verifique seu e-mail para confirmar a conta antes de entrar."
+      );
+
+      return;
+    }
+
+
+    await saveUserProfile(
+      data.user.id
+    );
+
+
+    await loadUserProfile();
+
+
+    closeAuthModal();
+    updateUserDropdown();
+
+    showToast(
+      "Conta criada com sucesso!"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao criar conta:",
+      error
+    );
+
+    showAuthMessage(
+      translateSupabaseError(
+        error
+      )
+    );
+
+  } finally {
+
+    if (submit) {
+      submit.disabled = false;
+
+      submit.textContent =
+        "Criar minha conta";
+    }
+
+  }
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+async function loginUser(
+  email,
+  password
+) {
+
+  const submit =
+    document.getElementById(
+      "authSubmit"
+    );
+
+  if (submit) {
+    submit.disabled = true;
+    submit.textContent =
+      "Entrando...";
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    state.user =
+      data.user;
+
+
+    await loadUserProfile();
+
+
+    closeAuthModal();
+
+    updateUserDropdown();
+
+    showToast(
+      "Login realizado com sucesso!"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao entrar:",
+      error
+    );
+
+    showAuthMessage(
+      translateSupabaseError(
+        error
+      )
+    );
+
+  } finally {
+
+    if (submit) {
+      submit.disabled = false;
+      submit.textContent =
+        "Entrar";
+    }
+
+  }
+}
+
+
+/* =========================================================
+   SALVAR PERFIL E ENDEREÇO
+   ========================================================= */
+
+async function saveUserProfile(
+  userId
+) {
+
+  if (!supabaseClient) return;
+
+
+  const nome =
+    document
+      .getElementById("authName")
+      ?.value
+      .trim() || "";
+
+
+  const cep =
+    document
+      .getElementById("authCep")
+      ?.value
+      .trim() || "";
+
+
+  const rua =
+    document
+      .getElementById("authRua")
+      ?.value
+      .trim() || "";
+
+
+  const numero =
+    document
+      .getElementById("authNumero")
+      ?.value
+      .trim() || "";
+
+
+  const complemento =
+    document
+      .getElementById("authComplemento")
+      ?.value
+      .trim() || "";
+
+
+  const bairro =
+    document
+      .getElementById("authBairro")
+      ?.value
+      .trim() || "";
+
+
+  const cidade =
+    document
+      .getElementById("authCidade")
+      ?.value
+      .trim() || "";
+
+
+  const estado =
+    document
+      .getElementById("authEstado")
+      ?.value
+      .trim()
+      .toUpperCase() || "";
+
+
+  /*
+   * Tabela profiles
+   */
+
+  const {
+    error: profileError
+  } =
+    await supabaseClient
+      .from("profiles")
+      .upsert(
+        {
+          id: userId,
+          nome
+        },
+        {
+          onConflict: "id"
+        }
+      );
+
+
+  if (profileError) {
+    console.error(
+      "Erro ao salvar perfil:",
+      profileError
+    );
+  }
+
+
+  /*
+   * Tabela addresses
+   */
+
+  const {
+    error: addressError
+  } =
+    await supabaseClient
+      .from("addresses")
+      .upsert(
+        {
+          user_id: userId,
+          cep,
+          rua,
+          numero,
+          complemento,
+          bairro,
+          cidade,
+          estado
+        },
+        {
+          onConflict: "user_id"
+        }
+      );
+
+
+  if (addressError) {
+
+    console.error(
+      "Erro ao salvar endereço:",
+      addressError
+    );
+
+    /*
+     * Não interrompe o cadastro inteiro
+     * caso a tabela de endereço ainda
+     * esteja sendo configurada.
+     */
+  }
+}
+
+
+/* =========================================================
+   CARREGAR PERFIL
+   ========================================================= */
+
+async function loadUserProfile() {
+
+  if (
+    !supabaseClient ||
+    !state.user
+  ) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      data: profile,
+      error: profileError
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", state.user.id)
+        .maybeSingle();
+
+
+    if (profileError) {
+      console.error(
+        "Erro ao carregar perfil:",
+        profileError
+      );
+    }
+
+
+    const {
+      data: address,
+      error: addressError
+    } =
+      await supabaseClient
+        .from("addresses")
+        .select("*")
+        .eq(
+          "user_id",
+          state.user.id
+        )
+        .maybeSingle();
+
+
+    if (addressError) {
+      console.error(
+        "Erro ao carregar endereço:",
+        addressError
+      );
+    }
+
+
+    state.profile = {
+      ...(profile || {}),
+      address:
+        address || {}
+    };
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao carregar dados do usuário:",
+      error
+    );
+
+  }
+}
+
+
+/* =========================================================
+   PERFIL
+   ========================================================= */
+
+function showProfile() {
+
+  if (!state.user) {
+    openAuthModal("login");
+    return;
+  }
+
+
+  const profile =
+    state.profile || {};
+
+  const address =
+    profile.address || {};
+
+
+  const modal =
+    document.getElementById(
+      "authModal"
+    );
+
+
+  if (!modal) {
+    createAuthModal();
+  }
+
+
+  const currentModal =
+    document.getElementById(
+      "authModal"
+    );
+
+
+  const card =
+    currentModal?.querySelector(
+      ".auth-modal-card"
+    );
+
+
+  if (!card) return;
+
+
+  card.innerHTML = `
+
+    <button
+      type="button"
+      class="auth-modal-close"
+      aria-label="Fechar"
+      data-auth-close
+    >
+      ×
+    </button>
+
+    <h2>
+      Meu perfil
+    </h2>
+
+    <p class="auth-modal-description">
+      Seus dados cadastrados.
+    </p>
+
+
+    <div class="profile-info">
+
+      <div>
+        <strong>
+          Nome
+        </strong>
+
+        <span>
+          ${escapeHTML(
+            profile.nome ||
+            state.user.email ||
+            "Não informado"
+          )}
+        </span>
+      </div>
+
+
+      <div>
+        <strong>
+          E-mail
+        </strong>
+
+        <span>
+          ${escapeHTML(
+            state.user.email || ""
+          )}
+        </span>
+      </div>
+
+
+      <h3>
+        Endereço de entrega
+      </h3>
+
+
+      <div>
+        <strong>
+          CEP
+        </strong>
+
+        <span>
+          ${escapeHTML(
+            address.cep || "Não informado"
+          )}
+        </span>
+      </div>
+
+
+      <div>
+        <strong>
+          Endereço
+        </strong>
+
+        <span>
+          ${escapeHTML(
+            address.rua
+              ? `${address.rua}, ${address.numero || "s/n"}`
+              : "Não informado"
+          )}
+        </span>
+      </div>
+
+
+      <div>
+        <strong>
+          Bairro
+        </strong>
+
+        <span>
+          ${escapeHTML(
+            address.bairro ||
+            "Não informado"
+          )}
+        </span>
+      </div>
+
+
+      <div>
+        <strong>
+          Cidade / Estado
+        </strong>
+
+        <span>
+          ${escapeHTML(
+            address.cidade
+              ? `${address.cidade} - ${address.estado || ""}`
+              : "Não informado"
+          )}
+        </span>
+      </div>
+
+
+      ${
+        address.complemento
+          ? `
+            <div>
+              <strong>
+                Complemento
+              </strong>
+
+              <span>
+                ${escapeHTML(
+                  address.complemento
+                )}
+              </span>
+            </div>
+          `
+          : ""
+      }
+
+    </div>
+
+
+    <button
+      type="button"
+      class="btn btn-ghost btn-small btn-full"
+      data-auth-close
+    >
+      Fechar
+    </button>
+  `;
+
+
+  currentModal.hidden = false;
+
+  currentModal
+    .querySelectorAll(
+      "[data-auth-close]"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        closeAuthModal
+      );
+
+    });
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function logoutUser() {
+
+  if (!supabaseClient) return;
+
+  try {
+
+    const {
+      error
+    } =
+      await supabaseClient.auth.signOut();
+
+    if (error) {
+      throw error;
+    }
+
+
+    state.user = null;
+    state.profile = null;
+
+    updateUserDropdown();
+
+    closeUserDropdown();
+
+    showToast(
+      "Você saiu da sua conta."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao sair:",
+      error
+    );
+
+    showToast(
+      "Não foi possível sair da conta."
+    );
+  }
+}
+
+
+/* =========================================================
+   MENSAGEM DE AUTENTICAÇÃO
+   ========================================================= */
+
+function showAuthMessage(message) {
+
+  const element =
+    document.getElementById(
+      "authMessage"
+    );
+
+  if (!element) return;
+
+  element.textContent =
+    message;
+}
+
+
+function translateSupabaseError(error) {
+
+  const message =
+    error?.message ||
+    "Ocorreu um erro.";
+
+  const normalized =
+    normalizeText(message);
+
+
+  if (
+    normalized.includes(
+      "invalid login credentials"
+    )
+  ) {
+    return "E-mail ou senha incorretos.";
+  }
+
+
+  if (
+    normalized.includes(
+      "user already registered"
+    )
+  ) {
+    return "Esse e-mail já possui uma conta.";
+  }
+
+
+  if (
+    normalized.includes(
+      "password should be at least"
+    )
+  ) {
+    return "A senha precisa ter pelo menos 6 caracteres.";
+  }
+
+
+  if (
+    normalized.includes(
+      "email not confirmed"
+    )
+  ) {
+    return "Seu e-mail ainda não foi confirmado.";
+  }
+
+
+  if (
+    normalized.includes(
+      "rate limit"
+    )
+  ) {
+    return "Muitas tentativas. Aguarde um pouco e tente novamente.";
+  }
+
+
+  return message;
+}
+
+
+/* =========================================================
+   SESSÃO DO SUPABASE
+   ========================================================= */
+
+async function loadCurrentUser() {
+
+  if (!supabaseClient) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    state.user =
+      data.session?.user || null;
+
+
+    if (state.user) {
+      await loadUserProfile();
+    }
+
+
+    updateUserDropdown();
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao verificar sessão:",
+      error
+    );
+
+  }
+}
+
+
+/* =========================================================
+   OBSERVAR LOGIN / LOGOUT
+   ========================================================= */
+
+function setupAuthListener() {
+
+  if (!supabaseClient) return;
+
+  supabaseClient.auth.onAuthStateChange(
+    async (_event, session) => {
+
+      state.user =
+        session?.user || null;
+
+      if (state.user) {
+        await loadUserProfile();
+      } else {
+        state.profile = null;
+      }
+
+      updateUserDropdown();
+    }
+  );
 }
 
 
@@ -1324,1190 +2529,26 @@ function handleCheckout() {
     );
 
     return;
-
   }
 
+
   if (!state.user) {
+
+    closeCart();
+
+    openAuthModal("login");
 
     showToast(
       "Entre na sua conta para continuar."
     );
 
-    openLoginModal();
-
     return;
-
   }
+
 
   showToast(
-    "Finalização de compra será configurada na próxima etapa."
+    "Checkout será configurado na próxima etapa."
   );
-
-}
-
-
-/* =========================================================
-   MENU MOBILE
-   ========================================================= */
-
-function openMobileMenu() {
-
-  if (!elements.mobileMenu) return;
-
-  closeUserDropdown();
-
-  closeCart();
-
-  elements.mobileMenu.hidden =
-    false;
-
-  if (elements.overlay) {
-
-    elements.overlay.hidden =
-      false;
-
-  }
-
-  if (elements.menuToggle) {
-
-    elements.menuToggle.setAttribute(
-      "aria-expanded",
-      "true"
-    );
-
-  }
-
-  document.body.style.overflow =
-    "hidden";
-
-}
-
-
-function closeMobileMenu() {
-
-  if (!elements.mobileMenu) return;
-
-  elements.mobileMenu.hidden =
-    true;
-
-  if (elements.overlay) {
-
-    elements.overlay.hidden =
-      true;
-
-  }
-
-  if (elements.menuToggle) {
-
-    elements.menuToggle.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-  }
-
-  if (
-    !elements.cartDrawer ||
-    elements.cartDrawer.hidden
-  ) {
-
-    document.body.style.overflow =
-      "";
-
-  }
-
-}
-
-
-function toggleMobileMenu() {
-
-  if (!elements.mobileMenu) return;
-
-  if (elements.mobileMenu.hidden) {
-
-    openMobileMenu();
-
-  } else {
-
-    closeMobileMenu();
-
-  }
-
-}
-
-
-/* =========================================================
-   DROPDOWN DA CONTA
-   ========================================================= */
-
-function openUserDropdown() {
-
-  if (!elements.userDropdown) return;
-
-  closeMobileMenu();
-
-  closeCart();
-
-  elements.userDropdown.hidden =
-    false;
-
-  if (elements.userBtn) {
-
-    elements.userBtn.setAttribute(
-      "aria-expanded",
-      "true"
-    );
-
-  }
-
-}
-
-
-function closeUserDropdown() {
-
-  if (!elements.userDropdown) return;
-
-  elements.userDropdown.hidden =
-    true;
-
-  if (elements.userBtn) {
-
-    elements.userBtn.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-  }
-
-}
-
-
-function toggleUserDropdown() {
-
-  if (!elements.userDropdown) return;
-
-  if (elements.userDropdown.hidden) {
-
-    openUserDropdown();
-
-  } else {
-
-    closeUserDropdown();
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGIN / CADASTRO
-   ========================================================= */
-
-function openLoginModal() {
-
-  if (!elements.loginModal) {
-
-    showToast(
-      "Área de login não encontrada no HTML."
-    );
-
-    return;
-
-  }
-
-  closeUserDropdown();
-
-  closeMobileMenu();
-
-  closeCart();
-
-  elements.loginModal.hidden =
-    false;
-
-  document.body.style.overflow =
-    "hidden";
-
-}
-
-
-function closeLoginModal() {
-
-  if (!elements.loginModal) return;
-
-  elements.loginModal.hidden =
-    true;
-
-  document.body.style.overflow =
-    "";
-
-}
-
-
-function switchAuthMode(mode) {
-
-  const loginPanel =
-    document.getElementById(
-      "loginPanel"
-    );
-
-  const registerPanel =
-    document.getElementById(
-      "registerPanel"
-    );
-
-  if (loginPanel) {
-
-    loginPanel.hidden =
-      mode !== "login";
-
-  }
-
-  if (registerPanel) {
-
-    registerPanel.hidden =
-      mode !== "register";
-
-  }
-
-}
-
-
-async function handleLogin(event) {
-
-  event.preventDefault();
-
-  if (!supabase) {
-
-    showToast(
-      "Conectando ao sistema. Tente novamente."
-    );
-
-    await initSupabase();
-
-    if (!supabase) return;
-
-  }
-
-  const email =
-    elements.loginEmail?.value
-      .trim();
-
-  const password =
-    elements.loginPassword?.value;
-
-  if (!email || !password) {
-
-    showToast(
-      "Preencha e-mail e senha."
-    );
-
-    return;
-
-  }
-
-  const submitButton =
-    elements.loginForm.querySelector(
-      'button[type="submit"]'
-    );
-
-  if (submitButton) {
-
-    submitButton.disabled =
-      true;
-
-    submitButton.textContent =
-      "Entrando...";
-
-  }
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-    if (error) {
-      throw error;
-    }
-
-    state.user =
-      data.user;
-
-    await loadUserProfile();
-
-    updateUserInterface();
-
-    closeLoginModal();
-
-    showToast(
-      "Login realizado com sucesso! 💜"
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    showToast(
-      translateAuthError(
-        error.message
-      )
-    );
-
-  } finally {
-
-    if (submitButton) {
-
-      submitButton.disabled =
-        false;
-
-      submitButton.textContent =
-        "Entrar";
-
-    }
-
-  }
-
-}
-
-
-async function handleRegister(event) {
-
-  event.preventDefault();
-
-  if (!supabase) {
-
-    await initSupabase();
-
-    if (!supabase) return;
-
-  }
-
-  const name =
-    elements.registerName?.value
-      .trim();
-
-  const email =
-    elements.registerEmail?.value
-      .trim();
-
-  const password =
-    elements.registerPassword?.value;
-
-  const passwordConfirm =
-    elements.registerPasswordConfirm?.value;
-
-  if (
-    !name ||
-    !email ||
-    !password ||
-    !passwordConfirm
-  ) {
-
-    showToast(
-      "Preencha todos os campos."
-    );
-
-    return;
-
-  }
-
-  if (password.length < 6) {
-
-    showToast(
-      "A senha precisa ter pelo menos 6 caracteres."
-    );
-
-    return;
-
-  }
-
-  if (
-    password !== passwordConfirm
-  ) {
-
-    showToast(
-      "As senhas não são iguais."
-    );
-
-    return;
-
-  }
-
-  const submitButton =
-    elements.registerForm.querySelector(
-      'button[type="submit"]'
-    );
-
-  if (submitButton) {
-
-    submitButton.disabled =
-      true;
-
-    submitButton.textContent =
-      "Criando conta...";
-
-  }
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabase.auth.signUp({
-
-        email,
-
-        password,
-
-        options: {
-          data: {
-            full_name: name
-          }
-        }
-
-      });
-
-    if (error) {
-      throw error;
-    }
-
-    if (data.user) {
-
-      state.user =
-        data.user;
-
-    }
-
-    /*
-      O perfil também será salvo na tabela
-      profiles quando houver sessão disponível.
-    */
-
-    if (data.session) {
-
-      await saveProfile({
-        name
-      });
-
-    }
-
-    if (
-      !data.session &&
-      data.user
-    ) {
-
-      showToast(
-        "Conta criada! Verifique seu e-mail para confirmar o cadastro."
-      );
-
-    } else {
-
-      showToast(
-        "Conta criada com sucesso! 💜"
-      );
-
-    }
-
-    switchAuthMode("login");
-
-    if (elements.loginEmail) {
-
-      elements.loginEmail.value =
-        email;
-
-    }
-
-  } catch (error) {
-
-    console.error(error);
-
-    showToast(
-      translateAuthError(
-        error.message
-      )
-    );
-
-  } finally {
-
-    if (submitButton) {
-
-      submitButton.disabled =
-        false;
-
-      submitButton.textContent =
-        "Criar conta";
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   ERROS DO SUPABASE
-   ========================================================= */
-
-function translateAuthError(message) {
-
-  const text =
-    String(message || "")
-      .toLowerCase();
-
-  if (
-    text.includes(
-      "invalid login credentials"
-    )
-  ) {
-
-    return "E-mail ou senha incorretos.";
-
-  }
-
-  if (
-    text.includes(
-      "user already registered"
-    )
-  ) {
-
-    return "Esse e-mail já possui uma conta.";
-
-  }
-
-  if (
-    text.includes(
-      "password should be at least"
-    )
-  ) {
-
-    return "A senha precisa ter pelo menos 6 caracteres.";
-
-  }
-
-  if (
-    text.includes(
-      "email not confirmed"
-    )
-  ) {
-
-    return "Confirme seu e-mail antes de entrar.";
-
-  }
-
-  return (
-    message ||
-    "Não foi possível concluir a operação."
-  );
-
-}
-
-
-/* =========================================================
-   CARREGAR USUÁRIO ATUAL
-   ========================================================= */
-
-async function loadCurrentUser() {
-
-  if (!supabase) return;
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabase.auth.getSession();
-
-    if (error) {
-      throw error;
-    }
-
-    state.user =
-      data.session?.user || null;
-
-    if (state.user) {
-
-      await loadUserProfile();
-
-    }
-
-    updateUserInterface();
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao carregar sessão:",
-      error
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   MONITORAR LOGIN / LOGOUT
-   ========================================================= */
-
-function setupAuthListener() {
-
-  if (!supabase) return;
-
-  supabase.auth.onAuthStateChange(
-    async (event, session) => {
-
-      state.user =
-        session?.user || null;
-
-      if (state.user) {
-
-        await loadUserProfile();
-
-      } else {
-
-        state.profile = null;
-
-        state.address = null;
-
-      }
-
-      updateUserInterface();
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   CARREGAR PERFIL
-   ========================================================= */
-
-async function loadUserProfile() {
-
-  if (
-    !supabase ||
-    !state.user
-  ) return;
-
-  try {
-
-    const {
-      data: profile,
-      error: profileError
-    } =
-      await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", state.user.id)
-        .maybeSingle();
-
-    if (
-      profileError &&
-      profileError.code !== "PGRST116"
-    ) {
-
-      console.warn(
-        "Não foi possível carregar o perfil:",
-        profileError
-      );
-
-    }
-
-    state.profile =
-      profile || null;
-
-
-    /*
-      Procura o endereço vinculado ao usuário.
-      O código aceita tanto "user_id" quanto
-      os campos padrão usados no projeto.
-    */
-
-    const {
-      data: address,
-      error: addressError
-    } =
-      await supabase
-        .from("addresses")
-        .select("*")
-        .eq("user_id", state.user.id)
-        .maybeSingle();
-
-    if (
-      addressError &&
-      addressError.code !== "PGRST116"
-    ) {
-
-      console.warn(
-        "Não foi possível carregar o endereço:",
-        addressError
-      );
-
-    }
-
-    state.address =
-      address || null;
-
-    fillProfileFields();
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao carregar perfil:",
-      error
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   SALVAR PERFIL
-   ========================================================= */
-
-async function saveProfile(data) {
-
-  if (
-    !supabase ||
-    !state.user
-  ) return false;
-
-  const name =
-    data.name ||
-    elements.profileName?.value?.trim() ||
-    state.user.user_metadata?.full_name ||
-    "";
-
-  try {
-
-    const {
-      data: profile,
-      error
-    } =
-      await supabase
-        .from("profiles")
-        .upsert(
-          {
-            id: state.user.id,
-            name: name,
-            email: state.user.email
-          },
-          {
-            onConflict: "id"
-          }
-        )
-        .select()
-        .single();
-
-    if (error) {
-      throw error;
-    }
-
-    state.profile =
-      profile;
-
-    return true;
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao salvar perfil:",
-      error
-    );
-
-    return false;
-
-  }
-
-}
-
-
-/* =========================================================
-   SALVAR ENDEREÇO
-   ========================================================= */
-
-async function saveAddress() {
-
-  if (
-    !supabase ||
-    !state.user
-  ) {
-
-    showToast(
-      "Você precisa estar logado."
-    );
-
-    return false;
-
-  }
-
-  const address = {
-
-    user_id:
-      state.user.id,
-
-    cep:
-      elements.profileCep?.value
-        ?.trim() || "",
-
-    street:
-      elements.profileStreet?.value
-        ?.trim() || "",
-
-    number:
-      elements.profileNumber?.value
-        ?.trim() || "",
-
-    complement:
-      elements.profileComplement?.value
-        ?.trim() || "",
-
-    neighborhood:
-      elements.profileNeighborhood?.value
-        ?.trim() || "",
-
-    city:
-      elements.profileCity?.value
-        ?.trim() || "",
-
-    state:
-      elements.profileState?.value
-        ?.trim() || ""
-
-  };
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabase
-        .from("addresses")
-        .upsert(
-          address,
-          {
-            onConflict: "user_id"
-          }
-        )
-        .select()
-        .single();
-
-    if (error) {
-      throw error;
-    }
-
-    state.address =
-      data;
-
-    showToast(
-      "Endereço salvo com sucesso! 💜"
-    );
-
-    return true;
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao salvar endereço:",
-      error
-    );
-
-    showToast(
-      "Não foi possível salvar o endereço."
-    );
-
-    return false;
-
-  }
-
-}
-
-
-/* =========================================================
-   PREENCHER CAMPOS DO PERFIL
-   ========================================================= */
-
-function fillProfileFields() {
-
-  const profile =
-    state.profile || {};
-
-  const address =
-    state.address || {};
-
-  if (elements.profileName) {
-
-    elements.profileName.value =
-      profile.name ||
-      state.user?.user_metadata?.full_name ||
-      "";
-
-  }
-
-  if (elements.profileEmail) {
-
-    elements.profileEmail.value =
-      state.user?.email ||
-      profile.email ||
-      "";
-
-  }
-
-  if (elements.profileCep) {
-
-    elements.profileCep.value =
-      address.cep || "";
-
-  }
-
-  if (elements.profileStreet) {
-
-    elements.profileStreet.value =
-      address.street || "";
-
-  }
-
-  if (elements.profileNumber) {
-
-    elements.profileNumber.value =
-      address.number || "";
-
-  }
-
-  if (elements.profileComplement) {
-
-    elements.profileComplement.value =
-      address.complement || "";
-
-  }
-
-  if (elements.profileNeighborhood) {
-
-    elements.profileNeighborhood.value =
-      address.neighborhood || "";
-
-  }
-
-  if (elements.profileCity) {
-
-    elements.profileCity.value =
-      address.city || "";
-
-  }
-
-  if (elements.profileState) {
-
-    elements.profileState.value =
-      address.state || "";
-
-  }
-
-}
-
-
-/* =========================================================
-   INTERFACE DO USUÁRIO
-   ========================================================= */
-
-function updateUserInterface() {
-
-  if (!elements.userBtn) return;
-
-  const loggedIn =
-    Boolean(state.user);
-
-  if (elements.userBtnLabel) {
-
-    elements.userBtnLabel.textContent =
-      loggedIn
-        ? (
-          state.profile?.name
-            ? state.profile.name.split(" ")[0]
-            : "Minha conta"
-        )
-        : "Entrar";
-
-  } else {
-
-    const label =
-      elements.userBtn.querySelector(
-        ".icon-btn-label"
-      );
-
-    if (label) {
-
-      label.textContent =
-        loggedIn
-          ? (
-            state.profile?.name
-              ? state.profile.name.split(" ")[0]
-              : "Minha conta"
-          )
-          : "Entrar";
-
-    }
-
-  }
-
-  updateAuthButtons();
-
-}
-
-
-/* =========================================================
-   BOTÕES DE LOGIN/CADASTRO
-   ========================================================= */
-
-function updateAuthButtons() {
-
-  const loginButton =
-    document.querySelector(
-      "[data-open-login]"
-    );
-
-  const registerButton =
-    document.querySelector(
-      "[data-open-register]"
-    );
-
-  const profileButton =
-    document.querySelector(
-      "[data-open-profile]"
-    );
-
-  const logoutButton =
-    document.querySelector(
-      "[data-logout]"
-    );
-
-  const loggedIn =
-    Boolean(state.user);
-
-  if (loginButton) {
-
-    loginButton.hidden =
-      loggedIn;
-
-  }
-
-  if (registerButton) {
-
-    registerButton.hidden =
-      loggedIn;
-
-  }
-
-  if (profileButton) {
-
-    profileButton.hidden =
-      !loggedIn;
-
-  }
-
-  if (logoutButton) {
-
-    logoutButton.hidden =
-      !loggedIn;
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-async function logout() {
-
-  if (!supabase) return;
-
-  try {
-
-    const {
-      error
-    } =
-      await supabase.auth.signOut();
-
-    if (error) {
-      throw error;
-    }
-
-    state.user = null;
-
-    state.profile = null;
-
-    state.address = null;
-
-    closeUserDropdown();
-
-    closeLoginModal();
-
-    updateUserInterface();
-
-    showToast(
-      "Você saiu da sua conta."
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    showToast(
-      "Não foi possível sair da conta."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   INÍCIO
-   ========================================================= */
-
-function goToHome() {
-
-  closeMobileMenu();
-
-  closeUserDropdown();
-
-  closeCart();
-
-  state.filter =
-    "todos";
-
-  state.query =
-    "";
-
-  if (elements.searchInput) {
-
-    elements.searchInput.value =
-      "";
-
-  }
-
-  updateActiveFilters();
-
-  renderProducts();
-
-  window.scrollTo({
-
-    top: 0,
-
-    behavior: "smooth"
-
-  });
-
 }
 
 
@@ -2522,7 +2563,27 @@ function handlePlaceholderLink(event) {
   showToast(
     "Esta área ainda faz parte da demonstração."
   );
+}
 
+
+/* =========================================================
+   BOTÃO INÍCIO
+   ========================================================= */
+
+function goToHome(event) {
+
+  if (event) {
+    event.preventDefault();
+  }
+
+  closeMobileMenu();
+  closeUserDropdown();
+  closeCart();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 
@@ -2532,8 +2593,7 @@ function handlePlaceholderLink(event) {
 
 function setupEvents() {
 
-
-  /* ---------- Busca ---------- */
+  /* Busca */
 
   if (elements.searchForm) {
 
@@ -2545,7 +2605,7 @@ function setupEvents() {
   }
 
 
-  /* ---------- Menu mobile ---------- */
+  /* Menu */
 
   if (elements.menuToggle) {
 
@@ -2557,17 +2617,7 @@ function setupEvents() {
   }
 
 
-  if (elements.mobileMenuClose) {
-
-    elements.mobileMenuClose.addEventListener(
-      "click",
-      closeMobileMenu
-    );
-
-  }
-
-
-  /* ---------- Overlay ---------- */
+  /* Overlay */
 
   if (elements.overlay) {
 
@@ -2579,7 +2629,7 @@ function setupEvents() {
   }
 
 
-  /* ---------- Carrinho ---------- */
+  /* Carrinho */
 
   if (elements.cartBtn) {
 
@@ -2611,55 +2661,19 @@ function setupEvents() {
   }
 
 
-  /* ---------- Conta ---------- */
+  /* Conta */
 
   if (elements.userBtn) {
 
     elements.userBtn.addEventListener(
       "click",
-      () => {
-
-        if (state.user) {
-
-          toggleUserDropdown();
-
-        } else {
-
-          openLoginModal();
-
-        }
-
-      }
+      toggleUserDropdown
     );
 
   }
 
 
-  /* ---------- Formulário login ---------- */
-
-  if (elements.loginForm) {
-
-    elements.loginForm.addEventListener(
-      "submit",
-      handleLogin
-    );
-
-  }
-
-
-  /* ---------- Formulário cadastro ---------- */
-
-  if (elements.registerForm) {
-
-    elements.registerForm.addEventListener(
-      "submit",
-      handleRegister
-    );
-
-  }
-
-
-  /* ---------- Checkout ---------- */
+  /* Checkout */
 
   if (elements.checkoutBtn) {
 
@@ -2671,14 +2685,13 @@ function setupEvents() {
   }
 
 
-  /* ---------- Delegação geral ---------- */
+  /* Delegação */
 
   document.addEventListener(
     "click",
     event => {
 
-
-      /* ---------- Filtros ---------- */
+      /* Filtros */
 
       const filterElement =
         event.target.closest(
@@ -2701,29 +2714,25 @@ function setupEvents() {
         }
 
         return;
-
       }
 
 
-      /* ---------- Início ---------- */
+      /* Início */
 
       const homeLink =
         event.target.closest(
-          "[data-home]"
+          "[data-home-link]"
         );
 
       if (homeLink) {
 
-        event.preventDefault();
-
-        goToHome();
+        goToHome(event);
 
         return;
-
       }
 
 
-      /* ---------- Adicionar ---------- */
+      /* Adicionar */
 
       const addButton =
         event.target.closest(
@@ -2737,11 +2746,10 @@ function setupEvents() {
         );
 
         return;
-
       }
 
 
-      /* ---------- Remover ---------- */
+      /* Remover */
 
       const removeButton =
         event.target.closest(
@@ -2755,11 +2763,10 @@ function setupEvents() {
         );
 
         return;
-
       }
 
 
-      /* ---------- Quantidade - ---------- */
+      /* Menos */
 
       const minusButton =
         event.target.closest(
@@ -2774,11 +2781,10 @@ function setupEvents() {
         );
 
         return;
-
       }
 
 
-      /* ---------- Quantidade + ---------- */
+      /* Mais */
 
       const plusButton =
         event.target.closest(
@@ -2793,181 +2799,56 @@ function setupEvents() {
         );
 
         return;
-
       }
 
 
-      /* ---------- Abrir login ---------- */
+      /* Ações da conta */
 
-      const loginButton =
+      const loginAction =
         event.target.closest(
-          "[data-open-login]"
+          "[data-login-action]"
         );
 
-      if (loginButton) {
+      if (loginAction) {
 
-        event.preventDefault();
+        const action =
+          loginAction.dataset.loginAction;
 
-        openLoginModal();
+        if (action === "login") {
 
-        return;
+          openAuthModal("login");
 
-      }
-
-
-      /* ---------- Abrir cadastro ---------- */
-
-      const registerButton =
-        event.target.closest(
-          "[data-open-register]"
-        );
-
-      if (registerButton) {
-
-        event.preventDefault();
-
-        openLoginModal();
-
-        switchAuthMode(
-          "register"
-        );
-
-        return;
-
-      }
-
-
-      /* ---------- Abrir perfil ---------- */
-
-      const profileButton =
-        event.target.closest(
-          "[data-open-profile]"
-        );
-
-      if (profileButton) {
-
-        event.preventDefault();
-
-        closeUserDropdown();
-
-        const profileSection =
-          document.getElementById(
-            "perfil"
-          );
-
-        if (profileSection) {
-
-          profileSection.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-
-        } else {
-
-          openLoginModal();
-
+          return;
         }
 
-        return;
+
+        if (action === "signup") {
+
+          openAuthModal("signup");
+
+          return;
+        }
+
+
+        if (action === "profile") {
+
+          showProfile();
+
+          return;
+        }
+
+
+        if (action === "logout") {
+
+          logoutUser();
+
+          return;
+        }
 
       }
 
 
-      /* ---------- Logout ---------- */
-
-      const logoutButton =
-        event.target.closest(
-          "[data-logout]"
-        );
-
-      if (logoutButton) {
-
-        event.preventDefault();
-
-        logout();
-
-        return;
-
-      }
-
-
-      /* ---------- Trocar para login ---------- */
-
-      const switchLogin =
-        event.target.closest(
-          "[data-switch-login]"
-        );
-
-      if (switchLogin) {
-
-        event.preventDefault();
-
-        switchAuthMode(
-          "login"
-        );
-
-        return;
-
-      }
-
-
-      /* ---------- Trocar para cadastro ---------- */
-
-      const switchRegister =
-        event.target.closest(
-          "[data-switch-register]"
-        );
-
-      if (switchRegister) {
-
-        event.preventDefault();
-
-        switchAuthMode(
-          "register"
-        );
-
-        return;
-
-      }
-
-
-      /* ---------- Fechar login ---------- */
-
-      const closeLogin =
-        event.target.closest(
-          "[data-close-login]"
-        );
-
-      if (closeLogin) {
-
-        event.preventDefault();
-
-        closeLoginModal();
-
-        return;
-
-      }
-
-
-      /* ---------- Salvar endereço ---------- */
-
-      const saveAddressButton =
-        event.target.closest(
-          "[data-save-address]"
-        );
-
-      if (saveAddressButton) {
-
-        event.preventDefault();
-
-        saveAddress();
-
-        return;
-
-      }
-
-
-      /* ---------- Fechar dropdown ---------- */
+      /* Fechar dropdown */
 
       const closeDropdownButton =
         event.target.closest(
@@ -2979,11 +2860,10 @@ function setupEvents() {
         closeUserDropdown();
 
         return;
-
       }
 
 
-      /* ---------- Fechar carrinho ---------- */
+      /* Fechar carrinho */
 
       const closeCartLink =
         event.target.closest(
@@ -2995,11 +2875,10 @@ function setupEvents() {
         closeCart();
 
         return;
-
       }
 
 
-      /* ---------- Placeholder ---------- */
+      /* Placeholder */
 
       const placeholder =
         event.target.closest(
@@ -3013,11 +2892,10 @@ function setupEvents() {
         );
 
         return;
-
       }
 
 
-      /* ---------- Fecha dropdown fora ---------- */
+      /* Fora do dropdown */
 
       if (
         elements.userDropdown &&
@@ -3034,12 +2912,11 @@ function setupEvents() {
 
       }
 
-
     }
   );
 
 
-  /* ---------- ESC ---------- */
+  /* ESC */
 
   document.addEventListener(
     "keydown",
@@ -3050,21 +2927,17 @@ function setupEvents() {
       }
 
       closeCart();
-
       closeMobileMenu();
-
       closeUserDropdown();
-
-      closeLoginModal();
+      closeAuthModal();
 
     }
   );
-
 }
 
 
 /* =========================================================
-   ANO DO FOOTER
+   ANO
    ========================================================= */
 
 function updateCurrentYear() {
@@ -3073,7 +2946,6 @@ function updateCurrentYear() {
 
   elements.anoAtual.textContent =
     new Date().getFullYear();
-
 }
 
 
@@ -3083,34 +2955,37 @@ function updateCurrentYear() {
 
 async function init() {
 
+  loadCart();
+
   renderCategoryCards();
-
   renderProducts();
-
   renderOffers();
-
   renderCart();
 
   updateCartCount();
-
   updateActiveFilters();
-
   updateCurrentYear();
+
+  createAuthModal();
 
   setupEvents();
 
-  await initSupabase();
+  await loadCurrentUser();
 
   setupAuthListener();
 
-  updateUserInterface();
-
+  console.log(
+    "Amora Make inicializada."
+  );
 }
 
 
+/* =========================================================
+   START
+   ========================================================= */
+
 if (
-  document.readyState ===
-  "loading"
+  document.readyState === "loading"
 ) {
 
   document.addEventListener(
@@ -3123,3 +2998,4 @@ if (
   init();
 
 }
+```
