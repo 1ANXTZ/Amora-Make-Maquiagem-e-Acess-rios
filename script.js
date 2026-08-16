@@ -154,154 +154,176 @@ const PRODUCTS = [
     id: "p01",
     name: "Esponja Chanfrada",
     category: "acessorio",
-    price: 5.00
+    price: 5.00,
+    image: "images/produtos/esponja-chanfrada.jpeg"
   },
 
   {
     id: "p02",
     name: "Fixador Fix Matte",
     category: "maquiagem",
-    price: 15.00
+    price: 15.00,
+    image: "images/produtos/fixador-fix-matte.jpeg"
   },
 
   {
     id: "p03",
     name: "Máscara de Cílios Alonga e Define",
     category: "mascara",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/mascara-de-cilios-alonga-e-define.jpeg"
   },
 
   {
     id: "p04",
     name: "Lip Oil Sweet Hello Kitty",
     category: "gloss",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/lip-oil-sweet-hello-kitty.jpeg"
   },
 
   {
     id: "p05",
     name: "Lip Oil Raios de Sol",
     category: "gloss",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/lip-oil-raios-de-sol.jpeg"
   },
 
   {
     id: "p06",
     name: "Demaquilante Aquatic Awe",
     category: "maquiagem",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/demaquilante-aquatic-awe.jpeg"
   },
 
   {
     id: "p07",
     name: "Demaquilante Sunset Coral",
     category: "maquiagem",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/demaquilante-sunset-coral.jpeg"
   },
 
   {
     id: "p08",
     name: "Perfume Capilar Atração Fatal",
     category: "acessorio",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/perfume-capilar-atração-fatal.jpeg"
   },
 
   {
     id: "p09",
     name: "Perfume Capilar Desejo Secreto",
     category: "acessorio",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/perfume-capilar-desejo-secreto.jpeg"
   },
 
   {
     id: "p10",
     name: "Delineador Líquido Super Poderes",
     category: "maquiagem",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/delineador-liquido-super-poderes.jpeg"
   },
 
   {
     id: "p11",
     name: "Folhas Antioliosidade",
     category: "maquiagem",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/folhas-anti-oleosidade.jpeg"
   },
 
   {
     id: "p12",
     name: "Esfoliante Labial Honey Scrub Vivai",
     category: "maquiagem",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/esfoliante-labial-honey-scrub-vivai.jpeg"
   },
 
   {
     id: "p13",
     name: "Pó Compacto Efeito Aveludado",
     category: "maquiagem",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/po-compacto-efeito-aveludado.jpeg"
   },
 
   {
     id: "p14",
     name: "Par de Cílios 6D",
     category: "acessorio",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/par-de-cilios-6d.jpeg"
   },
 
   {
     id: "p15",
     name: "Batom Bala Matte Lovely",
     category: "batom",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/batom-bala-matte-lovely.jpeg"
   },
 
   {
     id: "p16",
     name: "Pincel para Esfumar",
     category: "pincel",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/pincel-p-esfumar.jpeg"
   },
 
   {
     id: "p17",
     name: "Pincel para Corretivo Língua de Gato",
     category: "pincel",
-    price: 10.00
+    price: 10.00,
+    image: "images/produtos/pincel-p-corretivo-lingua-de-gato.jpeg"
   },
 
   {
     id: "p18",
     name: "Elástico para Cabelo",
     category: "acessorio",
-    price: 5.00
+    price: 5.00,
+    image: "images/produtos/elastico-p-cabelo.jpeg"
   },
 
   {
     id: "p19",
     name: "Kit com 2 Esponjas para Pó",
     category: "acessorio",
-    price: 5.00
+    price: 5.00,
+    image: "images/produtos/kit-c-2-esponjas-p-po.jpeg"
   },
 
   {
     id: "p20",
     name: "Máscara Facial Peel Off Total Black",
     category: "maquiagem",
-    price: 5.00
+    price: 5.00,
+    image: "images/produtos/mascara-facial-peel-off-total-black.jpeg"
   },
 
   {
     id: "p21",
     name: "Hidratante Facial Rosa Mosqueta",
     category: "maquiagem",
-    price: 5.00
+    price: 5.00,
+    image: "images/produtos/hidratante-facial-rosa-mosqueta.jpeg"
   },
 
   {
     id: "p22",
     name: "Mini Batom Princesa",
     category: "batom",
-    price: 5.00
+    price: 5.00,
+    image: "images/produtos/mini-batom-princesa.jpeg"
   }
 ];
 
@@ -350,6 +372,32 @@ function getProductIcon(category) {
 
 function getCategoryLabel(category) {
   return CATEGORY_LABELS[category] || "Maquiagem";
+}
+
+
+/*
+   Renderiza a imagem real do produto.
+   Se a imagem não carregar, volta automaticamente
+   para o ícone SVG da categoria.
+*/
+
+function getProductImage(product, className = "product-image") {
+  if (!product.image) {
+    return getProductIcon(product.category);
+  }
+
+  return `
+    <img
+      src="${product.image}"
+      alt="${product.name}"
+      class="${className}"
+      loading="lazy"
+      onerror="this.hidden=true; this.nextElementSibling.hidden=false;"
+    >
+    <span class="product-image-fallback" hidden>
+      ${getProductIcon(product.category)}
+    </span>
+  `;
 }
 
 
@@ -476,7 +524,7 @@ function createProductCard(product) {
     <article class="product-card">
 
       <div class="product-media">
-        ${getProductIcon(product.category)}
+        ${getProductImage(product)}
       </div>
 
       <div class="product-body">
@@ -877,7 +925,7 @@ function renderCart() {
         <div class="cart-item">
 
           <div class="cart-item-media">
-            ${getProductIcon(product.category)}
+            ${getProductImage(product, "cart-item-image")}
           </div>
 
           <div>
