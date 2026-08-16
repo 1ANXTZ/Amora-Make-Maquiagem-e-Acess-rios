@@ -377,7 +377,6 @@ p {
    PERFIL
    ========================================================= */
 
-/* Caso o perfil seja exibido como imagem no header */
 .profile-image {
   width: 40px;
   height: 40px;
@@ -418,8 +417,19 @@ p {
 
 /* ---------- Navegação ---------- */
 
+/*
+   Navegação fixa/aderente em TODAS as telas.
+   Ela acompanha o scroll e permanece visível.
+*/
 .category-nav {
+  position: sticky;
+  top: 0;
+  z-index: 400;
   border-top: 1px solid #F2EAED;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .category-nav-list {
@@ -563,37 +573,45 @@ p {
 
 .hero-visual {
   position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
   min-height: 420px;
+  isolation: isolate;
 }
 
+/* Círculo decorativo fica SEMPRE atrás da foto principal. */
 .hero-blob {
   position: absolute;
+  z-index: 0;
   width: min(430px, 80vw);
   height: min(430px, 80vw);
   border-radius: 48% 52% 55% 45%;
   background: var(--color-blush);
   transform: rotate(-12deg);
+  pointer-events: none;
 }
 
 .hero-illustration {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: min(420px, 100%);
   height: auto;
+  object-fit: contain;
 }
 
 .lip-swipe {
   position: absolute;
   right: -5%;
   bottom: -55px;
+  z-index: 0;
   width: 45%;
   height: 120px;
   border-radius: 50%;
   background: var(--color-berry-bright);
   opacity: 0.1;
   transform: rotate(-8deg);
+  pointer-events: none;
 }
 
 /* =========================================================
@@ -753,7 +771,6 @@ p {
   min-height: 230px;
   padding: 20px;
   overflow: hidden;
-
   background:
     radial-gradient(
       circle at center,
@@ -762,11 +779,6 @@ p {
     ),
     #FCF6F8;
 }
-
-/*
-   Imagens reais dos produtos.
-   O JS pode criar <img> dentro de .product-media.
-*/
 
 .product-media > img {
   display: block;
@@ -782,8 +794,6 @@ p {
 .product-card:hover .product-media > img {
   transform: scale(1.04);
 }
-
-/* Mantém compatibilidade caso algum produto ainda use SVG */
 
 .product-media > svg {
   width: 130px;
@@ -1071,8 +1081,6 @@ p {
   object-fit: contain;
   object-position: center;
 }
-
-/* Compatibilidade com SVG antigo */
 
 .cart-item-media svg {
   width: 100%;
@@ -1381,8 +1389,20 @@ p {
     max-width: none;
   }
 
+  /* A navegação continua visível e fixa no mobile. */
   .category-nav {
-    display: none;
+    display: block;
+  }
+
+  .category-nav-list {
+    width: 100%;
+    padding-inline: 14px;
+    justify-content: flex-start;
+  }
+
+  .category-nav-list a {
+    padding: 11px 12px;
+    font-size: 0.76rem;
   }
 
   .user-dropdown {
@@ -1423,6 +1443,11 @@ p {
 
   .hero-illustration {
     width: min(330px, 90vw);
+  }
+
+  .hero-blob {
+    width: min(330px, 80vw);
+    height: min(330px, 80vw);
   }
 
   /* Categorias */
@@ -1614,9 +1639,7 @@ p {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
+  * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
