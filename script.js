@@ -551,6 +551,7 @@ const elements = {
   registerName: document.getElementById("registerName"),
   registerEmail: document.getElementById("registerEmail"),
   registerPassword: document.getElementById("registerPassword"),
+  registerPasswordConfirm: document.getElementById("registerPasswordConfirm"),
   registerCep: document.getElementById("registerCep"),
   registerStreet: document.getElementById("registerStreet"),
   registerNumber: document.getElementById("registerNumber"),
@@ -1541,6 +1542,31 @@ async function loginUser(
 
 
 /* =========================================================
+   VALIDAÇÃO DE CADASTRO
+   ========================================================= */
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    String(email || "").trim()
+  );
+}
+
+
+function isValidCep(cep) {
+  return /^\d{5}-?\d{3}$/.test(
+    String(cep || "").trim()
+  );
+}
+
+
+function isValidState(uf) {
+  return /^[A-Za-z]{2}$/.test(
+    String(uf || "").trim()
+  );
+}
+
+
+/* =========================================================
    SUPABASE — CADASTRO
    ========================================================= */
 
@@ -1548,6 +1574,7 @@ async function registerUser({
   name,
   email,
   password,
+  passwordConfirm,
   cep,
   street,
   number,
@@ -1569,6 +1596,7 @@ async function registerUser({
     !name ||
     !email ||
     !password ||
+    !passwordConfirm ||
     !cep ||
     !street ||
     !number ||
@@ -1588,6 +1616,42 @@ async function registerUser({
     showAccountError(
       elements.registerError,
       "A senha precisa ter pelo menos 6 caracteres."
+    );
+
+    return;
+  }
+
+  if (password !== passwordConfirm) {
+    showAccountError(
+      elements.registerError,
+      "As senhas não coincidem."
+    );
+
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    showAccountError(
+      elements.registerError,
+      "Digite um e-mail válido."
+    );
+
+    return;
+  }
+
+  if (!isValidCep(cep)) {
+    showAccountError(
+      elements.registerError,
+      "Digite um CEP válido."
+    );
+
+    return;
+  }
+
+  if (!isValidState(state)) {
+    showAccountError(
+      elements.registerError,
+      "Digite o estado usando duas letras."
     );
 
     return;
@@ -2314,6 +2378,9 @@ function setupEvents() {
 
           password:
             elements.registerPassword?.value || "",
+
+          passwordConfirm:
+            elements.registerPasswordConfirm?.value || "",
 
           cep:
             elements.registerCep?.value?.trim() || "",
