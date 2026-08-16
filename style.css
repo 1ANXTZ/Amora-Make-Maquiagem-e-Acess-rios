@@ -1993,6 +1993,312 @@ main {
 }
 
 /* =========================================================
+   MODAL DE CONTA
+   ========================================================= */
+
+.account-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  opacity: 1;
+  visibility: visible;
+
+  overflow-y: auto;
+}
+
+.account-modal[hidden] {
+  display: none;
+}
+
+.account-modal-content {
+  position: relative;
+
+  width: min(100%, 480px);
+  max-height: calc(100vh - 48px);
+
+  overflow-y: auto;
+
+  background: #fff;
+  border-radius: 24px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 25px 80px rgba(40, 10, 25, 0.25);
+
+  animation: accountModalIn 0.25s ease;
+}
+
+@keyframes accountModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Fundo escuro atrás do card */
+
+.account-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 999;
+
+  background: rgba(30, 8, 20, 0.55);
+
+  backdrop-filter: blur(4px);
+}
+
+.account-overlay[hidden] {
+  display: none;
+}
+
+/* Cabeçalho */
+
+.account-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 24px;
+}
+
+.account-modal-header h2 {
+  margin: 4px 0 0;
+}
+
+/* Botão fechar */
+
+#accountCloseBtn {
+  flex-shrink: 0;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+}
+
+/* Formulário */
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.account-form label {
+  font-weight: 700;
+  font-size: 14px;
+
+  color: #4a2033;
+}
+
+.account-form input {
+  width: 100%;
+
+  padding: 13px 15px;
+
+  border: 1px solid #dfcbd4;
+  border-radius: 12px;
+
+  background: #fff;
+
+  font: inherit;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.account-form input:focus {
+  border-color: #6B1E3C;
+
+  box-shadow:
+    0 0 0 3px rgba(107, 30, 60, 0.10);
+}
+
+/* Botão ocupando toda a largura */
+
+.btn-full {
+  width: 100%;
+}
+
+/* Troca entre login/cadastro */
+
+.account-switch {
+  margin: 18px 0 0;
+
+  text-align: center;
+
+  font-size: 14px;
+
+  color: #6c5961;
+}
+
+.account-link {
+  border: 0;
+  padding: 0;
+
+  background: none;
+
+  color: #6B1E3C;
+
+  font: inherit;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.account-link:hover {
+  text-decoration: underline;
+}
+
+/* Mensagens de erro */
+
+.account-error {
+  margin: 4px 0 0;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background: #fff0f2;
+
+  color: #a51d3d;
+
+  font-size: 13px;
+}
+
+/* Ajuda dos campos */
+
+.account-field-help {
+  margin-top: -4px;
+
+  color: #806c75;
+
+  font-size: 12px;
+}
+
+/* Título da seção de endereço */
+
+.account-form-section-title {
+  margin: 18px 0 4px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #eee2e7;
+
+  font-family: "Fraunces", serif;
+
+  color: #6B1E3C;
+}
+
+/* Conta logada */
+
+.logged-account {
+  text-align: center;
+}
+
+.logged-account-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 76px;
+  height: 76px;
+
+  margin: 0 auto 16px;
+
+  border-radius: 50%;
+
+  background: #f7e8ee;
+
+  color: #6B1E3C;
+}
+
+.logged-account h3 {
+  margin: 4px 0;
+
+  font-family: "Fraunces", serif;
+
+  font-size: 28px;
+
+  color: #4a2033;
+}
+
+.logged-account > p {
+  margin: 4px 0;
+}
+
+.logged-address {
+  margin: 24px 0;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  background: #faf5f7;
+
+  text-align: left;
+}
+
+.logged-address h4 {
+  margin: 0 0 6px;
+
+  color: #6B1E3C;
+}
+
+.logged-address p {
+  margin: 0;
+
+  line-height: 1.5;
+}
+
+/* Evita scroll da página quando o popup está aberto */
+
+body.account-modal-open {
+  overflow: hidden;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+  .account-modal {
+    align-items: flex-end;
+
+    padding: 12px;
+  }
+
+  .account-modal-content {
+    width: 100%;
+
+    max-height: calc(100vh - 24px);
+
+    padding: 24px 20px;
+
+    border-radius: 22px 22px 16px 16px;
+  }
+}
+
+/* =========================================================
    REDUÇÃO DE MOVIMENTO
    ========================================================= */
 
