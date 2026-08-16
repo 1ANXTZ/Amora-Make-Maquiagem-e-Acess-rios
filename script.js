@@ -1,7 +1,7 @@
 /* =========================================================
    AMORA MAKE — script.js
    Produtos, categorias, busca, menu mobile,
-   carrinho, login/cadastro e Supabase.
+   carrinho, login/cadastro, endereço e Supabase.
    ========================================================= */
 
 
@@ -17,7 +17,10 @@ const SUPABASE_KEY =
 let supabaseClient = null;
 
 try {
-  if (window.supabase) {
+  if (
+    window.supabase &&
+    typeof window.supabase.createClient === "function"
+  ) {
     supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_KEY
@@ -364,11 +367,21 @@ function formatBRL(value) {
 
 
 function normalizeText(value) {
-  return String(value)
+  return String(value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
+}
+
+
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
@@ -383,16 +396,17 @@ function getCategoryLabel(category) {
 
 
 function getProductImage(product) {
-  if (!product.image) {
-    return getProductIcon(product.category);
+  if (!product?.image) {
+    return getProductIcon(product?.category);
   }
 
   return `
     <img
-      src="${product.image}"
-      alt="${product.name}"
+      src="${escapeHTML(product.image)}"
+      alt="${escapeHTML(product.name)}"
       loading="lazy"
       decoding="async"
+      onerror="this.onerror=null;this.style.display='none';this.parentElement.classList.add('image-error');"
     >
   `;
 }
@@ -407,6 +421,10 @@ const state = {
   query: "",
   cart: []
 };
+
+
+let currentProfile = null;
+let toastTimer = null;
 
 
 /* =========================================================
@@ -473,8 +491,6 @@ const elements = {
    TOAST
    ========================================================= */
 
-let toastTimer = null;
-
 function showToast(message) {
   if (!elements.toast) {
     console.log(message);
@@ -494,7 +510,9 @@ function showToast(message) {
     elements.toast.classList.remove("show");
 
     setTimeout(() => {
-      elements.toast.hidden = true;
+      if (!elements.toast.classList.contains("show")) {
+        elements.toast.hidden = true;
+      }
     }, 220);
   }, 2400);
 }
@@ -513,14 +531,14 @@ function renderCategoryCards() {
         <button
           type="button"
           class="cat-card"
-          data-filter="${category}"
+          data-filter="${escapeHTML(category)}"
         >
           <span class="cat-card-icon">
             ${getProductIcon(category)}
           </span>
 
           <span class="cat-card-name">
-            ${getCategoryLabel(category)}
+            ${escapeHTML(getCategoryLabel(category))}
           </span>
         </button>
       `)
@@ -547,11 +565,11 @@ function createProductCard(product) {
       <div class="product-body">
 
         <span class="product-category">
-          ${getCategoryLabel(product.category)}
+          ${escapeHTML(getCategoryLabel(product.category))}
         </span>
 
         <h3 class="product-name">
-          ${product.name}
+          ${escapeHTML(product.name)}
         </h3>
 
         <div class="product-price-row">
@@ -563,7 +581,7 @@ function createProductCard(product) {
         <button
           type="button"
           class="product-add-btn ${isInCart ? "added" : ""}"
-          data-add-cart="${product.id}"
+          data-add-cart="${escapeHTML(product.id)}"
         >
           ${
             isInCart
@@ -583,7 +601,6 @@ function getFilteredProducts() {
   const query = normalizeText(state.query);
 
   return PRODUCTS.filter(product => {
-
     const matchesFilter =
       state.filter === "todos" ||
       product.category === state.filter;
@@ -656,7 +673,10 @@ function renderOffers() {
    ========================================================= */
 
 function setFilter(filter) {
-  state.filter = filter || "todos";
+  state.filter =
+    filter && CATEGORY_LABELS[filter]
+      ? filter
+      : "todos";
 
   updateActiveFilters();
   renderProducts();
@@ -677,9 +697,7 @@ function updateActiveFilters() {
   document
     .querySelectorAll("[data-filter]")
     .forEach(element => {
-
-      const filter =
-        element.dataset.filter;
+      const filter = element.dataset.filter;
 
       if (
         element.matches(".category-nav-list a") ||
@@ -702,9 +720,7 @@ function handleSearch(event) {
   event.preventDefault();
 
   state.query =
-    elements.searchInput
-      ? elements.searchInput.value
-      : "";
+    elements.searchInput?.value?.trim() || "";
 
   renderProducts();
 
@@ -765,12 +781,7 @@ function closeCart() {
     );
   }
 
-  if (
-    !elements.mobileMenu ||
-    elements.mobileMenu.hidden
-  ) {
-    document.body.style.overflow = "";
-  }
+  restoreBodyScroll();
 }
 
 
@@ -828,6 +839,8 @@ function removeFromCart(productId) {
   renderCart();
   renderProducts();
   renderOffers();
+
+  showToast("Produto removido do carrinho.");
 }
 
 
@@ -859,19 +872,21 @@ function updateCartCount() {
   const totalItems =
     state.cart.reduce(
       (total, item) =>
-        total + item.quantity,
+        total + Number(item.quantity || 0),
       0
     );
 
   elements.cartCount.textContent =
     totalItems;
+
+  elements.cartCount.hidden =
+    totalItems <= 0;
 }
 
 
 function calculateCartSubtotal() {
   return state.cart.reduce(
     (total, item) => {
-
       const product =
         PRODUCTS.find(
           productItem =>
@@ -881,7 +896,8 @@ function calculateCartSubtotal() {
       if (!product) return total;
 
       return total +
-        product.price * item.quantity;
+        product.price *
+        Number(item.quantity || 0);
     },
     0
   );
@@ -890,6 +906,17 @@ function calculateCartSubtotal() {
 
 function renderCart() {
   if (!elements.cartItemsList) return;
+
+  const validItems =
+    state.cart.filter(item =>
+      PRODUCTS.some(
+        product => product.id === item.id
+      )
+    );
+
+  if (validItems.length !== state.cart.length) {
+    state.cart = validItems;
+  }
 
   const hasItems =
     state.cart.length > 0;
@@ -900,7 +927,6 @@ function renderCart() {
   }
 
   if (!hasItems) {
-
     elements.cartItemsList.innerHTML = "";
 
     if (elements.cartFooter) {
@@ -920,7 +946,6 @@ function renderCart() {
   elements.cartItemsList.innerHTML =
     state.cart
       .map(item => {
-
         const product =
           PRODUCTS.find(
             productItem =>
@@ -930,7 +955,8 @@ function renderCart() {
         if (!product) return "";
 
         const itemTotal =
-          product.price * item.quantity;
+          product.price *
+          Number(item.quantity || 0);
 
         return `
           <div class="cart-item">
@@ -939,10 +965,10 @@ function renderCart() {
               ${getProductImage(product)}
             </div>
 
-            <div>
+            <div class="cart-item-info">
 
               <p class="cart-item-name">
-                ${product.name}
+                ${escapeHTML(product.name)}
               </p>
 
               <p class="cart-item-price">
@@ -954,19 +980,21 @@ function renderCart() {
                 <button
                   type="button"
                   class="qty-btn"
-                  data-qty-minus="${product.id}"
+                  data-qty-minus="${escapeHTML(product.id)}"
+                  aria-label="Diminuir quantidade"
                 >
                   −
                 </button>
 
                 <span>
-                  ${item.quantity}
+                  ${Number(item.quantity || 0)}
                 </span>
 
                 <button
                   type="button"
                   class="qty-btn"
-                  data-qty-plus="${product.id}"
+                  data-qty-plus="${escapeHTML(product.id)}"
+                  aria-label="Aumentar quantidade"
                 >
                   +
                 </button>
@@ -978,7 +1006,7 @@ function renderCart() {
             <button
               type="button"
               class="cart-item-remove"
-              data-remove-cart="${product.id}"
+              data-remove-cart="${escapeHTML(product.id)}"
             >
               Remover
             </button>
@@ -1003,7 +1031,7 @@ function renderCart() {
 }
 
 
-function handleCheckout() {
+async function handleCheckout() {
   if (state.cart.length === 0) {
     showToast(
       "Seu carrinho está vazio."
@@ -1012,13 +1040,14 @@ function handleCheckout() {
   }
 
   const user =
-    getCurrentUser();
+    await getCurrentUser();
 
   if (!user) {
     showToast(
       "Entre na sua conta para continuar."
     );
 
+    closeCart();
     openLoginModal();
 
     return;
@@ -1074,13 +1103,7 @@ function closeMobileMenu() {
     );
   }
 
-  if (
-    !elements.cartDrawer ||
-    elements.cartDrawer.hidden
-  ) {
-    document.body.style.overflow =
-      "";
-  }
+  restoreBodyScroll();
 }
 
 
@@ -1135,9 +1158,7 @@ function closeUserDropdown() {
 function toggleUserDropdown() {
   if (!elements.userDropdown) return;
 
-  if (
-    elements.userDropdown.hidden
-  ) {
+  if (elements.userDropdown.hidden) {
     openUserDropdown();
   } else {
     closeUserDropdown();
@@ -1146,11 +1167,13 @@ function toggleUserDropdown() {
 
 
 /* =========================================================
-   MODAIS DE LOGIN
+   MODAIS
    ========================================================= */
 
 function openLoginModal() {
   closeUserDropdown();
+  closeCart();
+  closeMobileMenu();
 
   if (!elements.loginModal) {
     showToast(
@@ -1163,6 +1186,8 @@ function openLoginModal() {
 
   document.body.style.overflow =
     "hidden";
+
+  elements.loginEmail?.focus();
 }
 
 
@@ -1177,6 +1202,8 @@ function closeLoginModal() {
 
 function openRegisterModal() {
   closeUserDropdown();
+  closeCart();
+  closeMobileMenu();
 
   if (!elements.registerModal) {
     showToast(
@@ -1190,6 +1217,8 @@ function openRegisterModal() {
 
   document.body.style.overflow =
     "hidden";
+
+  elements.registerName?.focus();
 }
 
 
@@ -1204,6 +1233,10 @@ function closeRegisterModal() {
 
 
 function openAddressModal() {
+  closeUserDropdown();
+  closeCart();
+  closeMobileMenu();
+
   if (!elements.addressModal) {
     showToast(
       "Formulário de endereço não encontrado."
@@ -1216,6 +1249,8 @@ function openAddressModal() {
 
   document.body.style.overflow =
     "hidden";
+
+  awaitLoadAddress();
 }
 
 
@@ -1226,6 +1261,66 @@ function closeAddressModal() {
     true;
 
   restoreBodyScroll();
+}
+
+
+async function awaitLoadAddress() {
+  const user =
+    await getCurrentUser();
+
+  if (!user || !elements.addressForm) {
+    return;
+  }
+
+  try {
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("addresses")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if (error) {
+      console.error(
+        "Erro ao carregar endereço:",
+        error
+      );
+      return;
+    }
+
+    if (!data) return;
+
+    const form =
+      elements.addressForm;
+
+    const fields = [
+      "cep",
+      "rua",
+      "numero",
+      "complemento",
+      "bairro",
+      "cidade",
+      "estado"
+    ];
+
+    fields.forEach(field => {
+      const input =
+        form.elements.namedItem(field);
+
+      if (input && data[field] != null) {
+        input.value = data[field];
+      }
+    });
+
+  } catch (error) {
+    console.error(
+      "Erro inesperado ao carregar endereço:",
+      error
+    );
+  }
 }
 
 
@@ -1269,8 +1364,14 @@ async function loginUser(email, password) {
     return;
   }
 
-  try {
+  if (!email || !password) {
+    showToast(
+      "Digite seu e-mail e sua senha."
+    );
+    return;
+  }
 
+  try {
     const {
       data,
       error
@@ -1311,7 +1412,6 @@ async function loginUser(email, password) {
     updateAccountUI();
 
   } catch (error) {
-
     console.error(
       "Erro inesperado no login:",
       error
@@ -1334,7 +1434,6 @@ async function registerUser({
   password,
   passwordConfirm
 }) {
-
   if (!supabaseClient) {
     showToast(
       "Supabase não está conectado."
@@ -1345,7 +1444,8 @@ async function registerUser({
   if (
     !name ||
     !email ||
-    !password
+    !password ||
+    !passwordConfirm
   ) {
     showToast(
       "Preencha todos os campos."
@@ -1360,9 +1460,7 @@ async function registerUser({
     return;
   }
 
-  if (
-    password !== passwordConfirm
-  ) {
+  if (password !== passwordConfirm) {
     showToast(
       "As senhas não são iguais."
     );
@@ -1370,7 +1468,6 @@ async function registerUser({
   }
 
   try {
-
     const {
       data,
       error
@@ -1406,17 +1503,13 @@ async function registerUser({
     );
 
     if (data.user) {
-
       await createProfile(
         data.user,
         name
       );
     }
 
-    if (
-      data.session
-    ) {
-
+    if (data.session) {
       showToast(
         "Conta criada com sucesso!"
       );
@@ -1428,7 +1521,6 @@ async function registerUser({
       updateAccountUI();
 
     } else {
-
       showToast(
         "Conta criada! Verifique seu e-mail para confirmar o cadastro."
       );
@@ -1437,7 +1529,6 @@ async function registerUser({
     }
 
   } catch (error) {
-
     console.error(
       "Erro inesperado no cadastro:",
       error
@@ -1454,17 +1545,12 @@ async function registerUser({
    CRIAR PERFIL
    ========================================================= */
 
-async function createProfile(
-  user,
-  name
-) {
-
+async function createProfile(user, name) {
   if (!supabaseClient || !user) {
     return;
   }
 
   try {
-
     const {
       error
     } =
@@ -1493,7 +1579,6 @@ async function createProfile(
     }
 
   } catch (error) {
-
     console.error(
       "Erro inesperado ao criar perfil:",
       error
@@ -1506,10 +1591,7 @@ async function createProfile(
    PERFIL DO USUÁRIO
    ========================================================= */
 
-let currentProfile = null;
-
 async function loadUserProfile() {
-
   if (!supabaseClient) {
     return null;
   }
@@ -1523,7 +1605,6 @@ async function loadUserProfile() {
   }
 
   try {
-
     const {
       data,
       error
@@ -1535,19 +1616,26 @@ async function loadUserProfile() {
         .maybeSingle();
 
     if (error) {
-
       console.error(
         "Erro ao buscar perfil:",
         error
       );
 
-      return null;
+      currentProfile = {
+        id: user.id,
+        email: user.email || "",
+        full_name:
+          user.user_metadata?.full_name ||
+          ""
+      };
+
+      return currentProfile;
     }
 
     currentProfile =
       data || {
         id: user.id,
-        email: user.email,
+        email: user.email || "",
         full_name:
           user.user_metadata?.full_name ||
           ""
@@ -1556,7 +1644,6 @@ async function loadUserProfile() {
     return currentProfile;
 
   } catch (error) {
-
     console.error(
       "Erro ao carregar perfil:",
       error
@@ -1572,13 +1659,11 @@ async function loadUserProfile() {
    ========================================================= */
 
 async function getCurrentUser() {
-
   if (!supabaseClient) {
     return null;
   }
 
   try {
-
     const {
       data,
       error
@@ -1592,7 +1677,6 @@ async function getCurrentUser() {
     return data?.user || null;
 
   } catch (error) {
-
     console.error(
       "Erro ao buscar usuário:",
       error
@@ -1608,7 +1692,6 @@ async function getCurrentUser() {
    ========================================================= */
 
 async function updateAccountUI() {
-
   if (!elements.userDropdown) {
     return;
   }
@@ -1627,7 +1710,6 @@ async function updateAccountUI() {
     );
 
   if (!user) {
-
     if (title) {
       title.textContent =
         "Área da cliente";
@@ -1650,6 +1732,16 @@ async function updateAccountUI() {
       }
     }
 
+    if (elements.accountName) {
+      elements.accountName.textContent =
+        "Cliente";
+    }
+
+    if (elements.accountEmail) {
+      elements.accountEmail.textContent =
+        "";
+    }
+
     return;
   }
 
@@ -1670,7 +1762,6 @@ async function updateAccountUI() {
   }
 
   if (elements.userBtn) {
-
     const label =
       elements.userBtn.querySelector(
         ".icon-btn-label"
@@ -1699,20 +1790,17 @@ async function updateAccountUI() {
    ========================================================= */
 
 async function logoutUser() {
-
   if (!supabaseClient) {
     return;
   }
 
   try {
-
     const {
       error
     } =
       await supabaseClient.auth.signOut();
 
     if (error) {
-
       console.error(
         "Erro ao sair:",
         error
@@ -1733,10 +1821,9 @@ async function logoutUser() {
 
     closeUserDropdown();
 
-    updateAccountUI();
+    await updateAccountUI();
 
   } catch (error) {
-
     console.error(
       "Erro inesperado ao sair:",
       error
@@ -1750,7 +1837,6 @@ async function logoutUser() {
    ========================================================= */
 
 async function saveAddress(event) {
-
   event.preventDefault();
 
   if (!supabaseClient) {
@@ -1764,7 +1850,6 @@ async function saveAddress(event) {
     await getCurrentUser();
 
   if (!user) {
-
     showToast(
       "Entre na sua conta primeiro."
     );
@@ -1809,7 +1894,6 @@ async function saveAddress(event) {
   };
 
   try {
-
     const {
       error
     } =
@@ -1823,7 +1907,6 @@ async function saveAddress(event) {
         );
 
     if (error) {
-
       console.error(
         "Erro ao salvar endereço:",
         error
@@ -1843,7 +1926,6 @@ async function saveAddress(event) {
     closeAddressModal();
 
   } catch (error) {
-
     console.error(
       "Erro inesperado ao salvar endereço:",
       error
@@ -1860,12 +1942,9 @@ async function saveAddress(event) {
    TRADUÇÃO DE ERROS DO SUPABASE
    ========================================================= */
 
-function getAuthErrorMessage(
-  message
-) {
-
+function getAuthErrorMessage(message) {
   const normalized =
-    String(message)
+    String(message || "")
       .toLowerCase();
 
   if (
@@ -1879,6 +1958,9 @@ function getAuthErrorMessage(
   if (
     normalized.includes(
       "user already registered"
+    ) ||
+    normalized.includes(
+      "already registered"
     )
   ) {
     return "Este e-mail já possui uma conta.";
@@ -1908,6 +1990,17 @@ function getAuthErrorMessage(
     return "Muitas tentativas. Aguarde um pouco e tente novamente.";
   }
 
+  if (
+    normalized.includes(
+      "email address"
+    ) &&
+    normalized.includes(
+      "invalid"
+    )
+  ) {
+    return "Digite um endereço de e-mail válido.";
+  }
+
   return (
     message ||
     "Ocorreu um erro. Tente novamente."
@@ -1920,20 +2013,18 @@ function getAuthErrorMessage(
    ========================================================= */
 
 function handleAccountAction(event) {
-
   const loginButton =
     event.target.closest(
       "[data-login]"
     );
 
   if (loginButton) {
-
     event.preventDefault();
 
     closeUserDropdown();
     openLoginModal();
 
-    return;
+    return true;
   }
 
   const registerButton =
@@ -1942,13 +2033,12 @@ function handleAccountAction(event) {
     );
 
   if (registerButton) {
-
     event.preventDefault();
 
     closeUserDropdown();
     openRegisterModal();
 
-    return;
+    return true;
   }
 
   const addressButton =
@@ -1957,13 +2047,12 @@ function handleAccountAction(event) {
     );
 
   if (addressButton) {
-
     event.preventDefault();
 
     closeUserDropdown();
     openAddressModal();
 
-    return;
+    return true;
   }
 
   const logoutButton =
@@ -1972,13 +2061,14 @@ function handleAccountAction(event) {
     );
 
   if (logoutButton) {
-
     event.preventDefault();
 
     logoutUser();
 
-    return;
+    return true;
   }
+
+  return false;
 }
 
 
@@ -2004,7 +2094,6 @@ function setupEvents() {
   /* Busca */
 
   if (elements.searchForm) {
-
     elements.searchForm.addEventListener(
       "submit",
       handleSearch
@@ -2015,7 +2104,6 @@ function setupEvents() {
   /* Menu */
 
   if (elements.menuToggle) {
-
     elements.menuToggle.addEventListener(
       "click",
       toggleMobileMenu
@@ -2024,7 +2112,6 @@ function setupEvents() {
 
 
   if (elements.overlay) {
-
     elements.overlay.addEventListener(
       "click",
       closeMobileMenu
@@ -2035,7 +2122,6 @@ function setupEvents() {
   /* Carrinho */
 
   if (elements.cartBtn) {
-
     elements.cartBtn.addEventListener(
       "click",
       toggleCart
@@ -2044,7 +2130,6 @@ function setupEvents() {
 
 
   if (elements.cartCloseBtn) {
-
     elements.cartCloseBtn.addEventListener(
       "click",
       closeCart
@@ -2053,7 +2138,6 @@ function setupEvents() {
 
 
   if (elements.cartOverlay) {
-
     elements.cartOverlay.addEventListener(
       "click",
       closeCart
@@ -2064,7 +2148,6 @@ function setupEvents() {
   /* Conta */
 
   if (elements.userBtn) {
-
     elements.userBtn.addEventListener(
       "click",
       toggleUserDropdown
@@ -2072,22 +2155,20 @@ function setupEvents() {
   }
 
 
-  /* Formulário de login */
+  /* Login */
 
   if (elements.loginForm) {
-
     elements.loginForm.addEventListener(
       "submit",
       async event => {
-
         event.preventDefault();
 
         const email =
           elements.loginEmail?.value
-            .trim();
+            ?.trim() || "";
 
         const password =
-          elements.loginPassword?.value;
+          elements.loginPassword?.value || "";
 
         await loginUser(
           email,
@@ -2098,42 +2179,38 @@ function setupEvents() {
   }
 
 
-  /* Formulário de cadastro */
+  /* Cadastro */
 
   if (elements.registerForm) {
-
     elements.registerForm.addEventListener(
       "submit",
       async event => {
-
         event.preventDefault();
 
         await registerUser({
           name:
             elements.registerName?.value
-              .trim(),
+              ?.trim() || "",
 
           email:
             elements.registerEmail?.value
-              .trim(),
+              ?.trim() || "",
 
           password:
-            elements.registerPassword?.value,
+            elements.registerPassword?.value || "",
 
           passwordConfirm:
-            elements
-              .registerPasswordConfirm
-              ?.value
+            elements.registerPasswordConfirm
+              ?.value || ""
         });
       }
     );
   }
 
 
-  /* Formulário de endereço */
+  /* Endereço */
 
   if (elements.addressForm) {
-
     elements.addressForm.addEventListener(
       "submit",
       saveAddress
@@ -2144,7 +2221,6 @@ function setupEvents() {
   /* Checkout */
 
   if (elements.checkoutBtn) {
-
     elements.checkoutBtn.addEventListener(
       "click",
       handleCheckout
@@ -2152,7 +2228,7 @@ function setupEvents() {
   }
 
 
-  /* Delegação */
+  /* Delegação global */
 
   document.addEventListener(
     "click",
@@ -2166,14 +2242,12 @@ function setupEvents() {
         );
 
       if (filterElement) {
-
         event.preventDefault();
 
         const filter =
           filterElement.dataset.filter;
 
         if (filter) {
-
           setFilter(filter);
           closeMobileMenu();
         }
@@ -2182,7 +2256,7 @@ function setupEvents() {
       }
 
 
-      /* Adicionar */
+      /* Adicionar ao carrinho */
 
       const addButton =
         event.target.closest(
@@ -2190,6 +2264,7 @@ function setupEvents() {
         );
 
       if (addButton) {
+        event.preventDefault();
 
         addToCart(
           addButton.dataset.addCart
@@ -2207,6 +2282,7 @@ function setupEvents() {
         );
 
       if (removeButton) {
+        event.preventDefault();
 
         removeFromCart(
           removeButton.dataset.removeCart
@@ -2224,6 +2300,7 @@ function setupEvents() {
         );
 
       if (minusButton) {
+        event.preventDefault();
 
         changeQuantity(
           minusButton.dataset.qtyMinus,
@@ -2242,6 +2319,7 @@ function setupEvents() {
         );
 
       if (plusButton) {
+        event.preventDefault();
 
         changeQuantity(
           plusButton.dataset.qtyPlus,
@@ -2252,9 +2330,11 @@ function setupEvents() {
       }
 
 
-      /* Login / cadastro / endereço / logout */
+      /* Conta */
 
-      handleAccountAction(event);
+      if (handleAccountAction(event)) {
+        return;
+      }
 
 
       /* Fechar dropdown */
@@ -2265,6 +2345,7 @@ function setupEvents() {
         );
 
       if (closeDropdownButton) {
+        event.preventDefault();
 
         closeUserDropdown();
 
@@ -2272,7 +2353,7 @@ function setupEvents() {
       }
 
 
-      /* Fechar modal login */
+      /* Fechar login */
 
       const closeLoginButton =
         event.target.closest(
@@ -2280,6 +2361,7 @@ function setupEvents() {
         );
 
       if (closeLoginButton) {
+        event.preventDefault();
 
         closeLoginModal();
 
@@ -2287,7 +2369,7 @@ function setupEvents() {
       }
 
 
-      /* Fechar modal cadastro */
+      /* Fechar cadastro */
 
       const closeRegisterButton =
         event.target.closest(
@@ -2295,6 +2377,7 @@ function setupEvents() {
         );
 
       if (closeRegisterButton) {
+        event.preventDefault();
 
         closeRegisterModal();
 
@@ -2310,6 +2393,7 @@ function setupEvents() {
         );
 
       if (closeAddressButton) {
+        event.preventDefault();
 
         closeAddressModal();
 
@@ -2325,7 +2409,6 @@ function setupEvents() {
         );
 
       if (goRegisterButton) {
-
         event.preventDefault();
 
         closeLoginModal();
@@ -2343,7 +2426,6 @@ function setupEvents() {
         );
 
       if (goLoginButton) {
-
         event.preventDefault();
 
         closeRegisterModal();
@@ -2361,6 +2443,7 @@ function setupEvents() {
         );
 
       if (closeCartLink) {
+        event.preventDefault();
 
         closeCart();
 
@@ -2376,7 +2459,6 @@ function setupEvents() {
         );
 
       if (placeholder) {
-
         handlePlaceholderLink(event);
 
         return;
@@ -2388,14 +2470,9 @@ function setupEvents() {
       if (
         elements.userDropdown &&
         !elements.userDropdown.hidden &&
-        !event.target.closest(
-          "#userDropdown"
-        ) &&
-        !event.target.closest(
-          "#userBtn"
-        )
+        !event.target.closest("#userDropdown") &&
+        !event.target.closest("#userBtn")
       ) {
-
         closeUserDropdown();
       }
     }
@@ -2407,10 +2484,7 @@ function setupEvents() {
   document.addEventListener(
     "keydown",
     event => {
-
-      if (
-        event.key !== "Escape"
-      ) {
+      if (event.key !== "Escape") {
         return;
       }
 
@@ -2430,29 +2504,24 @@ function setupEvents() {
    ========================================================= */
 
 function setupAuthListener() {
-
   if (!supabaseClient) {
     return;
   }
 
   supabaseClient.auth.onAuthStateChange(
     async (event, session) => {
-
       console.log(
         "Estado de autenticação:",
         event
       );
 
       if (session?.user) {
-
         await loadUserProfile();
-
       } else {
-
         currentProfile = null;
       }
 
-      updateAccountUI();
+      await updateAccountUI();
     }
   );
 }
@@ -2463,7 +2532,6 @@ function setupAuthListener() {
    ========================================================= */
 
 function updateCurrentYear() {
-
   if (!elements.anoAtual) {
     return;
   }
@@ -2478,7 +2546,6 @@ function updateCurrentYear() {
    ========================================================= */
 
 async function init() {
-
   renderCategoryCards();
 
   renderProducts();
@@ -2498,10 +2565,8 @@ async function init() {
   setupAuthListener();
 
   if (supabaseClient) {
-
     await loadUserProfile();
-
-    updateAccountUI();
+    await updateAccountUI();
   }
 
   console.log(
@@ -2510,17 +2575,18 @@ async function init() {
 }
 
 
-if (
-  document.readyState ===
-  "loading"
-) {
+/* =========================================================
+   START
+   ========================================================= */
 
+if (
+  document.readyState === "loading"
+) {
   document.addEventListener(
     "DOMContentLoaded",
-    init
+    init,
+    { once: true }
   );
-
 } else {
-
   init();
 }
