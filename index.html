@@ -1,3 +1,6 @@
+# Amora Make — index.html
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1035,10 +1038,18 @@
           id="registerPasswordConfirm"
           name="passwordConfirm"
           autocomplete="new-password"
-          placeholder="Digite sua senha novamente"
+          placeholder="Digite a senha novamente"
           minlength="6"
           required
+          aria-describedby="registerPasswordConfirmHelp"
         >
+
+        <small
+          id="registerPasswordConfirmHelp"
+          class="account-field-help"
+        >
+          Digite novamente a senha para confirmar.
+        </small>
 
 
         <h3 class="account-form-section-title">
@@ -1692,3 +1703,4 @@
 
 </body>
 </html>
+```
