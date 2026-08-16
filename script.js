@@ -155,7 +155,7 @@ const PRODUCTS = [
     name: "Esponja Chanfrada",
     category: "acessorio",
     price: 5.00,
-    image: "images/esponja-chanfrada.jpeg"
+    image: "images/produtos/esponja-chanfrada.jpeg"
   },
 
   {
@@ -163,7 +163,7 @@ const PRODUCTS = [
     name: "Fixador Fix Matte",
     category: "maquiagem",
     price: 15.00,
-    image: "images/fixador-fix-matte.jpeg"
+    image: "images/produtos/fixador-fix-matte.jpeg"
   },
 
   {
@@ -171,7 +171,7 @@ const PRODUCTS = [
     name: "Máscara de Cílios Alonga e Define",
     category: "mascara",
     price: 10.00,
-    image: "images/mascara-de-cilios-alonga-e-define.jpeg"
+    image: "images/produtos/mascara-de-cilios-alonga-e-define.jpeg"
   },
 
   {
@@ -179,7 +179,7 @@ const PRODUCTS = [
     name: "Lip Oil Sweet Hello Kitty",
     category: "gloss",
     price: 10.00,
-    image: "images/lip-oil-sweet-hello-kitty.jpeg"
+    image: "images/produtos/lip-oil-sweet-hello-kitty.jpeg"
   },
 
   {
@@ -187,7 +187,7 @@ const PRODUCTS = [
     name: "Lip Oil Raios de Sol",
     category: "gloss",
     price: 10.00,
-    image: "images/lip-oil-raios-de-sol.jpeg"
+    image: "images/produtos/lip-oil-raios-de-sol.jpeg"
   },
 
   {
@@ -195,7 +195,7 @@ const PRODUCTS = [
     name: "Demaquilante Aquatic Awe",
     category: "maquiagem",
     price: 10.00,
-    image: "images/demaquilante-aquatic-awe.jpeg"
+    image: "images/produtos/demaquilante-aquatic-awe.jpeg"
   },
 
   {
@@ -203,7 +203,7 @@ const PRODUCTS = [
     name: "Demaquilante Sunset Coral",
     category: "maquiagem",
     price: 10.00,
-    image: "images/demaquilante-sunset-coral.jpeg"
+    image: "images/produtos/demaquilante-sunset-coral.jpeg"
   },
 
   {
@@ -211,7 +211,7 @@ const PRODUCTS = [
     name: "Perfume Capilar Atração Fatal",
     category: "acessorio",
     price: 10.00,
-    image: "images/perfume-capilar-atração-fatal.jpeg"
+    image: "images/produtos/perfume-capilar-atracao-fatal.jpeg"
   },
 
   {
@@ -219,7 +219,7 @@ const PRODUCTS = [
     name: "Perfume Capilar Desejo Secreto",
     category: "acessorio",
     price: 10.00,
-    image: "images/perfume-capilar-desejo-secreto.jpeg"
+    image: "images/produtos/perfume-capilar-desejo-secreto.jpeg"
   },
 
   {
@@ -227,7 +227,7 @@ const PRODUCTS = [
     name: "Delineador Líquido Super Poderes",
     category: "maquiagem",
     price: 10.00,
-    image: "images/delineador-liquido-super-poderes.jpeg"
+    image: "images/produtos/delineador-liquido-super-poderes.jpeg"
   },
 
   {
@@ -235,7 +235,7 @@ const PRODUCTS = [
     name: "Folhas Antioliosidade",
     category: "maquiagem",
     price: 10.00,
-    image: "images/folhas-anti-oleosidade.jpeg"
+    image: "images/produtos/folhas-anti-oleosidade.jpeg"
   },
 
   {
@@ -243,7 +243,7 @@ const PRODUCTS = [
     name: "Esfoliante Labial Honey Scrub Vivai",
     category: "maquiagem",
     price: 10.00,
-    image: "images/esfoliante-labial-honey-scrub-vivai.jpeg"
+    image: "images/produtos/esfoliante-labial-honey-scrub-vivai.jpeg"
   },
 
   {
@@ -251,7 +251,7 @@ const PRODUCTS = [
     name: "Pó Compacto Efeito Aveludado",
     category: "maquiagem",
     price: 10.00,
-    image: "images/po-compacto-efeito-aveludado.jpeg"
+    image: "images/produtos/po-compacto-efeito-aveludado.jpeg"
   },
 
   {
@@ -259,7 +259,7 @@ const PRODUCTS = [
     name: "Par de Cílios 6D",
     category: "acessorio",
     price: 10.00,
-    image: "images/par-de-cilios-6d.jpeg"
+    image: "images/produtos/par-de-cilios-6d.jpeg"
   },
 
   {
@@ -267,7 +267,7 @@ const PRODUCTS = [
     name: "Batom Bala Matte Lovely",
     category: "batom",
     price: 10.00,
-    image: "images/batom-bala-matte-lovely.jpeg"
+    image: "images/produtos/batom-bala-matte-lovely.jpeg"
   },
 
   {
@@ -275,7 +275,7 @@ const PRODUCTS = [
     name: "Pincel para Esfumar",
     category: "pincel",
     price: 10.00,
-    image: "images/pincel-p-esfumar.jpeg"
+    image: "images/produtos/pincel-p-esfumar.jpeg"
   },
 
   {
@@ -283,7 +283,7 @@ const PRODUCTS = [
     name: "Pincel para Corretivo Língua de Gato",
     category: "pincel",
     price: 10.00,
-    image: "images/pincel-p-corretivo-lingua-de-gato.jpeg"
+    image: "images/produtos/pincel-p-corretivo-lingua-de-gato.jpeg"
   },
 
   {
@@ -291,7 +291,7 @@ const PRODUCTS = [
     name: "Elástico para Cabelo",
     category: "acessorio",
     price: 5.00,
-    image: "images/elastico-p-cabelo.jpeg"
+    image: "images/produtos/elastico-p-cabelo.jpeg"
   },
 
   {
@@ -299,7 +299,7 @@ const PRODUCTS = [
     name: "Kit com 2 Esponjas para Pó",
     category: "acessorio",
     price: 5.00,
-    image: "images/kit-c-2-esponjas-p-po.jpeg"
+    image: "images/produtos/kit-c-2-esponjas-p-po.jpeg"
   },
 
   {
@@ -307,7 +307,7 @@ const PRODUCTS = [
     name: "Máscara Facial Peel Off Total Black",
     category: "maquiagem",
     price: 5.00,
-    image: "images/mascara-facial-peel-off-total-black.jpeg"
+    image: "images/produtos/mascara-facial-peel-off-total-black.jpeg"
   },
 
   {
@@ -315,7 +315,7 @@ const PRODUCTS = [
     name: "Hidratante Facial Rosa Mosqueta",
     category: "maquiagem",
     price: 5.00,
-    image: "images/hidratante-facial-rosa-mosqueta.jpeg"
+    image: "images/produtos/hidratante-facial-rosa-mosqueta.jpeg"
   },
 
   {
@@ -323,7 +323,7 @@ const PRODUCTS = [
     name: "Mini Batom Princesa",
     category: "batom",
     price: 5.00,
-    image: "images/mini-batom-princesa.jpeg"
+    image: "images/produtos/mini-batom-princesa.jpeg"
   }
 ];
 
