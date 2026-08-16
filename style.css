@@ -43,9 +43,6 @@
   box-sizing: border-box;
 }
 
-/* Correção: elementos com hidden devem permanecer ocultos,
-   mesmo quando possuem display definido por outras regras. */
-
 [hidden] {
   display: none !important;
 }
@@ -85,6 +82,10 @@ button {
 img,
 svg {
   display: block;
+}
+
+img {
+  max-width: 100%;
 }
 
 a {
@@ -370,6 +371,28 @@ p {
   margin-bottom: 16px;
   color: var(--color-muted);
   font-size: 0.88rem;
+}
+
+/* =========================================================
+   PERFIL
+   ========================================================= */
+
+/* Caso o perfil seja exibido como imagem no header */
+.profile-image {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  overflow: hidden;
+  border: 2px solid var(--color-blush);
+  border-radius: 50%;
+  background: var(--color-blush);
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* ---------- Menu toggle ---------- */
@@ -680,6 +703,12 @@ p {
   margin-bottom: 12px;
 }
 
+.cat-card-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .cat-card-name {
   text-align: center;
   color: var(--color-berry-deep);
@@ -714,21 +743,54 @@ p {
   transform: translateY(-4px);
 }
 
+/* ---------- Área da imagem do produto ---------- */
+
 .product-media {
   position: relative;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 230px;
-  padding: 32px;
+  padding: 20px;
+  overflow: hidden;
+
   background:
-    radial-gradient(circle at center, rgba(245, 221, 229, 0.7), transparent 68%),
+    radial-gradient(
+      circle at center,
+      rgba(245, 221, 229, 0.78),
+      transparent 68%
+    ),
     #FCF6F8;
 }
+
+/*
+   Imagens reais dos produtos.
+   O JS pode criar <img> dentro de .product-media.
+*/
+
+.product-media > img {
+  display: block;
+  width: 100%;
+  height: 190px;
+  object-fit: contain;
+  object-position: center;
+  transition:
+    transform 250ms ease,
+    filter 250ms ease;
+}
+
+.product-card:hover .product-media > img {
+  transform: scale(1.04);
+}
+
+/* Mantém compatibilidade caso algum produto ainda use SVG */
 
 .product-media > svg {
   width: 130px;
   height: 130px;
 }
+
+/* ---------- Badge ---------- */
 
 .product-badge {
   position: absolute;
@@ -742,6 +804,8 @@ p {
   font-size: 0.66rem;
   font-weight: 800;
 }
+
+/* ---------- Conteúdo ---------- */
 
 .product-body {
   padding: 18px;
@@ -854,7 +918,11 @@ p {
 
 .offers-section {
   background:
-    radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.08), transparent 30%),
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(255, 255, 255, 0.08),
+      transparent 30%
+    ),
     var(--color-berry-deep);
 }
 
@@ -864,8 +932,16 @@ p {
 
 .offers-section .product-media {
   background:
-    radial-gradient(circle at center, rgba(217, 138, 165, 0.3), transparent 68%),
+    radial-gradient(
+      circle at center,
+      rgba(217, 138, 165, 0.3),
+      transparent 68%
+    ),
     #591832;
+}
+
+.offers-section .product-media > img {
+  height: 190px;
 }
 
 /* =========================================================
@@ -983,10 +1059,20 @@ p {
   place-items: center;
   width: 68px;
   height: 68px;
-  padding: 10px;
+  padding: 7px;
+  overflow: hidden;
   border-radius: 12px;
   background: var(--color-blush);
 }
+
+.cart-item-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Compatibilidade com SVG antigo */
 
 .cart-item-media svg {
   width: 100%;
@@ -1368,7 +1454,11 @@ p {
 
   .product-media {
     min-height: 180px;
-    padding: 22px;
+    padding: 14px;
+  }
+
+  .product-media > img {
+    height: 155px;
   }
 
   .product-media > svg {
@@ -1465,6 +1555,11 @@ p {
 
   .product-media {
     min-height: 210px;
+    padding: 18px;
+  }
+
+  .product-media > img {
+    height: 185px;
   }
 
   .product-name {
