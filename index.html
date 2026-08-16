@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,7 +14,6 @@
 
   <meta name="theme-color" content="#6B1E3C">
 
-  <!-- FAVICON -->
   <link
     rel="icon"
     type="image/jpeg"
@@ -38,18 +38,23 @@
   </a>
 
 
-  <!-- ===================== HEADER ===================== -->
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
 
   <header class="site-header" id="topo">
 
     <div class="header-top">
+
       <div class="header-inner">
+
+        <!-- MENU MOBILE -->
 
         <button
           type="button"
           class="menu-toggle"
           id="menuToggle"
-          aria-label="Abrir menu"
+          aria-label="Abrir menu de categorias"
           aria-expanded="false"
           aria-controls="mobileMenu"
         >
@@ -59,7 +64,7 @@
         </button>
 
 
-        <!-- LOGO / PERFIL -->
+        <!-- LOGO -->
 
         <a
           class="logo"
@@ -151,7 +156,7 @@
         </form>
 
 
-        <!-- AÇÕES -->
+        <!-- AÇÕES DO HEADER -->
 
         <div class="header-actions">
 
@@ -174,6 +179,7 @@
               fill="none"
               aria-hidden="true"
             >
+
               <circle
                 cx="12"
                 cy="8"
@@ -188,16 +194,20 @@
                 stroke-width="1.8"
                 stroke-linecap="round"
               />
+
             </svg>
 
-            <span class="icon-btn-label">
+            <span
+              class="icon-btn-label"
+              id="userBtnLabel"
+            >
               Entrar
             </span>
 
           </button>
 
 
-          <!-- DROPDOWN -->
+          <!-- DROPDOWN DA CONTA -->
 
           <div
             class="user-dropdown"
@@ -205,22 +215,70 @@
             hidden
           >
 
-            <p class="user-dropdown-title">
-              Área da cliente
-            </p>
+            <!-- ESTADO DESLOGADO -->
 
-            <p class="user-dropdown-text">
-              Login e cadastro chegam em breve.
-              Por enquanto, esta é uma demonstração visual. 💜
-            </p>
+            <div id="loggedOutAccount">
 
-            <button
-              type="button"
-              class="btn btn-ghost btn-small"
-              data-close-dropdown
+              <p class="user-dropdown-title">
+                Área da cliente
+              </p>
+
+              <p class="user-dropdown-text">
+                Entre na sua conta ou crie um cadastro
+                para salvar seus dados e endereço de entrega.
+              </p>
+
+              <button
+                type="button"
+                class="btn btn-primary btn-small btn-full"
+                id="openLoginBtn"
+              >
+                Entrar
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-ghost btn-small btn-full"
+                id="openRegisterBtn"
+              >
+                Criar conta
+              </button>
+
+            </div>
+
+
+            <!-- ESTADO LOGADO -->
+
+            <div
+              id="loggedInAccount"
+              hidden
             >
-              Fechar
-            </button>
+
+              <p class="user-dropdown-title">
+                Olá, <span id="accountName">cliente</span>! 💜
+              </p>
+
+              <p class="user-dropdown-text">
+                Sua conta está conectada.
+              </p>
+
+              <button
+                type="button"
+                class="btn btn-primary btn-small btn-full"
+                id="openProfileBtn"
+              >
+                Meus dados
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-ghost btn-small btn-full"
+                id="logoutBtn"
+              >
+                Sair da conta
+              </button>
+
+            </div>
 
           </div>
 
@@ -282,10 +340,13 @@
         </div>
 
       </div>
+
     </div>
 
 
-    <!-- ===================== CATEGORIAS ===================== -->
+    <!-- =====================================================
+         CATEGORIAS DESKTOP
+         ===================================================== -->
 
     <nav
       class="category-nav"
@@ -374,15 +435,53 @@
   </header>
 
 
-  <!-- ===================== MENU MOBILE ===================== -->
+  <!-- =====================================================
+       MENU MOBILE RETRÁTIL
+       ===================================================== -->
 
-  <div
+  <aside
     class="mobile-menu"
     id="mobileMenu"
     hidden
+    aria-label="Menu de categorias"
   >
 
-    <nav aria-label="Menu mobile">
+    <div class="mobile-menu-header">
+
+      <h2>
+        Categorias
+      </h2>
+
+      <button
+        type="button"
+        class="icon-btn"
+        id="mobileMenuClose"
+        aria-label="Fechar menu"
+      >
+
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M5 5l14 14M19 5L5 19"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+
+        </svg>
+
+      </button>
+
+    </div>
+
+
+    <nav aria-label="Categorias no menu mobile">
 
       <ul>
 
@@ -456,8 +555,10 @@
 
     </nav>
 
-  </div>
+  </aside>
 
+
+  <!-- OVERLAY DO MENU -->
 
   <div
     class="overlay"
@@ -467,12 +568,16 @@
   ></div>
 
 
-  <!-- ===================== CONTEÚDO ===================== -->
+  <!-- =====================================================
+       CONTEÚDO PRINCIPAL
+       ===================================================== -->
 
   <main id="conteudo-principal">
 
 
-    <!-- ===================== HERO ===================== -->
+    <!-- ===================================================
+         HERO
+         =================================================== -->
 
     <section
       class="hero"
@@ -546,7 +651,9 @@
     </section>
 
 
-    <!-- ===================== CATEGORIAS ===================== -->
+    <!-- ===================================================
+         CATEGORIAS
+         =================================================== -->
 
     <section
       class="section featured-categories"
@@ -572,7 +679,9 @@
     </section>
 
 
-    <!-- ===================== PRODUTOS ===================== -->
+    <!-- ===================================================
+         PRODUTOS
+         =================================================== -->
 
     <section
       class="section"
@@ -623,7 +732,9 @@
     </section>
 
 
-    <!-- ===================== OFERTAS ===================== -->
+    <!-- ===================================================
+         OFERTAS
+         =================================================== -->
 
     <section
       class="section offers-section"
@@ -658,7 +769,9 @@
     </section>
 
 
-    <!-- ===================== DIFERENCIAIS ===================== -->
+    <!-- ===================================================
+         DIFERENCIAIS
+         =================================================== -->
 
     <section
       class="section trust-section"
@@ -693,7 +806,7 @@
             </strong>
 
             <span>
-              Ambiente de demonstração protegido
+              Ambiente protegido
             </span>
 
           </div>
@@ -790,7 +903,9 @@
   </main>
 
 
-  <!-- ===================== CARRINHO ===================== -->
+  <!-- =====================================================
+       CARRINHO
+       ===================================================== -->
 
   <aside
     class="cart-drawer"
@@ -845,7 +960,6 @@
         class="cart-empty"
         id="cartEmptyMsg"
       >
-
         Seu carrinho está vazio.
         Que tal dar uma olhada nos nossos
 
@@ -855,7 +969,6 @@
         >
           produtos em destaque
         </a>?
-
       </p>
 
 
@@ -888,7 +1001,6 @@
 
       <p class="cart-note">
         Frete fixo: R$ 5,00.
-        Pagamento e finalização serão configurados.
       </p>
 
 
@@ -913,7 +1025,502 @@
   ></div>
 
 
-  <!-- ===================== TOAST ===================== -->
+  <!-- =====================================================
+       MODAL DE LOGIN / CADASTRO
+       ===================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="authModal"
+    hidden
+    aria-hidden="true"
+  >
+
+    <section
+      class="auth-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="authModalTitle"
+    >
+
+      <div class="auth-modal-header">
+
+        <div>
+
+          <p class="eyebrow">
+            Amora Make
+          </p>
+
+          <h2 id="authModalTitle">
+            Entre na sua conta
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="icon-btn"
+          id="closeAuthModal"
+          aria-label="Fechar janela"
+        >
+
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M5 5l14 14M19 5L5 19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <!-- LOGIN -->
+
+      <form
+        id="loginForm"
+        class="auth-form"
+      >
+
+        <div class="form-field">
+
+          <label for="loginEmail">
+            E-mail
+          </label>
+
+          <input
+            type="email"
+            id="loginEmail"
+            name="email"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="loginPassword">
+            Senha
+          </label>
+
+          <input
+            type="password"
+            id="loginPassword"
+            name="password"
+            autocomplete="current-password"
+            minlength="6"
+            required
+          >
+
+        </div>
+
+
+        <p
+          class="form-message"
+          id="loginMessage"
+          role="alert"
+          hidden
+        ></p>
+
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-full"
+        >
+          Entrar
+        </button>
+
+
+        <button
+          type="button"
+          class="auth-switch"
+          id="showRegisterBtn"
+        >
+          Ainda não tenho uma conta
+        </button>
+
+      </form>
+
+
+      <!-- CADASTRO -->
+
+      <form
+        id="registerForm"
+        class="auth-form"
+        hidden
+      >
+
+        <div class="form-field">
+
+          <label for="registerName">
+            Nome completo
+          </label>
+
+          <input
+            type="text"
+            id="registerName"
+            name="name"
+            autocomplete="name"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="registerEmail">
+            E-mail
+          </label>
+
+          <input
+            type="email"
+            id="registerEmail"
+            name="email"
+            autocomplete="email"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="registerPassword">
+            Senha
+          </label>
+
+          <input
+            type="password"
+            id="registerPassword"
+            name="password"
+            autocomplete="new-password"
+            minlength="6"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="registerPasswordConfirm">
+            Confirmar senha
+          </label>
+
+          <input
+            type="password"
+            id="registerPasswordConfirm"
+            name="passwordConfirm"
+            autocomplete="new-password"
+            minlength="6"
+            required
+          >
+
+        </div>
+
+
+        <p
+          class="form-message"
+          id="registerMessage"
+          role="alert"
+          hidden
+        ></p>
+
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-full"
+        >
+          Criar minha conta
+        </button>
+
+
+        <button
+          type="button"
+          class="auth-switch"
+          id="showLoginBtn"
+        >
+          Já tenho uma conta
+        </button>
+
+      </form>
+
+    </section>
+
+  </div>
+
+
+  <!-- =====================================================
+       MODAL — MEUS DADOS
+       ===================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="profileModal"
+    hidden
+    aria-hidden="true"
+  >
+
+    <section
+      class="profile-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="profileModalTitle"
+    >
+
+      <div class="auth-modal-header">
+
+        <div>
+
+          <p class="eyebrow">
+            Minha conta
+          </p>
+
+          <h2 id="profileModalTitle">
+            Meus dados
+          </h2>
+
+        </div>
+
+        <button
+          type="button"
+          class="icon-btn"
+          id="closeProfileModal"
+          aria-label="Fechar meus dados"
+        >
+
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M5 5l14 14M19 5L5 19"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <form
+        id="profileForm"
+        class="auth-form"
+      >
+
+        <div class="form-field">
+
+          <label for="profileName">
+            Nome completo
+          </label>
+
+          <input
+            type="text"
+            id="profileName"
+            name="name"
+            autocomplete="name"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="profileEmail">
+            E-mail
+          </label>
+
+          <input
+            type="email"
+            id="profileEmail"
+            name="email"
+            autocomplete="email"
+            readonly
+          >
+
+        </div>
+
+
+        <h3 class="form-section-title">
+          Endereço de entrega
+        </h3>
+
+
+        <div class="form-field">
+
+          <label for="profileCep">
+            CEP
+          </label>
+
+          <input
+            type="text"
+            id="profileCep"
+            name="cep"
+            autocomplete="postal-code"
+            inputmode="numeric"
+            maxlength="9"
+            placeholder="00000-000"
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="profileStreet">
+            Rua / Avenida
+          </label>
+
+          <input
+            type="text"
+            id="profileStreet"
+            name="street"
+            autocomplete="street-address"
+            placeholder="Nome da rua"
+          >
+
+        </div>
+
+
+        <div class="form-row">
+
+          <div class="form-field">
+
+            <label for="profileNumber">
+              Número
+            </label>
+
+            <input
+              type="text"
+              id="profileNumber"
+              name="number"
+              autocomplete="address-line2"
+              placeholder="123"
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="profileComplement">
+              Complemento
+            </label>
+
+            <input
+              type="text"
+              id="profileComplement"
+              name="complement"
+              placeholder="Apto, casa..."
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="profileNeighborhood">
+            Bairro
+          </label>
+
+          <input
+            type="text"
+            id="profileNeighborhood"
+            name="neighborhood"
+            autocomplete="address-level3"
+          >
+
+        </div>
+
+
+        <div class="form-row">
+
+          <div class="form-field">
+
+            <label for="profileCity">
+              Cidade
+            </label>
+
+            <input
+              type="text"
+              id="profileCity"
+              name="city"
+              autocomplete="address-level2"
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="profileState">
+              Estado
+            </label>
+
+            <input
+              type="text"
+              id="profileState"
+              name="state"
+              autocomplete="address-level1"
+              maxlength="2"
+              placeholder="BA"
+            >
+
+          </div>
+
+        </div>
+
+
+        <p
+          class="form-message"
+          id="profileMessage"
+          role="status"
+          hidden
+        ></p>
+
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-full"
+        >
+          Salvar meus dados
+        </button>
+
+      </form>
+
+    </section>
+
+  </div>
+
+
+  <!-- =====================================================
+       TOAST
+       ===================================================== -->
 
   <div
     class="toast"
@@ -924,7 +1531,9 @@
   ></div>
 
 
-  <!-- ===================== FOOTER ===================== -->
+  <!-- =====================================================
+       FOOTER
+       ===================================================== -->
 
   <footer class="site-footer">
 
@@ -960,8 +1569,6 @@
           para realçar sua beleza no seu tempo.
         </p>
 
-
-        <!-- REDES SOCIAIS -->
 
         <div
           class="social-row"
@@ -1194,8 +1801,6 @@
     </div>
 
 
-    <!-- RODAPÉ INFERIOR -->
-
     <div class="footer-bottom">
 
       <p>
@@ -1209,9 +1814,19 @@
   </footer>
 
 
-  <!-- ===================== JAVASCRIPT ===================== -->
+  <!-- =====================================================
+       SUPABASE
+       ===================================================== -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <!-- =====================================================
+       JAVASCRIPT DO SITE
+       ===================================================== -->
 
   <script src="script.js"></script>
 
 </body>
 </html>
+```
