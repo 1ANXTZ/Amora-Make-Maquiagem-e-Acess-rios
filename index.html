@@ -1,5 +1,5 @@
-```html
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -7,10 +7,11 @@
 
   <title>Amora Make — Maquiagem e Acessórios</title>
 
-  <meta
-    name="description"
-    content="Amora Make: maquiagem e acessórios com curadoria especial. Batons, glosses, bases, paletas, pincéis e muito mais."
-  >
+<meta
+name="description"
+content="Amora Make: maquiagem e acessórios com curadoria especial. Batons, glosses, bases, paletas, pincéis e muito mais."
+
+>
 
   <meta name="theme-color" content="#6B1E3C">
 
@@ -37,528 +38,486 @@
     Pular para o conteúdo
   </a>
 
-
-  <!-- =====================================================
-       HEADER
-       ===================================================== -->
+  <!-- ===================== HEADER ===================== -->
 
   <header class="site-header" id="topo">
 
-    <div class="header-top">
+```
+<div class="header-top">
+  <div class="header-inner">
 
-      <div class="header-inner">
+    <button
+      type="button"
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Abrir menu"
+      aria-expanded="false"
+      aria-controls="mobileMenu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-        <!-- MENU MOBILE -->
 
-        <button
-          type="button"
-          class="menu-toggle"
-          id="menuToggle"
-          aria-label="Abrir menu de categorias"
-          aria-expanded="false"
-          aria-controls="mobileMenu"
+    <!-- LOGO -->
+
+    <a
+      class="logo"
+      href="#topo"
+      aria-label="Amora Make — página inicial"
+    >
+
+      <span class="logo-mark">
+        <img
+          src="images/perfil/perfil.jpeg"
+          alt=""
+          width="34"
+          height="34"
         >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+      </span>
+
+      <span class="logo-text">
+        <span class="logo-title">Amora Make</span>
+        <span class="logo-sub">Maquiagem &amp; Acessórios</span>
+      </span>
+
+    </a>
 
 
-        <!-- LOGO -->
+    <!-- BUSCA -->
 
-        <a
-          class="logo"
-          href="#topo"
-          aria-label="Amora Make — página inicial"
+    <form
+      class="search-form"
+      role="search"
+      aria-label="Buscar produtos"
+      id="searchForm"
+    >
+
+      <label
+        class="visually-hidden"
+        for="searchInput"
+      >
+        Buscar produtos
+      </label>
+
+      <input
+        type="search"
+        id="searchInput"
+        name="busca"
+        placeholder="Buscar batom, base, pincéis..."
+        autocomplete="off"
+      >
+
+      <button
+        type="submit"
+        aria-label="Buscar"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
         >
+          <circle
+            cx="11"
+            cy="11"
+            r="7"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <line
+            x1="21"
+            y1="21"
+            x2="16.65"
+            y2="16.65"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
 
-          <span class="logo-mark">
-            <img
-              src="images/perfil/perfil.jpeg"
-              alt=""
-              width="34"
-              height="34"
-            >
-          </span>
-
-          <span class="logo-text">
-
-            <span class="logo-title">
-              Amora Make
-            </span>
-
-            <span class="logo-sub">
-              Maquiagem &amp; Acessórios
-            </span>
-
-          </span>
-
-        </a>
+    </form>
 
 
-        <!-- BUSCA -->
+    <!-- AÇÕES -->
 
-        <form
-          class="search-form"
-          role="search"
-          aria-label="Buscar produtos"
-          id="searchForm"
+    <div class="header-actions">
+
+      <!-- CONTA -->
+
+      <button
+        type="button"
+        class="icon-btn"
+        id="userBtn"
+        aria-haspopup="true"
+        aria-expanded="false"
+        aria-controls="userDropdown"
+        aria-label="Minha conta"
+      >
+
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
         >
+          <circle
+            cx="12"
+            cy="8"
+            r="4"
+            stroke="currentColor"
+            stroke-width="1.8"
+          />
 
-          <label
-            class="visually-hidden"
-            for="searchInput"
-          >
-            Buscar produtos
-          </label>
+          <path
+            d="M4 20c1.8-4 5-6 8-6s6.2 2 8 6"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          />
+        </svg>
 
-          <input
-            type="search"
-            id="searchInput"
-            name="busca"
-            placeholder="Buscar batom, base, pincéis..."
-            autocomplete="off"
-          >
+        <span
+          class="icon-btn-label"
+          id="userBtnLabel"
+        >
+          Entrar
+        </span>
 
-          <button
-            type="submit"
-            aria-label="Buscar"
-          >
-
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-              <circle
-                cx="11"
-                cy="11"
-                r="7"
-                stroke="currentColor"
-                stroke-width="2"
-              />
-
-              <line
-                x1="21"
-                y1="21"
-                x2="16.65"
-                y2="16.65"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-
-          </button>
-
-        </form>
+      </button>
 
 
-        <!-- AÇÕES DO HEADER -->
+      <!-- DROPDOWN DA CONTA -->
 
-        <div class="header-actions">
+      <div
+        class="user-dropdown"
+        id="userDropdown"
+        hidden
+      >
 
-          <!-- CONTA -->
+        <!-- VISÃO DESLOGADA -->
 
-          <button
-            type="button"
-            class="icon-btn"
-            id="userBtn"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-controls="userDropdown"
-            aria-label="Minha conta"
-          >
+        <div id="loggedOutView">
 
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
+          <p class="user-dropdown-title">
+            Área da cliente
+          </p>
 
-              <circle
-                cx="12"
-                cy="8"
-                r="4"
-                stroke="currentColor"
-                stroke-width="1.8"
-              />
+          <p class="user-dropdown-text">
+            Entre na sua conta ou crie seu cadastro para salvar seus dados e endereço de entrega.
+          </p>
 
-              <path
-                d="M4 20c1.8-4 5-6 8-6s6.2 2 8 6"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-              />
+          <div class="user-dropdown-actions">
 
-            </svg>
-
-            <span
-              class="icon-btn-label"
-              id="userBtnLabel"
+            <button
+              type="button"
+              class="btn btn-primary btn-small"
+              id="openLoginBtn"
             >
               Entrar
-            </span>
+            </button>
 
-          </button>
-
-
-          <!-- DROPDOWN DA CONTA -->
-
-          <div
-            class="user-dropdown"
-            id="userDropdown"
-            hidden
-          >
-
-            <!-- ESTADO DESLOGADO -->
-
-            <div id="loggedOutAccount">
-
-              <p class="user-dropdown-title">
-                Área da cliente
-              </p>
-
-              <p class="user-dropdown-text">
-                Entre na sua conta ou crie um cadastro
-                para salvar seus dados e endereço de entrega.
-              </p>
-
-              <button
-                type="button"
-                class="btn btn-primary btn-small btn-full"
-                id="openLoginBtn"
-              >
-                Entrar
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-ghost btn-small btn-full"
-                id="openRegisterBtn"
-              >
-                Criar conta
-              </button>
-
-            </div>
-
-
-            <!-- ESTADO LOGADO -->
-
-            <div
-              id="loggedInAccount"
-              hidden
+            <button
+              type="button"
+              class="btn btn-ghost btn-small"
+              id="openRegisterBtn"
             >
-
-              <p class="user-dropdown-title">
-                Olá, <span id="accountName">cliente</span>! 💜
-              </p>
-
-              <p class="user-dropdown-text">
-                Sua conta está conectada.
-              </p>
-
-              <button
-                type="button"
-                class="btn btn-primary btn-small btn-full"
-                id="openProfileBtn"
-              >
-                Meus dados
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-ghost btn-small btn-full"
-                id="logoutBtn"
-              >
-                Sair da conta
-              </button>
-
-            </div>
+              Criar conta
+            </button>
 
           </div>
 
+        </div>
 
-          <!-- CARRINHO -->
+
+        <!-- VISÃO LOGADA -->
+
+        <div
+          id="loggedInView"
+          hidden
+        >
+
+          <p class="user-dropdown-title">
+            Olá, <span id="loggedUserName">cliente</span>! 💜
+          </p>
+
+          <p
+            class="user-dropdown-text"
+            id="loggedUserEmail"
+          ></p>
 
           <button
             type="button"
-            class="icon-btn cart-btn"
-            id="cartBtn"
-            aria-label="Abrir carrinho"
-            aria-haspopup="dialog"
-            aria-expanded="false"
-            aria-controls="cartDrawer"
+            class="btn btn-ghost btn-small btn-full"
+            id="logoutBtn"
           >
-
-            <svg
-              width="23"
-              height="23"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-
-              <path
-                d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-
-              <circle
-                cx="10"
-                cy="21"
-                r="1.4"
-                fill="currentColor"
-              />
-
-              <circle
-                cx="18"
-                cy="21"
-                r="1.4"
-                fill="currentColor"
-              />
-
-            </svg>
-
-            <span
-              class="cart-count"
-              id="cartCount"
-              aria-live="polite"
-            >
-              0
-            </span>
-
+            Sair da conta
           </button>
 
         </div>
 
       </div>
 
-    </div>
 
-
-    <!-- =====================================================
-         CATEGORIAS DESKTOP
-         ===================================================== -->
-
-    <nav
-      class="category-nav"
-      aria-label="Categorias de produtos"
-    >
-
-      <ul
-        class="category-nav-list"
-        id="categoryNavList"
-      >
-
-        <li>
-          <a
-            href="#produtos"
-            data-filter="todos"
-            class="active"
-          >
-            Todos
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="maquiagem">
-            Maquiagem
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="batom">
-            Batom
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="gloss">
-            Gloss
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="base">
-            Base
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="corretivo">
-            Corretivo
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="blush">
-            Blush
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="mascara">
-            Máscara de Cílios
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="paleta">
-            Paletas
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="pincel">
-            Pincéis
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="acessorio">
-            Acessórios
-          </a>
-        </li>
-
-      </ul>
-
-    </nav>
-
-  </header>
-
-
-  <!-- =====================================================
-       MENU MOBILE RETRÁTIL
-       ===================================================== -->
-
-  <aside
-    class="mobile-menu"
-    id="mobileMenu"
-    hidden
-    aria-label="Menu de categorias"
-  >
-
-    <div class="mobile-menu-header">
-
-      <h2>
-        Categorias
-      </h2>
+      <!-- CARRINHO -->
 
       <button
         type="button"
-        class="icon-btn"
-        id="mobileMenuClose"
-        aria-label="Fechar menu"
+        class="icon-btn cart-btn"
+        id="cartBtn"
+        aria-label="Abrir carrinho"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="cartDrawer"
       >
 
         <svg
-          width="20"
-          height="20"
+          width="23"
+          height="23"
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
         >
 
           <path
-            d="M5 5l14 14M19 5L5 19"
+            d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.8"
             stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <circle
+            cx="10"
+            cy="21"
+            r="1.4"
+            fill="currentColor"
+          />
+
+          <circle
+            cx="18"
+            cy="21"
+            r="1.4"
+            fill="currentColor"
           />
 
         </svg>
+
+        <span
+          class="cart-count"
+          id="cartCount"
+          aria-live="polite"
+        >
+          0
+        </span>
 
       </button>
 
     </div>
 
-
-    <nav aria-label="Categorias no menu mobile">
-
-      <ul>
-
-        <li>
-          <a href="#produtos" data-filter="todos">
-            Todos
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="maquiagem">
-            Maquiagem
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="batom">
-            Batom
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="gloss">
-            Gloss
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="base">
-            Base
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="corretivo">
-            Corretivo
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="blush">
-            Blush
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="mascara">
-            Máscara de Cílios
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="paleta">
-            Paletas
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="pincel">
-            Pincéis
-          </a>
-        </li>
-
-        <li>
-          <a href="#produtos" data-filter="acessorio">
-            Acessórios
-          </a>
-        </li>
-
-      </ul>
-
-    </nav>
-
-  </aside>
+  </div>
+</div>
 
 
-  <!-- OVERLAY DO MENU -->
+<!-- ===================== CATEGORIAS ===================== -->
+
+<nav
+  class="category-nav"
+  aria-label="Categorias de produtos"
+>
+
+  <ul
+    class="category-nav-list"
+    id="categoryNavList"
+  >
+
+    <!-- NOVO: INÍCIO -->
+
+    <li>
+      <a
+        href="#topo"
+        data-home-link
+        class="active"
+      >
+        Início
+      </a>
+    </li>
+
+    <li>
+      <a
+        href="#produtos"
+        data-filter="todos"
+      >
+        Todos
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="maquiagem">
+        Maquiagem
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="batom">
+        Batom
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="gloss">
+        Gloss
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="base">
+        Base
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="corretivo">
+        Corretivo
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="blush">
+        Blush
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="mascara">
+        Máscara de Cílios
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="paleta">
+        Paletas
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="pincel">
+        Pincéis
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="acessorio">
+        Acessórios
+      </a>
+    </li>
+
+  </ul>
+
+</nav>
+```
+
+  </header>
+
+  <!-- ===================== MENU MOBILE ===================== -->
+
+  <div
+    class="mobile-menu"
+    id="mobileMenu"
+    hidden
+  >
+
+```
+<nav aria-label="Menu mobile">
+
+  <ul>
+
+    <li>
+      <a
+        href="#topo"
+        data-home-link
+        class="active"
+      >
+        Início
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="todos">
+        Todos
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="maquiagem">
+        Maquiagem
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="batom">
+        Batom
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="gloss">
+        Gloss
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="base">
+        Base
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="corretivo">
+        Corretivo
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="blush">
+        Blush
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="mascara">
+        Máscara de Cílios
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="paleta">
+        Paletas
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="pincel">
+        Pincéis
+      </a>
+    </li>
+
+    <li>
+      <a href="#produtos" data-filter="acessorio">
+        Acessórios
+      </a>
+    </li>
+
+  </ul>
+
+</nav>
+```
+
+  </div>
 
   <div
     class="overlay"
@@ -567,345 +526,302 @@
     aria-hidden="true"
   ></div>
 
-
-  <!-- =====================================================
-       CONTEÚDO PRINCIPAL
-       ===================================================== -->
+  <!-- ===================== CONTEÚDO ===================== -->
 
   <main id="conteudo-principal">
 
+```
+<!-- ===================== HERO ===================== -->
 
-    <!-- ===================================================
-         HERO
-         =================================================== -->
+<section
+  class="hero"
+  aria-label="Destaque promocional"
+>
 
-    <section
-      class="hero"
-      aria-label="Destaque promocional"
-    >
+  <div class="hero-inner">
 
-      <div class="hero-inner">
+    <div class="hero-copy">
 
-        <div class="hero-copy">
+      <p class="eyebrow">
+        Coleção Amora — Edição Outono
+      </p>
 
-          <p class="eyebrow">
-            Coleção Amora — Edição Outono
-          </p>
+      <h1>
+        Sua beleza,
+        <em>sem pressa</em>
+        e com intenção.
+      </h1>
 
-          <h1>
-            Sua beleza,
-            <em>sem pressa</em>
-            e com intenção.
-          </h1>
+      <p class="hero-text">
+        Peças de maquiagem selecionadas a dedo,
+        com cores profundas de amora e acabamentos
+        que duram o dia inteiro.
+        Frete fixo de R$ 5,00.
+      </p>
 
-          <p class="hero-text">
-            Peças de maquiagem selecionadas a dedo,
-            com cores profundas de amora e acabamentos
-            que duram o dia inteiro.
-            Frete fixo de R$ 5,00.
-          </p>
+      <div class="hero-actions">
 
-          <div class="hero-actions">
-
-            <a
-              href="#produtos"
-              class="btn btn-primary"
-            >
-              Ver produtos
-            </a>
-
-            <a
-              href="#ofertas"
-              class="btn btn-outline"
-            >
-              Conferir ofertas
-            </a>
-
-          </div>
-
-        </div>
-
-
-        <div
-          class="hero-visual"
-          aria-hidden="true"
+        <a
+          href="#produtos"
+          class="btn btn-primary"
         >
+          Ver produtos
+        </a>
 
-          <div class="hero-blob"></div>
-
-          <img
-            class="hero-profile-image"
-            src="images/perfil/perfil.jpeg"
-            alt=""
-          >
-
-        </div>
+        <a
+          href="#ofertas"
+          class="btn btn-outline"
+        >
+          Conferir ofertas
+        </a>
 
       </div>
 
-      <div
-        class="lip-swipe"
+    </div>
+
+
+    <div
+      class="hero-visual"
+      aria-hidden="true"
+    >
+
+      <div class="hero-blob"></div>
+
+      <img
+        class="hero-profile-image"
+        src="images/perfil/perfil.jpeg"
+        alt=""
+      >
+
+    </div>
+
+  </div>
+
+  <div
+    class="lip-swipe"
+    aria-hidden="true"
+  ></div>
+
+</section>
+
+
+<!-- ===================== CATEGORIAS ===================== -->
+
+<section
+  class="section featured-categories"
+  aria-labelledby="cat-title"
+>
+
+  <div class="section-inner">
+
+    <h2
+      id="cat-title"
+      class="section-title"
+    >
+      Explore por categoria
+    </h2>
+
+    <div
+      class="cat-grid"
+      id="catGrid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ===================== PRODUTOS ===================== -->
+
+<section
+  class="section"
+  id="produtos"
+  aria-labelledby="produtos-title"
+>
+
+  <div class="section-inner">
+
+    <div class="section-heading-row">
+
+      <h2
+        id="produtos-title"
+        class="section-title"
+      >
+        Produtos em destaque
+      </h2>
+
+      <p
+        class="section-subtitle"
+        id="filterLabel"
+        aria-live="polite"
+      >
+        Mostrando todos os produtos
+      </p>
+
+    </div>
+
+
+    <div
+      class="product-grid"
+      id="productGrid"
+      aria-live="polite"
+    ></div>
+
+
+    <p
+      class="empty-state"
+      id="emptyState"
+      hidden
+    >
+      Nenhum produto encontrado por aqui.
+      Tente outra busca ou categoria.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- ===================== OFERTAS ===================== -->
+
+<section
+  class="section offers-section"
+  id="ofertas"
+  aria-labelledby="ofertas-title"
+>
+
+  <div class="section-inner">
+
+    <div class="section-heading-row">
+
+      <h2
+        id="ofertas-title"
+        class="section-title section-title-inverse"
+      >
+        Ofertas da semana
+      </h2>
+
+      <p class="section-subtitle section-subtitle-inverse">
+        Confira nossos produtos em destaque
+      </p>
+
+    </div>
+
+    <div
+      class="product-grid offers-grid"
+      id="offersGrid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ===================== DIFERENCIAIS ===================== -->
+
+<section
+  class="section trust-section"
+  aria-label="Diferenciais da loja"
+>
+
+  <div class="section-inner trust-grid">
+
+    <div class="trust-item">
+
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
         aria-hidden="true"
-      ></div>
+      >
+        <path
+          d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"
+          stroke="currentColor"
+          stroke-width="1.6"
+        />
+      </svg>
 
-    </section>
-
-
-    <!-- ===================================================
-         CATEGORIAS
-         =================================================== -->
-
-    <section
-      class="section featured-categories"
-      aria-labelledby="cat-title"
-    >
-
-      <div class="section-inner">
-
-        <h2
-          id="cat-title"
-          class="section-title"
-        >
-          Explore por categoria
-        </h2>
-
-        <div
-          class="cat-grid"
-          id="catGrid"
-        ></div>
-
+      <div>
+        <strong>Compra segura</strong>
+        <span>Ambiente protegido</span>
       </div>
 
-    </section>
+    </div>
 
 
-    <!-- ===================================================
-         PRODUTOS
-         =================================================== -->
+    <div class="trust-item">
 
-    <section
-      class="section"
-      id="produtos"
-      aria-labelledby="produtos-title"
-    >
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <rect
+          x="3"
+          y="7"
+          width="18"
+          height="12"
+          rx="2"
+          stroke="currentColor"
+          stroke-width="1.6"
+        />
 
-      <div class="section-inner">
+        <path
+          d="M3 10h18"
+          stroke="currentColor"
+          stroke-width="1.6"
+        />
+      </svg>
 
-        <div class="section-heading-row">
-
-          <h2
-            id="produtos-title"
-            class="section-title"
-          >
-            Produtos em destaque
-          </h2>
-
-          <p
-            class="section-subtitle"
-            id="filterLabel"
-            aria-live="polite"
-          >
-            Mostrando todos os produtos
-          </p>
-
-        </div>
-
-
-        <div
-          class="product-grid"
-          id="productGrid"
-          aria-live="polite"
-        ></div>
-
-
-        <p
-          class="empty-state"
-          id="emptyState"
-          hidden
-        >
-          Nenhum produto encontrado por aqui.
-          Tente outra busca ou categoria.
-        </p>
-
+      <div>
+        <strong>Frete fixo</strong>
+        <span>Apenas R$ 5,00 por pedido</span>
       </div>
 
-    </section>
+    </div>
 
 
-    <!-- ===================================================
-         OFERTAS
-         =================================================== -->
+    <div class="trust-item">
 
-    <section
-      class="section offers-section"
-      id="ofertas"
-      aria-labelledby="ofertas-title"
-    >
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M4 12a8 8 0 1 0 8-8"
+          stroke="currentColor"
+          stroke-width="1.6"
+        />
 
-      <div class="section-inner">
+        <path
+          d="M4 4v5h5"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+        />
+      </svg>
 
-        <div class="section-heading-row">
-
-          <h2
-            id="ofertas-title"
-            class="section-title section-title-inverse"
-          >
-            Ofertas da semana
-          </h2>
-
-          <p class="section-subtitle section-subtitle-inverse">
-            Confira nossos produtos em destaque
-          </p>
-
-        </div>
-
-        <div
-          class="product-grid offers-grid"
-          id="offersGrid"
-        ></div>
-
+      <div>
+        <strong>Troca fácil</strong>
+        <span>Atendimento pelo WhatsApp</span>
       </div>
 
-    </section>
+    </div>
 
+  </div>
 
-    <!-- ===================================================
-         DIFERENCIAIS
-         =================================================== -->
-
-    <section
-      class="section trust-section"
-      aria-label="Diferenciais da loja"
-    >
-
-      <div class="section-inner trust-grid">
-
-
-        <div class="trust-item">
-
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-
-            <path
-              d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"
-              stroke="currentColor"
-              stroke-width="1.6"
-            />
-
-          </svg>
-
-          <div>
-
-            <strong>
-              Compra segura
-            </strong>
-
-            <span>
-              Ambiente protegido
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="trust-item">
-
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-
-            <rect
-              x="3"
-              y="7"
-              width="18"
-              height="12"
-              rx="2"
-              stroke="currentColor"
-              stroke-width="1.6"
-            />
-
-            <path
-              d="M3 10h18"
-              stroke="currentColor"
-              stroke-width="1.6"
-            />
-
-          </svg>
-
-          <div>
-
-            <strong>
-              Frete fixo
-            </strong>
-
-            <span>
-              Apenas R$ 5,00 por pedido
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="trust-item">
-
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-
-            <path
-              d="M4 12a8 8 0 1 0 8-8"
-              stroke="currentColor"
-              stroke-width="1.6"
-            />
-
-            <path
-              d="M4 4v5h5"
-              stroke="currentColor"
-              stroke-width="1.6"
-              stroke-linecap="round"
-            />
-
-          </svg>
-
-          <div>
-
-            <strong>
-              Troca fácil
-            </strong>
-
-            <span>
-              Atendimento pelo WhatsApp
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
+</section>
+```
 
   </main>
 
-
-  <!-- =====================================================
-       CARRINHO
-       ===================================================== -->
+  <!-- ===================== CARRINHO ===================== -->
 
   <aside
     class="cart-drawer"
@@ -916,106 +832,104 @@
     hidden
   >
 
-    <div class="cart-drawer-header">
+```
+<div class="cart-drawer-header">
 
-      <h2 id="cartTitle">
-        Seu carrinho
-      </h2>
+  <h2 id="cartTitle">
+    Seu carrinho
+  </h2>
 
-      <button
-        type="button"
-        class="icon-btn"
-        id="cartCloseBtn"
-        aria-label="Fechar carrinho"
-      >
+  <button
+    type="button"
+    class="icon-btn"
+    id="cartCloseBtn"
+    aria-label="Fechar carrinho"
+  >
 
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true"
-        >
-
-          <path
-            d="M5 5l14 14M19 5L5 19"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-
-        </svg>
-
-      </button>
-
-    </div>
-
-
-    <div
-      class="cart-drawer-body"
-      id="cartItems"
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
     >
+      <path
+        d="M5 5l14 14M19 5L5 19"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
 
-      <p
-        class="cart-empty"
-        id="cartEmptyMsg"
-      >
-        Seu carrinho está vazio.
-        Que tal dar uma olhada nos nossos
+  </button>
 
-        <a
-          href="#produtos"
-          data-close-cart
-        >
-          produtos em destaque
-        </a>?
-      </p>
+</div>
 
 
-      <div
-        class="cart-items-list"
-        id="cartItemsList"
-      ></div>
+<div
+  class="cart-drawer-body"
+  id="cartItems"
+>
 
-    </div>
+  <p
+    class="cart-empty"
+    id="cartEmptyMsg"
+  >
+    Seu carrinho está vazio.
+    Que tal dar uma olhada nos nossos
 
-
-    <div
-      class="cart-drawer-footer"
-      id="cartFooter"
-      hidden
+    <a
+      href="#produtos"
+      data-close-cart
     >
-
-      <div class="cart-subtotal-row">
-
-        <span>
-          Subtotal
-        </span>
-
-        <strong id="cartSubtotal">
-          R$ 0,00
-        </strong>
-
-      </div>
+      produtos em destaque
+    </a>?
+  </p>
 
 
-      <p class="cart-note">
-        Frete fixo: R$ 5,00.
-      </p>
+  <div
+    class="cart-items-list"
+    id="cartItemsList"
+  ></div>
+
+</div>
 
 
-      <button
-        class="btn btn-primary btn-full"
-        id="checkoutBtn"
-        type="button"
-      >
-        Finalizar compra
-      </button>
+<div
+  class="cart-drawer-footer"
+  id="cartFooter"
+  hidden
+>
 
-    </div>
+  <div class="cart-subtotal-row">
+
+    <span>Subtotal</span>
+
+    <strong id="cartSubtotal">
+      R$ 0,00
+    </strong>
+
+  </div>
+
+
+  <p class="cart-note">
+    Frete fixo: R$ 5,00.
+    Pagamento e finalização serão configurados.
+  </p>
+
+
+  <button
+    class="btn btn-primary btn-full"
+    id="checkoutBtn"
+    type="button"
+  >
+    Finalizar compra
+  </button>
+
+</div>
+```
 
   </aside>
-
 
   <div
     class="overlay cart-overlay"
@@ -1024,503 +938,341 @@
     aria-hidden="true"
   ></div>
 
-
-  <!-- =====================================================
-       MODAL DE LOGIN / CADASTRO
-       ===================================================== -->
+  <!-- ===================== MODAL DE AUTENTICAÇÃO ===================== -->
 
   <div
-    class="modal-overlay"
+    class="auth-modal"
     id="authModal"
     hidden
-    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="authModalTitle"
   >
 
-    <section
-      class="auth-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="authModalTitle"
+```
+<div class="auth-modal-card">
+
+  <button
+    type="button"
+    class="auth-close-btn"
+    id="authCloseBtn"
+    aria-label="Fechar"
+  >
+    ×
+  </button>
+
+
+  <!-- LOGIN -->
+
+  <section id="loginView">
+
+    <p class="eyebrow">
+      Área da cliente
+    </p>
+
+    <h2 id="authModalTitle">
+      Entrar na sua conta
+    </h2>
+
+    <p class="auth-description">
+      Acesse seus dados e endereço de entrega.
+    </p>
+
+
+    <form
+      id="loginForm"
+      class="auth-form"
     >
 
-      <div class="auth-modal-header">
+      <label for="loginEmail">
+        E-mail
+      </label>
+
+      <input
+        type="email"
+        id="loginEmail"
+        name="email"
+        placeholder="seu@email.com"
+        autocomplete="email"
+        required
+      >
+
+
+      <label for="loginPassword">
+        Senha
+      </label>
+
+      <input
+        type="password"
+        id="loginPassword"
+        name="password"
+        placeholder="Sua senha"
+        autocomplete="current-password"
+        required
+      >
+
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-full"
+        id="loginSubmitBtn"
+      >
+        Entrar
+      </button>
+
+    </form>
+
+
+    <p class="auth-switch">
+      Ainda não tem conta?
+
+      <button
+        type="button"
+        id="switchToRegisterBtn"
+      >
+        Criar conta
+      </button>
+    </p>
+
+  </section>
+
+
+  <!-- CADASTRO -->
+
+  <section
+    id="registerView"
+    hidden
+  >
+
+    <p class="eyebrow">
+      Novo cadastro
+    </p>
+
+    <h2>
+      Criar sua conta
+    </h2>
+
+    <p class="auth-description">
+      Cadastre seus dados para facilitar suas próximas compras.
+    </p>
+
+
+    <form
+      id="registerForm"
+      class="auth-form"
+    >
+
+      <label for="registerName">
+        Nome completo
+      </label>
+
+      <input
+        type="text"
+        id="registerName"
+        name="name"
+        placeholder="Seu nome completo"
+        autocomplete="name"
+        required
+      >
+
+
+      <label for="registerEmail">
+        E-mail
+      </label>
+
+      <input
+        type="email"
+        id="registerEmail"
+        name="email"
+        placeholder="seu@email.com"
+        autocomplete="email"
+        required
+      >
+
+
+      <label for="registerPassword">
+        Senha
+      </label>
+
+      <input
+        type="password"
+        id="registerPassword"
+        name="password"
+        placeholder="Mínimo de 6 caracteres"
+        minlength="6"
+        autocomplete="new-password"
+        required
+      >
+
+
+      <h3 class="auth-section-title">
+        Endereço de entrega
+      </h3>
+
+
+      <label for="registerCep">
+        CEP
+      </label>
+
+      <input
+        type="text"
+        id="registerCep"
+        name="cep"
+        placeholder="00000-000"
+        inputmode="numeric"
+        autocomplete="postal-code"
+        maxlength="9"
+        required
+      >
+
+
+      <label for="registerStreet">
+        Rua / Avenida
+      </label>
+
+      <input
+        type="text"
+        id="registerStreet"
+        name="street"
+        placeholder="Nome da rua"
+        autocomplete="street-address"
+        required
+      >
+
+
+      <div class="auth-form-row">
 
         <div>
 
-          <p class="eyebrow">
-            Amora Make
-          </p>
-
-          <h2 id="authModalTitle">
-            Entre na sua conta
-          </h2>
-
-        </div>
-
-        <button
-          type="button"
-          class="icon-btn"
-          id="closeAuthModal"
-          aria-label="Fechar janela"
-        >
-
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-
-            <path
-              d="M5 5l14 14M19 5L5 19"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-
-          </svg>
-
-        </button>
-
-      </div>
-
-
-      <!-- LOGIN -->
-
-      <form
-        id="loginForm"
-        class="auth-form"
-      >
-
-        <div class="form-field">
-
-          <label for="loginEmail">
-            E-mail
-          </label>
-
-          <input
-            type="email"
-            id="loginEmail"
-            name="email"
-            autocomplete="email"
-            required
-          >
-
-        </div>
-
-
-        <div class="form-field">
-
-          <label for="loginPassword">
-            Senha
-          </label>
-
-          <input
-            type="password"
-            id="loginPassword"
-            name="password"
-            autocomplete="current-password"
-            minlength="6"
-            required
-          >
-
-        </div>
-
-
-        <p
-          class="form-message"
-          id="loginMessage"
-          role="alert"
-          hidden
-        ></p>
-
-
-        <button
-          type="submit"
-          class="btn btn-primary btn-full"
-        >
-          Entrar
-        </button>
-
-
-        <button
-          type="button"
-          class="auth-switch"
-          id="showRegisterBtn"
-        >
-          Ainda não tenho uma conta
-        </button>
-
-      </form>
-
-
-      <!-- CADASTRO -->
-
-      <form
-        id="registerForm"
-        class="auth-form"
-        hidden
-      >
-
-        <div class="form-field">
-
-          <label for="registerName">
-            Nome completo
+          <label for="registerNumber">
+            Número
           </label>
 
           <input
             type="text"
-            id="registerName"
-            name="name"
-            autocomplete="name"
+            id="registerNumber"
+            name="number"
+            placeholder="123"
+            autocomplete="address-line2"
             required
           >
 
         </div>
 
 
-        <div class="form-field">
+        <div>
 
-          <label for="registerEmail">
-            E-mail
+          <label for="registerComplement">
+            Complemento
           </label>
 
           <input
-            type="email"
-            id="registerEmail"
-            name="email"
-            autocomplete="email"
-            required
+            type="text"
+            id="registerComplement"
+            name="complement"
+            placeholder="Apto, casa..."
+            autocomplete="address-line2"
           >
 
         </div>
 
+      </div>
 
-        <div class="form-field">
 
-          <label for="registerPassword">
-            Senha
+      <label for="registerNeighborhood">
+        Bairro
+      </label>
+
+      <input
+        type="text"
+        id="registerNeighborhood"
+        name="neighborhood"
+        placeholder="Seu bairro"
+        autocomplete="address-level3"
+        required
+      >
+
+
+      <div class="auth-form-row">
+
+        <div>
+
+          <label for="registerCity">
+            Cidade
           </label>
 
           <input
-            type="password"
-            id="registerPassword"
-            name="password"
-            autocomplete="new-password"
-            minlength="6"
+            type="text"
+            id="registerCity"
+            name="city"
+            placeholder="Sua cidade"
+            autocomplete="address-level2"
             required
           >
 
         </div>
 
 
-        <div class="form-field">
+        <div>
 
-          <label for="registerPasswordConfirm">
-            Confirmar senha
+          <label for="registerState">
+            Estado
           </label>
 
           <input
-            type="password"
-            id="registerPasswordConfirm"
-            name="passwordConfirm"
-            autocomplete="new-password"
-            minlength="6"
+            type="text"
+            id="registerState"
+            name="state"
+            placeholder="BA"
+            maxlength="2"
+            autocomplete="address-level1"
             required
           >
 
         </div>
 
-
-        <p
-          class="form-message"
-          id="registerMessage"
-          role="alert"
-          hidden
-        ></p>
+      </div>
 
 
-        <button
-          type="submit"
-          class="btn btn-primary btn-full"
-        >
-          Criar minha conta
-        </button>
+      <button
+        type="submit"
+        class="btn btn-primary btn-full"
+        id="registerSubmitBtn"
+      >
+        Criar conta
+      </button>
+
+    </form>
 
 
-        <button
-          type="button"
-          class="auth-switch"
-          id="showLoginBtn"
-        >
-          Já tenho uma conta
-        </button>
+    <p class="auth-switch">
+      Já possui uma conta?
 
-      </form>
+      <button
+        type="button"
+        id="switchToLoginBtn"
+      >
+        Entrar
+      </button>
+    </p>
 
-    </section>
+  </section>
+
+</div>
+```
 
   </div>
 
-
-  <!-- =====================================================
-       MODAL — MEUS DADOS
-       ===================================================== -->
+  <!-- OVERLAY DO LOGIN -->
 
   <div
-    class="modal-overlay"
-    id="profileModal"
+    class="overlay auth-overlay"
+    id="authOverlay"
     hidden
     aria-hidden="true"
-  >
+  ></div>
 
-    <section
-      class="profile-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="profileModalTitle"
-    >
-
-      <div class="auth-modal-header">
-
-        <div>
-
-          <p class="eyebrow">
-            Minha conta
-          </p>
-
-          <h2 id="profileModalTitle">
-            Meus dados
-          </h2>
-
-        </div>
-
-        <button
-          type="button"
-          class="icon-btn"
-          id="closeProfileModal"
-          aria-label="Fechar meus dados"
-        >
-
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-
-            <path
-              d="M5 5l14 14M19 5L5 19"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-
-          </svg>
-
-        </button>
-
-      </div>
-
-
-      <form
-        id="profileForm"
-        class="auth-form"
-      >
-
-        <div class="form-field">
-
-          <label for="profileName">
-            Nome completo
-          </label>
-
-          <input
-            type="text"
-            id="profileName"
-            name="name"
-            autocomplete="name"
-            required
-          >
-
-        </div>
-
-
-        <div class="form-field">
-
-          <label for="profileEmail">
-            E-mail
-          </label>
-
-          <input
-            type="email"
-            id="profileEmail"
-            name="email"
-            autocomplete="email"
-            readonly
-          >
-
-        </div>
-
-
-        <h3 class="form-section-title">
-          Endereço de entrega
-        </h3>
-
-
-        <div class="form-field">
-
-          <label for="profileCep">
-            CEP
-          </label>
-
-          <input
-            type="text"
-            id="profileCep"
-            name="cep"
-            autocomplete="postal-code"
-            inputmode="numeric"
-            maxlength="9"
-            placeholder="00000-000"
-          >
-
-        </div>
-
-
-        <div class="form-field">
-
-          <label for="profileStreet">
-            Rua / Avenida
-          </label>
-
-          <input
-            type="text"
-            id="profileStreet"
-            name="street"
-            autocomplete="street-address"
-            placeholder="Nome da rua"
-          >
-
-        </div>
-
-
-        <div class="form-row">
-
-          <div class="form-field">
-
-            <label for="profileNumber">
-              Número
-            </label>
-
-            <input
-              type="text"
-              id="profileNumber"
-              name="number"
-              autocomplete="address-line2"
-              placeholder="123"
-            >
-
-          </div>
-
-
-          <div class="form-field">
-
-            <label for="profileComplement">
-              Complemento
-            </label>
-
-            <input
-              type="text"
-              id="profileComplement"
-              name="complement"
-              placeholder="Apto, casa..."
-            >
-
-          </div>
-
-        </div>
-
-
-        <div class="form-field">
-
-          <label for="profileNeighborhood">
-            Bairro
-          </label>
-
-          <input
-            type="text"
-            id="profileNeighborhood"
-            name="neighborhood"
-            autocomplete="address-level3"
-          >
-
-        </div>
-
-
-        <div class="form-row">
-
-          <div class="form-field">
-
-            <label for="profileCity">
-              Cidade
-            </label>
-
-            <input
-              type="text"
-              id="profileCity"
-              name="city"
-              autocomplete="address-level2"
-            >
-
-          </div>
-
-
-          <div class="form-field">
-
-            <label for="profileState">
-              Estado
-            </label>
-
-            <input
-              type="text"
-              id="profileState"
-              name="state"
-              autocomplete="address-level1"
-              maxlength="2"
-              placeholder="BA"
-            >
-
-          </div>
-
-        </div>
-
-
-        <p
-          class="form-message"
-          id="profileMessage"
-          role="status"
-          hidden
-        ></p>
-
-
-        <button
-          type="submit"
-          class="btn btn-primary btn-full"
-        >
-          Salvar meus dados
-        </button>
-
-      </form>
-
-    </section>
-
-  </div>
-
-
-  <!-- =====================================================
-       TOAST
-       ===================================================== -->
+  <!-- ===================== TOAST ===================== -->
 
   <div
     class="toast"
@@ -1530,303 +1282,209 @@
     hidden
   ></div>
 
-
-  <!-- =====================================================
-       FOOTER
-       ===================================================== -->
+  <!-- ===================== FOOTER ===================== -->
 
   <footer class="site-footer">
 
-    <div class="section-inner footer-grid">
+```
+<div class="section-inner footer-grid">
 
 
-      <!-- SOBRE -->
+  <!-- SOBRE -->
 
-      <div class="footer-col footer-about">
+  <div class="footer-col footer-about">
 
-        <a
-          class="logo footer-logo"
-          href="#topo"
-          aria-label="Amora Make — página inicial"
-        >
+    <a
+      class="logo footer-logo"
+      href="#topo"
+      aria-label="Amora Make — página inicial"
+    >
 
-          <img
-            src="images/perfil/perfil.jpeg"
-            alt=""
-            width="30"
-            height="30"
-          >
+      <img
+        src="images/perfil/perfil.jpeg"
+        alt=""
+        width="30"
+        height="30"
+      >
 
-          <span class="logo-title">
-            Amora Make
-          </span>
+      <span class="logo-title">
+        Amora Make
+      </span>
 
+    </a>
+
+
+    <p>
+      Maquiagem e acessórios com curadoria cuidadosa,
+      para realçar sua beleza no seu tempo.
+    </p>
+
+
+    <div
+      class="social-row"
+      role="group"
+      aria-label="Redes sociais"
+    >
+
+      <a
+        href="#"
+        aria-label="Instagram da Amora Make"
+        data-placeholder-link
+      >
+        Instagram
+      </a>
+
+
+      <a
+        href="#"
+        aria-label="TikTok da Amora Make"
+        data-placeholder-link
+      >
+        TikTok
+      </a>
+
+
+      <a
+        href="https://wa.me/5511970206617"
+        aria-label="WhatsApp da Amora Make"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        WhatsApp
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- CATEGORIAS -->
+
+  <div class="footer-col">
+
+    <h3>Categorias</h3>
+
+    <ul>
+
+      <li>
+        <a href="#produtos" data-filter="batom">
+          Batom
         </a>
+      </li>
 
+      <li>
+        <a href="#produtos" data-filter="base">
+          Base
+        </a>
+      </li>
 
-        <p>
-          Maquiagem e acessórios com curadoria cuidadosa,
-          para realçar sua beleza no seu tempo.
-        </p>
-
-
-        <div
-          class="social-row"
-          role="group"
-          aria-label="Redes sociais"
-        >
-
-          <a
-            href="#"
-            aria-label="Instagram da Amora Make"
-            data-placeholder-link
-          >
-
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-
-              <rect
-                x="3"
-                y="3"
-                width="18"
-                height="18"
-                rx="5"
-                stroke="currentColor"
-                stroke-width="1.6"
-              />
-
-              <circle
-                cx="12"
-                cy="12"
-                r="4"
-                stroke="currentColor"
-                stroke-width="1.6"
-              />
-
-              <circle
-                cx="17.2"
-                cy="6.8"
-                r="1.1"
-                fill="currentColor"
-              />
-
-            </svg>
-
-          </a>
-
-
-          <a
-            href="#"
-            aria-label="TikTok da Amora Make"
-            data-placeholder-link
-          >
-
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-
-              <path
-                d="M14 3v10.5a3.5 3.5 0 1 1-3.5-3.5"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-              />
-
-              <path
-                d="M14 3c.4 2.2 2 3.8 4.2 4.2"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-              />
-
-            </svg>
-
-          </a>
-
-
-          <a
-            href="https://wa.me/5511970206617"
-            aria-label="WhatsApp da Amora Make"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
+      <li>
+        <a href="#produtos" data-filter="paleta">
+          Paletas
+        </a>
+      </li>
 
-              <path
-                d="M4 20l1.4-4A8 8 0 1 1 9 19l-5 1z"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linejoin="round"
-              />
+      <li>
+        <a href="#produtos" data-filter="pincel">
+          Pincéis
+        </a>
+      </li>
 
-            </svg>
+      <li>
+        <a href="#produtos" data-filter="acessorio">
+          Acessórios
+        </a>
+      </li>
 
-          </a>
+    </ul>
 
-        </div>
+  </div>
 
-      </div>
 
+  <!-- AJUDA -->
 
-      <!-- CATEGORIAS -->
+  <div class="footer-col">
 
-      <div class="footer-col">
+    <h3>Ajuda</h3>
 
-        <h3>
-          Categorias
-        </h3>
+    <ul>
 
-        <ul>
+      <li>
+        <a href="#" data-placeholder-link>
+          Contato
+        </a>
+      </li>
 
-          <li>
-            <a href="#produtos" data-filter="batom">
-              Batom
-            </a>
-          </li>
+      <li>
+        <a href="#" data-placeholder-link>
+          Trocas e devoluções
+        </a>
+      </li>
 
-          <li>
-            <a href="#produtos" data-filter="base">
-              Base
-            </a>
-          </li>
+      <li>
+        <a href="#" data-placeholder-link>
+          Perguntas frequentes
+        </a>
+      </li>
 
-          <li>
-            <a href="#produtos" data-filter="paleta">
-              Paletas
-            </a>
-          </li>
+      <li>
+        <a href="#" data-placeholder-link>
+          Política de privacidade
+        </a>
+      </li>
 
-          <li>
-            <a href="#produtos" data-filter="pincel">
-              Pincéis
-            </a>
-          </li>
+    </ul>
 
-          <li>
-            <a href="#produtos" data-filter="acessorio">
-              Acessórios
-            </a>
-          </li>
+  </div>
 
-        </ul>
 
-      </div>
+  <!-- CONTATO -->
 
+  <div class="footer-col">
 
-      <!-- AJUDA -->
+    <h3>Fale com a gente</h3>
 
-      <div class="footer-col">
+    <ul class="footer-contact">
 
-        <h3>
-          Ajuda
-        </h3>
+      <li>
+        <a href="mailto:useamora.make01@gmail.com">
+          useamora.make01@gmail.com
+        </a>
+      </li>
 
-        <ul>
+      <li>
+        <a href="https://wa.me/5511970206617">
+          (11) 97020-6617
+        </a>
+      </li>
 
-          <li>
-            <a href="#" data-placeholder-link>
-              Contato
-            </a>
-          </li>
+      <li>
+        Seg. a sex., 9h às 18h
+      </li>
 
-          <li>
-            <a href="#" data-placeholder-link>
-              Trocas e devoluções
-            </a>
-          </li>
+    </ul>
 
-          <li>
-            <a href="#" data-placeholder-link>
-              Perguntas frequentes
-            </a>
-          </li>
+  </div>
 
-          <li>
-            <a href="#" data-placeholder-link>
-              Política de privacidade
-            </a>
-          </li>
+</div>
 
-        </ul>
 
-      </div>
+<div class="footer-bottom">
 
-
-      <!-- CONTATO -->
-
-      <div class="footer-col">
-
-        <h3>
-          Fale com a gente
-        </h3>
-
-        <ul class="footer-contact">
-
-          <li>
-            <a href="mailto:useamora.make01@gmail.com">
-              useamora.make01@gmail.com
-            </a>
-          </li>
-
-          <li>
-            <a href="https://wa.me/5511970206617">
-              (11) 97020-6617
-            </a>
-          </li>
-
-          <li>
-            Seg. a sex., 9h às 18h
-          </li>
-
-        </ul>
-
-      </div>
-
-    </div>
-
-
-    <div class="footer-bottom">
-
-      <p>
-        &copy;
-        <span id="anoAtual"></span>
-        Amora Make Maquiagem e Acessórios.
-      </p>
-
-    </div>
+  <p>
+    &copy;
+    <span id="anoAtual"></span>
+    Amora Make Maquiagem e Acessórios.
+  </p>
+
+</div>
+```
 
   </footer>
 
-
-  <!-- =====================================================
-       SUPABASE
-       ===================================================== -->
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-  <!-- =====================================================
-       JAVASCRIPT DO SITE
-       ===================================================== -->
+  <!-- ===================== JAVASCRIPT ===================== -->
 
   <script src="script.js"></script>
 
 </body>
 </html>
-```
