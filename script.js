@@ -435,25 +435,52 @@ const elements = {
   catGrid: document.getElementById("catGrid"),
   productGrid: document.getElementById("productGrid"),
   offersGrid: document.getElementById("offersGrid"),
-
   emptyState: document.getElementById("emptyState"),
   filterLabel: document.getElementById("filterLabel"),
-
   searchForm: document.getElementById("searchForm"),
   searchInput: document.getElementById("searchInput"),
-
   menuToggle: document.getElementById("menuToggle"),
   mobileMenu: document.getElementById("mobileMenu"),
   overlay: document.getElementById("overlay"),
 
   userBtn: document.getElementById("userBtn"),
-  userDropdown: document.getElementById("userDropdown"),
+  userBtnLabel: document.getElementById("userBtnLabel"),
+  accountModal: document.getElementById("accountModal"),
+  accountOverlay: document.getElementById("accountOverlay"),
+  accountCloseBtn: document.getElementById("accountCloseBtn"),
+  accountModalTitle: document.getElementById("accountModalTitle"),
+
+  loginForm: document.getElementById("loginForm"),
+  loginEmail: document.getElementById("loginEmail"),
+  loginPassword: document.getElementById("loginPassword"),
+  loginError: document.getElementById("loginError"),
+
+  registerForm: document.getElementById("registerForm"),
+  registerName: document.getElementById("registerName"),
+  registerEmail: document.getElementById("registerEmail"),
+  registerPassword: document.getElementById("registerPassword"),
+  registerCep: document.getElementById("registerCep"),
+  registerStreet: document.getElementById("registerStreet"),
+  registerNumber: document.getElementById("registerNumber"),
+  registerComplement: document.getElementById("registerComplement"),
+  registerNeighborhood: document.getElementById("registerNeighborhood"),
+  registerCity: document.getElementById("registerCity"),
+  registerState: document.getElementById("registerState"),
+  registerError: document.getElementById("registerError"),
+
+  showRegisterBtn: document.getElementById("showRegisterBtn"),
+  showLoginBtn: document.getElementById("showLoginBtn"),
+
+  loggedAccount: document.getElementById("loggedAccount"),
+  loggedUserName: document.getElementById("loggedUserName"),
+  loggedUserEmail: document.getElementById("loggedUserEmail"),
+  loggedUserAddress: document.getElementById("loggedUserAddress"),
+  logoutBtn: document.getElementById("logoutBtn"),
 
   cartBtn: document.getElementById("cartBtn"),
   cartCloseBtn: document.getElementById("cartCloseBtn"),
   cartDrawer: document.getElementById("cartDrawer"),
   cartOverlay: document.getElementById("cartOverlay"),
-
   cartCount: document.getElementById("cartCount"),
   cartItemsList: document.getElementById("cartItemsList"),
   cartEmptyMsg: document.getElementById("cartEmptyMsg"),
@@ -462,28 +489,7 @@ const elements = {
   checkoutBtn: document.getElementById("checkoutBtn"),
 
   toast: document.getElementById("toast"),
-  anoAtual: document.getElementById("anoAtual"),
-
-  loginModal: document.getElementById("loginModal"),
-  loginForm: document.getElementById("loginForm"),
-  loginEmail: document.getElementById("loginEmail"),
-  loginPassword: document.getElementById("loginPassword"),
-
-  registerModal: document.getElementById("registerModal"),
-  registerForm: document.getElementById("registerForm"),
-  registerName: document.getElementById("registerName"),
-  registerEmail: document.getElementById("registerEmail"),
-  registerPassword: document.getElementById("registerPassword"),
-  registerPasswordConfirm:
-    document.getElementById("registerPasswordConfirm"),
-
-  addressModal: document.getElementById("addressModal"),
-  addressForm: document.getElementById("addressForm"),
-
-  logoutBtn: document.getElementById("logoutBtn"),
-
-  accountName: document.getElementById("accountName"),
-  accountEmail: document.getElementById("accountEmail")
+  anoAtual: document.getElementById("anoAtual")
 };
 
 
@@ -743,7 +749,7 @@ function handleSearch(event) {
 function openCart() {
   if (!elements.cartDrawer) return;
 
-  closeUserDropdown();
+  closeAccountModal();
   closeMobileMenu();
 
   elements.cartDrawer.hidden = false;
@@ -1048,7 +1054,8 @@ async function handleCheckout() {
     );
 
     closeCart();
-    openLoginModal();
+    openAccountModal();
+    showLoginView();
 
     return;
   }
@@ -1066,7 +1073,7 @@ async function handleCheckout() {
 function openMobileMenu() {
   if (!elements.mobileMenu) return;
 
-  closeUserDropdown();
+  closeAccountModal();
   closeCart();
 
   elements.mobileMenu.hidden = false;
@@ -1119,16 +1126,39 @@ function toggleMobileMenu() {
 
 
 /* =========================================================
-   DROPDOWN DA CONTA
+   MODAL DE CONTA
    ========================================================= */
 
-function openUserDropdown() {
-  if (!elements.userDropdown) return;
-
-  closeMobileMenu();
+function openAccountModal() {
   closeCart();
+  closeMobileMenu();
 
-  elements.userDropdown.hidden = false;
+  if (!elements.accountModal) return;
+
+  elements.accountModal.hidden = false;
+
+  if (elements.accountOverlay) {
+    elements.accountOverlay.hidden = false;
+  }
+
+  document.body.style.overflow =
+    "hidden";
+
+  updateAccountUI().then(() => {
+    if (
+      !elements.loggedAccount ||
+      elements.loggedAccount.hidden
+    ) {
+      if (
+        elements.registerForm &&
+        elements.registerForm.hidden === false
+      ) {
+        elements.registerName?.focus();
+      } else {
+        elements.loginEmail?.focus();
+      }
+    }
+  });
 
   if (elements.userBtn) {
     elements.userBtn.setAttribute(
@@ -1136,15 +1166,17 @@ function openUserDropdown() {
       "true"
     );
   }
-
-  updateAccountUI();
 }
 
 
-function closeUserDropdown() {
-  if (!elements.userDropdown) return;
+function closeAccountModal() {
+  if (elements.accountModal) {
+    elements.accountModal.hidden = true;
+  }
 
-  elements.userDropdown.hidden = true;
+  if (elements.accountOverlay) {
+    elements.accountOverlay.hidden = true;
+  }
 
   if (elements.userBtn) {
     elements.userBtn.setAttribute(
@@ -1152,123 +1184,104 @@ function closeUserDropdown() {
       "false"
     );
   }
+
+  restoreBodyScroll();
 }
 
 
-function toggleUserDropdown() {
-  if (!elements.userDropdown) return;
+function toggleAccountModal() {
+  if (!elements.accountModal) return;
 
-  if (elements.userDropdown.hidden) {
-    openUserDropdown();
+  if (elements.accountModal.hidden) {
+    openAccountModal();
   } else {
-    closeUserDropdown();
+    closeAccountModal();
   }
 }
 
 
-/* =========================================================
-   MODAIS
-   ========================================================= */
-
-function openLoginModal() {
-  closeUserDropdown();
-  closeCart();
-  closeMobileMenu();
-
-  if (!elements.loginModal) {
-    showToast(
-      "O formulário de login não foi encontrado no HTML."
-    );
-    return;
+function showLoginView() {
+  if (elements.loginForm) {
+    elements.loginForm.hidden = false;
   }
 
-  elements.loginModal.hidden = false;
+  if (elements.registerForm) {
+    elements.registerForm.hidden = true;
+  }
 
-  document.body.style.overflow =
-    "hidden";
+  if (elements.loggedAccount) {
+    elements.loggedAccount.hidden = true;
+  }
+
+  if (elements.accountModalTitle) {
+    elements.accountModalTitle.textContent =
+      "Entrar";
+  }
+
+  clearAccountErrors();
 
   elements.loginEmail?.focus();
 }
 
 
-function closeLoginModal() {
-  if (!elements.loginModal) return;
-
-  elements.loginModal.hidden = true;
-
-  restoreBodyScroll();
-}
-
-
-function openRegisterModal() {
-  closeUserDropdown();
-  closeCart();
-  closeMobileMenu();
-
-  if (!elements.registerModal) {
-    showToast(
-      "O formulário de cadastro não foi encontrado no HTML."
-    );
-    return;
+function showRegisterView() {
+  if (elements.loginForm) {
+    elements.loginForm.hidden = true;
   }
 
-  elements.registerModal.hidden =
-    false;
+  if (elements.registerForm) {
+    elements.registerForm.hidden = false;
+  }
 
-  document.body.style.overflow =
-    "hidden";
+  if (elements.loggedAccount) {
+    elements.loggedAccount.hidden = true;
+  }
+
+  if (elements.accountModalTitle) {
+    elements.accountModalTitle.textContent =
+      "Criar conta";
+  }
+
+  clearAccountErrors();
 
   elements.registerName?.focus();
 }
 
 
-function closeRegisterModal() {
-  if (!elements.registerModal) return;
-
-  elements.registerModal.hidden =
-    true;
-
-  restoreBodyScroll();
+function clearAccountErrors() {
+  [
+    elements.loginError,
+    elements.registerError
+  ].forEach(error => {
+    if (error) {
+      error.textContent = "";
+      error.hidden = true;
+    }
+  });
 }
 
 
-function openAddressModal() {
-  closeUserDropdown();
-  closeCart();
-  closeMobileMenu();
-
-  if (!elements.addressModal) {
-    showToast(
-      "Formulário de endereço não encontrado."
-    );
+function showAccountError(element, message) {
+  if (!element) {
+    showToast(message);
     return;
   }
 
-  elements.addressModal.hidden =
-    false;
-
-  document.body.style.overflow =
-    "hidden";
-
-  awaitLoadAddress();
+  element.textContent = message;
+  element.hidden = false;
 }
 
 
-function closeAddressModal() {
-  if (!elements.addressModal) return;
+/* =========================================================
+   ENDEREÇO DO USUÁRIO
+   ========================================================= */
 
-  elements.addressModal.hidden =
-    true;
-
-  restoreBodyScroll();
-}
-
-
-async function awaitLoadAddress() {
-  const user =
-    await getCurrentUser();
-
-  if (!user || !elements.addressForm) {
+async function loadAddressForUser(user) {
+  if (
+    !supabaseClient ||
+    !user ||
+    !elements.loggedUserAddress
+  ) {
     return;
   }
 
@@ -1288,50 +1301,51 @@ async function awaitLoadAddress() {
         "Erro ao carregar endereço:",
         error
       );
+
+      elements.loggedUserAddress.textContent =
+        "Endereço não informado.";
+
       return;
     }
 
-    if (!data) return;
+    if (!data) {
+      elements.loggedUserAddress.textContent =
+        "Endereço não informado.";
 
-    const form =
-      elements.addressForm;
+      return;
+    }
 
-    const fields = [
-      "cep",
-      "rua",
-      "numero",
-      "complemento",
-      "bairro",
-      "cidade",
-      "estado"
-    ];
+    const parts = [
+      data.rua,
+      data.numero,
+      data.complemento,
+      data.bairro,
+      data.cidade,
+      data.estado,
+      data.cep
+    ].filter(Boolean);
 
-    fields.forEach(field => {
-      const input =
-        form.elements.namedItem(field);
-
-      if (input && data[field] != null) {
-        input.value = data[field];
-      }
-    });
+    elements.loggedUserAddress.textContent =
+      parts.length
+        ? parts.join(", ")
+        : "Endereço não informado.";
 
   } catch (error) {
     console.error(
       "Erro inesperado ao carregar endereço:",
       error
     );
+
+    elements.loggedUserAddress.textContent =
+      "Endereço não informado.";
   }
 }
 
 
 function restoreBodyScroll() {
   const modalOpen =
-    (elements.loginModal &&
-      !elements.loginModal.hidden) ||
-    (elements.registerModal &&
-      !elements.registerModal.hidden) ||
-    (elements.addressModal &&
-      !elements.addressModal.hidden);
+    elements.accountModal &&
+    !elements.accountModal.hidden;
 
   const cartOpen =
     elements.cartDrawer &&
@@ -1356,20 +1370,29 @@ function restoreBodyScroll() {
    SUPABASE — LOGIN
    ========================================================= */
 
-async function loginUser(email, password) {
+async function loginUser(
+  email,
+  password
+) {
   if (!supabaseClient) {
-    showToast(
+    showAccountError(
+      elements.loginError,
       "Supabase não está conectado."
     );
+
     return;
   }
 
   if (!email || !password) {
-    showToast(
+    showAccountError(
+      elements.loginError,
       "Digite seu e-mail e sua senha."
     );
+
     return;
   }
+
+  clearAccountErrors();
 
   try {
     const {
@@ -1387,7 +1410,8 @@ async function loginUser(email, password) {
         error
       );
 
-      showToast(
+      showAccountError(
+        elements.loginError,
         getAuthErrorMessage(
           error.message
         )
@@ -1396,20 +1420,12 @@ async function loginUser(email, password) {
       return;
     }
 
-    console.log(
-      "Login realizado:",
-      data.user
-    );
+    await loadUserProfile();
+    await updateAccountUI();
 
     showToast(
       "Login realizado com sucesso!"
     );
-
-    closeLoginModal();
-
-    await loadUserProfile();
-
-    updateAccountUI();
 
   } catch (error) {
     console.error(
@@ -1417,7 +1433,8 @@ async function loginUser(email, password) {
       error
     );
 
-    showToast(
+    showAccountError(
+      elements.loginError,
       "Não foi possível entrar na conta."
     );
   }
@@ -1432,12 +1449,20 @@ async function registerUser({
   name,
   email,
   password,
-  passwordConfirm
+  cep,
+  street,
+  number,
+  complement,
+  neighborhood,
+  city,
+  state
 }) {
   if (!supabaseClient) {
-    showToast(
+    showAccountError(
+      elements.registerError,
       "Supabase não está conectado."
     );
+
     return;
   }
 
@@ -1445,27 +1470,31 @@ async function registerUser({
     !name ||
     !email ||
     !password ||
-    !passwordConfirm
+    !cep ||
+    !street ||
+    !number ||
+    !neighborhood ||
+    !city ||
+    !state
   ) {
-    showToast(
-      "Preencha todos os campos."
+    showAccountError(
+      elements.registerError,
+      "Preencha todos os campos obrigatórios."
     );
+
     return;
   }
 
   if (password.length < 6) {
-    showToast(
+    showAccountError(
+      elements.registerError,
       "A senha precisa ter pelo menos 6 caracteres."
     );
+
     return;
   }
 
-  if (password !== passwordConfirm) {
-    showToast(
-      "As senhas não são iguais."
-    );
-    return;
-  }
+  clearAccountErrors();
 
   try {
     const {
@@ -1488,7 +1517,8 @@ async function registerUser({
         error
       );
 
-      showToast(
+      showAccountError(
+        elements.registerError,
         getAuthErrorMessage(
           error.message
         )
@@ -1497,11 +1527,6 @@ async function registerUser({
       return;
     }
 
-    console.log(
-      "Cadastro realizado:",
-      data
-    );
-
     if (data.user) {
       await createProfile(
         data.user,
@@ -1509,23 +1534,36 @@ async function registerUser({
       );
     }
 
-    if (data.session) {
+    if (
+      data.session &&
+      data.user
+    ) {
+      await saveAddressData(
+        data.user,
+        {
+          cep,
+          rua: street,
+          numero: number,
+          complemento: complement,
+          bairro: neighborhood,
+          cidade: city,
+          estado: state
+        }
+      );
+
+      await loadUserProfile();
+      await updateAccountUI();
+
       showToast(
         "Conta criada com sucesso!"
       );
-
-      closeRegisterModal();
-
-      await loadUserProfile();
-
-      updateAccountUI();
 
     } else {
       showToast(
         "Conta criada! Verifique seu e-mail para confirmar o cadastro."
       );
 
-      closeRegisterModal();
+      showLoginView();
     }
 
   } catch (error) {
@@ -1534,7 +1572,8 @@ async function registerUser({
       error
     );
 
-    showToast(
+    showAccountError(
+      elements.registerError,
       "Não foi possível criar a conta."
     );
   }
@@ -1545,8 +1584,14 @@ async function registerUser({
    CRIAR PERFIL
    ========================================================= */
 
-async function createProfile(user, name) {
-  if (!supabaseClient || !user) {
+async function createProfile(
+  user,
+  name
+) {
+  if (
+    !supabaseClient ||
+    !user
+  ) {
     return;
   }
 
@@ -1559,12 +1604,15 @@ async function createProfile(user, name) {
         .upsert(
           {
             id: user.id,
+
             full_name:
               name ||
               user.user_metadata?.full_name ||
               "",
+
             email:
-              user.email || ""
+              user.email ||
+              ""
           },
           {
             onConflict: "id"
@@ -1623,7 +1671,11 @@ async function loadUserProfile() {
 
       currentProfile = {
         id: user.id,
-        email: user.email || "",
+
+        email:
+          user.email ||
+          "",
+
         full_name:
           user.user_metadata?.full_name ||
           ""
@@ -1633,9 +1685,14 @@ async function loadUserProfile() {
     }
 
     currentProfile =
-      data || {
+      data ||
+      {
         id: user.id,
-        email: user.email || "",
+
+        email:
+          user.email ||
+          "",
+
         full_name:
           user.user_metadata?.full_name ||
           ""
@@ -1668,7 +1725,9 @@ async function getCurrentUser() {
       data,
       error
     } =
-      await supabaseClient.auth.getUser();
+      await supabaseClient
+        .auth
+        .getUser();
 
     if (error) {
       return null;
@@ -1692,54 +1751,32 @@ async function getCurrentUser() {
    ========================================================= */
 
 async function updateAccountUI() {
-  if (!elements.userDropdown) {
-    return;
-  }
-
   const user =
     await getCurrentUser();
 
-  const title =
-    elements.userDropdown.querySelector(
-      ".user-dropdown-title"
-    );
-
-  const text =
-    elements.userDropdown.querySelector(
-      ".user-dropdown-text"
-    );
-
   if (!user) {
-    if (title) {
-      title.textContent =
-        "Área da cliente";
+    currentProfile = null;
+
+    if (elements.userBtnLabel) {
+      elements.userBtnLabel.textContent =
+        "Entrar";
     }
 
-    if (text) {
-      text.textContent =
-        "Entre na sua conta ou crie seu cadastro para salvar seus dados e endereço.";
+    if (elements.accountModalTitle) {
+      elements.accountModalTitle.textContent =
+        "Entrar";
     }
 
-    if (elements.userBtn) {
-      const label =
-        elements.userBtn.querySelector(
-          ".icon-btn-label"
-        );
-
-      if (label) {
-        label.textContent =
-          "Entrar";
-      }
+    if (elements.loginForm) {
+      elements.loginForm.hidden = false;
     }
 
-    if (elements.accountName) {
-      elements.accountName.textContent =
-        "Cliente";
+    if (elements.registerForm) {
+      elements.registerForm.hidden = true;
     }
 
-    if (elements.accountEmail) {
-      elements.accountEmail.textContent =
-        "";
+    if (elements.loggedAccount) {
+      elements.loggedAccount.hidden = true;
     }
 
     return;
@@ -1751,37 +1788,41 @@ async function updateAccountUI() {
     user.email?.split("@")[0] ||
     "Cliente";
 
-  if (title) {
-    title.textContent =
-      `Olá, ${name}!`;
-  }
-
-  if (text) {
-    text.textContent =
-      user.email || "";
-  }
-
-  if (elements.userBtn) {
-    const label =
-      elements.userBtn.querySelector(
-        ".icon-btn-label"
-      );
-
-    if (label) {
-      label.textContent =
-        name;
-    }
-  }
-
-  if (elements.accountName) {
-    elements.accountName.textContent =
+  if (elements.userBtnLabel) {
+    elements.userBtnLabel.textContent =
       name;
   }
 
-  if (elements.accountEmail) {
-    elements.accountEmail.textContent =
+  if (elements.accountModalTitle) {
+    elements.accountModalTitle.textContent =
+      "Minha conta";
+  }
+
+  if (elements.loginForm) {
+    elements.loginForm.hidden = true;
+  }
+
+  if (elements.registerForm) {
+    elements.registerForm.hidden = true;
+  }
+
+  if (elements.loggedAccount) {
+    elements.loggedAccount.hidden = false;
+  }
+
+  if (elements.loggedUserName) {
+    elements.loggedUserName.textContent =
+      name;
+  }
+
+  if (elements.loggedUserEmail) {
+    elements.loggedUserEmail.textContent =
       user.email || "";
   }
+
+  await loadAddressForUser(
+    user
+  );
 }
 
 
@@ -1798,7 +1839,9 @@ async function logoutUser() {
     const {
       error
     } =
-      await supabaseClient.auth.signOut();
+      await supabaseClient
+        .auth
+        .signOut();
 
     if (error) {
       console.error(
@@ -1819,7 +1862,7 @@ async function logoutUser() {
       "Você saiu da sua conta."
     );
 
-    closeUserDropdown();
+    closeAccountModal();
 
     await updateAccountUI();
 
@@ -1836,62 +1879,16 @@ async function logoutUser() {
    ENDEREÇO
    ========================================================= */
 
-async function saveAddress(event) {
-  event.preventDefault();
-
-  if (!supabaseClient) {
-    showToast(
-      "Supabase não está conectado."
-    );
-    return;
+async function saveAddressData(
+  user,
+  addressData
+) {
+  if (
+    !supabaseClient ||
+    !user
+  ) {
+    return false;
   }
-
-  const user =
-    await getCurrentUser();
-
-  if (!user) {
-    showToast(
-      "Entre na sua conta primeiro."
-    );
-
-    closeAddressModal();
-    openLoginModal();
-
-    return;
-  }
-
-  const form =
-    elements.addressForm;
-
-  if (!form) return;
-
-  const formData =
-    new FormData(form);
-
-  const addressData = {
-    user_id: user.id,
-
-    cep:
-      formData.get("cep") || "",
-
-    rua:
-      formData.get("rua") || "",
-
-    numero:
-      formData.get("numero") || "",
-
-    complemento:
-      formData.get("complemento") || "",
-
-    bairro:
-      formData.get("bairro") || "",
-
-    cidade:
-      formData.get("cidade") || "",
-
-    estado:
-      formData.get("estado") || ""
-  };
 
   try {
     const {
@@ -1900,7 +1897,10 @@ async function saveAddress(event) {
       await supabaseClient
         .from("addresses")
         .upsert(
-          addressData,
+          {
+            user_id: user.id,
+            ...addressData
+          },
           {
             onConflict: "user_id"
           }
@@ -1912,18 +1912,10 @@ async function saveAddress(event) {
         error
       );
 
-      showToast(
-        "Não foi possível salvar o endereço."
-      );
-
-      return;
+      return false;
     }
 
-    showToast(
-      "Endereço salvo com sucesso!"
-    );
-
-    closeAddressModal();
+    return true;
 
   } catch (error) {
     console.error(
@@ -1931,9 +1923,7 @@ async function saveAddress(event) {
       error
     );
 
-    showToast(
-      "Erro ao salvar endereço."
-    );
+    return false;
   }
 }
 
@@ -1942,7 +1932,9 @@ async function saveAddress(event) {
    TRADUÇÃO DE ERROS DO SUPABASE
    ========================================================= */
 
-function getAuthErrorMessage(message) {
+function getAuthErrorMessage(
+  message
+) {
   const normalized =
     String(message || "")
       .toLowerCase();
@@ -2012,7 +2004,9 @@ function getAuthErrorMessage(message) {
    LINKS DE LOGIN/CADASTRO
    ========================================================= */
 
-function handleAccountAction(event) {
+function handleAccountAction(
+  event
+) {
   const loginButton =
     event.target.closest(
       "[data-login]"
@@ -2021,8 +2015,8 @@ function handleAccountAction(event) {
   if (loginButton) {
     event.preventDefault();
 
-    closeUserDropdown();
-    openLoginModal();
+    openAccountModal();
+    showLoginView();
 
     return true;
   }
@@ -2035,22 +2029,8 @@ function handleAccountAction(event) {
   if (registerButton) {
     event.preventDefault();
 
-    closeUserDropdown();
-    openRegisterModal();
-
-    return true;
-  }
-
-  const addressButton =
-    event.target.closest(
-      "[data-address]"
-    );
-
-  if (addressButton) {
-    event.preventDefault();
-
-    closeUserDropdown();
-    openAddressModal();
+    openAccountModal();
+    showRegisterView();
 
     return true;
   }
@@ -2076,7 +2056,9 @@ function handleAccountAction(event) {
    PLACEHOLDER
    ========================================================= */
 
-function handlePlaceholderLink(event) {
+function handlePlaceholderLink(
+  event
+) {
   event.preventDefault();
 
   showToast(
@@ -2091,7 +2073,9 @@ function handlePlaceholderLink(event) {
 
 function setupEvents() {
 
-  /* Busca */
+  /* =======================================================
+     BUSCA
+     ======================================================= */
 
   if (elements.searchForm) {
     elements.searchForm.addEventListener(
@@ -2101,7 +2085,9 @@ function setupEvents() {
   }
 
 
-  /* Menu */
+  /* =======================================================
+     MENU
+     ======================================================= */
 
   if (elements.menuToggle) {
     elements.menuToggle.addEventListener(
@@ -2109,7 +2095,6 @@ function setupEvents() {
       toggleMobileMenu
     );
   }
-
 
   if (elements.overlay) {
     elements.overlay.addEventListener(
@@ -2119,7 +2104,9 @@ function setupEvents() {
   }
 
 
-  /* Carrinho */
+  /* =======================================================
+     CARRINHO
+     ======================================================= */
 
   if (elements.cartBtn) {
     elements.cartBtn.addEventListener(
@@ -2128,14 +2115,12 @@ function setupEvents() {
     );
   }
 
-
   if (elements.cartCloseBtn) {
     elements.cartCloseBtn.addEventListener(
       "click",
       closeCart
     );
   }
-
 
   if (elements.cartOverlay) {
     elements.cartOverlay.addEventListener(
@@ -2145,17 +2130,56 @@ function setupEvents() {
   }
 
 
-  /* Conta */
+  /* =======================================================
+     CONTA
+     ======================================================= */
 
   if (elements.userBtn) {
     elements.userBtn.addEventListener(
       "click",
-      toggleUserDropdown
+      toggleAccountModal
+    );
+  }
+
+  if (elements.accountCloseBtn) {
+    elements.accountCloseBtn.addEventListener(
+      "click",
+      closeAccountModal
+    );
+  }
+
+  if (elements.accountOverlay) {
+    elements.accountOverlay.addEventListener(
+      "click",
+      closeAccountModal
+    );
+  }
+
+  if (elements.showRegisterBtn) {
+    elements.showRegisterBtn.addEventListener(
+      "click",
+      showRegisterView
+    );
+  }
+
+  if (elements.showLoginBtn) {
+    elements.showLoginBtn.addEventListener(
+      "click",
+      showLoginView
+    );
+  }
+
+  if (elements.logoutBtn) {
+    elements.logoutBtn.addEventListener(
+      "click",
+      logoutUser
     );
   }
 
 
-  /* Login */
+  /* =======================================================
+     LOGIN
+     ======================================================= */
 
   if (elements.loginForm) {
     elements.loginForm.addEventListener(
@@ -2163,23 +2187,18 @@ function setupEvents() {
       async event => {
         event.preventDefault();
 
-        const email =
-          elements.loginEmail?.value
-            ?.trim() || "";
-
-        const password =
-          elements.loginPassword?.value || "";
-
         await loginUser(
-          email,
-          password
+          elements.loginEmail?.value?.trim() || "",
+          elements.loginPassword?.value || ""
         );
       }
     );
   }
 
 
-  /* Cadastro */
+  /* =======================================================
+     CADASTRO
+     ======================================================= */
 
   if (elements.registerForm) {
     elements.registerForm.addEventListener(
@@ -2189,36 +2208,85 @@ function setupEvents() {
 
         await registerUser({
           name:
-            elements.registerName?.value
-              ?.trim() || "",
+            elements.registerName?.value?.trim() || "",
 
           email:
-            elements.registerEmail?.value
-              ?.trim() || "",
+            elements.registerEmail?.value?.trim() || "",
 
           password:
             elements.registerPassword?.value || "",
 
-          passwordConfirm:
-            elements.registerPasswordConfirm
-              ?.value || ""
+          cep:
+            elements.registerCep?.value?.trim() || "",
+
+          street:
+            elements.registerStreet?.value?.trim() || "",
+
+          number:
+            elements.registerNumber?.value?.trim() || "",
+
+          complement:
+            elements.registerComplement?.value?.trim() || "",
+
+          neighborhood:
+            elements.registerNeighborhood?.value?.trim() || "",
+
+          city:
+            elements.registerCity?.value?.trim() || "",
+
+          state:
+            elements.registerState?.value
+              ?.trim()
+              .toUpperCase() || ""
         });
       }
     );
   }
 
 
-  /* Endereço */
+  /* =======================================================
+     MÁSCARA DE CEP
+     ======================================================= */
 
-  if (elements.addressForm) {
-    elements.addressForm.addEventListener(
-      "submit",
-      saveAddress
+  if (elements.registerCep) {
+    elements.registerCep.addEventListener(
+      "input",
+      event => {
+        const value =
+          event.target.value
+            .replace(/\D/g, "")
+            .slice(0, 8);
+
+        event.target.value =
+          value.length > 5
+            ? `${value.slice(0, 5)}-${value.slice(5)}`
+            : value;
+      }
     );
   }
 
 
-  /* Checkout */
+  /* =======================================================
+     ESTADO
+     ======================================================= */
+
+  if (elements.registerState) {
+    elements.registerState.addEventListener(
+      "input",
+      event => {
+        event.target.value =
+          event.target.value
+            .replace(/[^a-zA-Z]/g, "")
+            .slice(0, 2)
+            .toUpperCase();
+      }
+    );
+  }
+
+
+  /* =======================================================
+     CHECKOUT
+     ======================================================= */
 
   if (elements.checkoutBtn) {
     elements.checkoutBtn.addEventListener(
@@ -2228,13 +2296,17 @@ function setupEvents() {
   }
 
 
-  /* Delegação global */
+  /* =======================================================
+     DELEGAÇÃO GLOBAL
+     ======================================================= */
 
   document.addEventListener(
     "click",
     event => {
 
-      /* Filtros */
+      /* -----------------------------------------------------
+         FILTROS
+         ----------------------------------------------------- */
 
       const filterElement =
         event.target.closest(
@@ -2256,7 +2328,9 @@ function setupEvents() {
       }
 
 
-      /* Adicionar ao carrinho */
+      /* -----------------------------------------------------
+         ADICIONAR AO CARRINHO
+         ----------------------------------------------------- */
 
       const addButton =
         event.target.closest(
@@ -2274,7 +2348,9 @@ function setupEvents() {
       }
 
 
-      /* Remover */
+      /* -----------------------------------------------------
+         REMOVER DO CARRINHO
+         ----------------------------------------------------- */
 
       const removeButton =
         event.target.closest(
@@ -2292,7 +2368,9 @@ function setupEvents() {
       }
 
 
-      /* Quantidade - */
+      /* -----------------------------------------------------
+         DIMINUIR QUANTIDADE
+         ----------------------------------------------------- */
 
       const minusButton =
         event.target.closest(
@@ -2311,7 +2389,9 @@ function setupEvents() {
       }
 
 
-      /* Quantidade + */
+      /* -----------------------------------------------------
+         AUMENTAR QUANTIDADE
+         ----------------------------------------------------- */
 
       const plusButton =
         event.target.closest(
@@ -2330,112 +2410,20 @@ function setupEvents() {
       }
 
 
-      /* Conta */
+      /* -----------------------------------------------------
+         AÇÕES DE CONTA
+         ----------------------------------------------------- */
 
-      if (handleAccountAction(event)) {
+      if (
+        handleAccountAction(event)
+      ) {
         return;
       }
 
 
-      /* Fechar dropdown */
-
-      const closeDropdownButton =
-        event.target.closest(
-          "[data-close-dropdown]"
-        );
-
-      if (closeDropdownButton) {
-        event.preventDefault();
-
-        closeUserDropdown();
-
-        return;
-      }
-
-
-      /* Fechar login */
-
-      const closeLoginButton =
-        event.target.closest(
-          "[data-close-login]"
-        );
-
-      if (closeLoginButton) {
-        event.preventDefault();
-
-        closeLoginModal();
-
-        return;
-      }
-
-
-      /* Fechar cadastro */
-
-      const closeRegisterButton =
-        event.target.closest(
-          "[data-close-register]"
-        );
-
-      if (closeRegisterButton) {
-        event.preventDefault();
-
-        closeRegisterModal();
-
-        return;
-      }
-
-
-      /* Fechar endereço */
-
-      const closeAddressButton =
-        event.target.closest(
-          "[data-close-address]"
-        );
-
-      if (closeAddressButton) {
-        event.preventDefault();
-
-        closeAddressModal();
-
-        return;
-      }
-
-
-      /* Abrir cadastro */
-
-      const goRegisterButton =
-        event.target.closest(
-          "[data-open-register]"
-        );
-
-      if (goRegisterButton) {
-        event.preventDefault();
-
-        closeLoginModal();
-        openRegisterModal();
-
-        return;
-      }
-
-
-      /* Abrir login */
-
-      const goLoginButton =
-        event.target.closest(
-          "[data-open-login]"
-        );
-
-      if (goLoginButton) {
-        event.preventDefault();
-
-        closeRegisterModal();
-        openLoginModal();
-
-        return;
-      }
-
-
-      /* Fechar carrinho */
+      /* -----------------------------------------------------
+         FECHAR CARRINHO
+         ----------------------------------------------------- */
 
       const closeCartLink =
         event.target.closest(
@@ -2451,7 +2439,9 @@ function setupEvents() {
       }
 
 
-      /* Links placeholder */
+      /* -----------------------------------------------------
+         LINKS PLACEHOLDER
+         ----------------------------------------------------- */
 
       const placeholder =
         event.target.closest(
@@ -2459,41 +2449,32 @@ function setupEvents() {
         );
 
       if (placeholder) {
-        handlePlaceholderLink(event);
+        handlePlaceholderLink(
+          event
+        );
 
         return;
-      }
-
-
-      /* Clique fora do dropdown */
-
-      if (
-        elements.userDropdown &&
-        !elements.userDropdown.hidden &&
-        !event.target.closest("#userDropdown") &&
-        !event.target.closest("#userBtn")
-      ) {
-        closeUserDropdown();
       }
     }
   );
 
 
-  /* ESC */
+  /* =======================================================
+     ESC
+     ======================================================= */
 
   document.addEventListener(
     "keydown",
     event => {
-      if (event.key !== "Escape") {
+      if (
+        event.key !== "Escape"
+      ) {
         return;
       }
 
       closeCart();
       closeMobileMenu();
-      closeUserDropdown();
-      closeLoginModal();
-      closeRegisterModal();
-      closeAddressModal();
+      closeAccountModal();
     }
   );
 }
@@ -2509,7 +2490,11 @@ function setupAuthListener() {
   }
 
   supabaseClient.auth.onAuthStateChange(
-    async (event, session) => {
+    async (
+      event,
+      session
+    ) => {
+
       console.log(
         "Estado de autenticação:",
         event
@@ -2546,6 +2531,7 @@ function updateCurrentYear() {
    ========================================================= */
 
 async function init() {
+
   renderCategoryCards();
 
   renderProducts();
@@ -2580,12 +2566,15 @@ async function init() {
    ========================================================= */
 
 if (
-  document.readyState === "loading"
+  document.readyState ===
+  "loading"
 ) {
   document.addEventListener(
     "DOMContentLoaded",
     init,
-    { once: true }
+    {
+      once: true
+    }
   );
 } else {
   init();
