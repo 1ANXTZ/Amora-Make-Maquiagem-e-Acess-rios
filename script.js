@@ -1,10 +1,7 @@
-# script.js
-
-```javascript
 /* =========================================================
    AMORA MAKE — script.js
-   Produtos, categorias, busca, filtros, menu mobile,
-   carrinho, autenticação Supabase, perfil e endereço.
+   Produtos, categorias, busca, menu mobile,
+   carrinho, login/cadastro e Supabase.
    ========================================================= */
 
 
@@ -12,24 +9,30 @@
    SUPABASE
    ========================================================= */
 
-const SUPABASE_URL =
-  "https://xcwjqbqinnvnyiktyjbj.supabase.co";
+const SUPABASE_URL = "https://xcwjqbqinnvnyiktyjbj.supabase.co";
 
-const SUPABASE_ANON_KEY =
+const SUPABASE_KEY =
   "sb_publishable_I8MW1Q8ovLLKI-Gb-MavTg_UankO-md";
 
 let supabaseClient = null;
 
-if (window.supabase) {
-  supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+try {
+  if (window.supabase) {
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
-  console.log("Supabase conectado.");
-} else {
+    console.log("Supabase conectado.");
+  } else {
+    console.error(
+      "Biblioteca do Supabase não encontrada no HTML."
+    );
+  }
+} catch (error) {
   console.error(
-    "Supabase não foi carregado. Verifique o script do Supabase no index.html."
+    "Erro ao conectar com o Supabase:",
+    error
   );
 }
 
@@ -183,154 +186,154 @@ const PRODUCTS = [
     id: "p01",
     name: "Esponja Chanfrada",
     category: "acessorio",
-    price: 5.00,
+    price: 5,
     image: "images/produtos/esponja-chanfrada.jpeg"
   },
   {
     id: "p02",
     name: "Fixador Fix Matte",
     category: "maquiagem",
-    price: 15.00,
+    price: 15,
     image: "images/produtos/fixador-fix-matte.jpeg"
   },
   {
     id: "p03",
     name: "Máscara de Cílios Alonga e Define",
     category: "mascara",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/mascara-de-cilios-alonga-e-define.jpeg"
   },
   {
     id: "p04",
     name: "Lip Oil Sweet Hello Kitty",
     category: "gloss",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/lip-oil-sweet-hello-kitty.jpeg"
   },
   {
     id: "p05",
     name: "Lip Oil Raios de Sol",
     category: "gloss",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/lip-oil-raios-de-sol.jpeg"
   },
   {
     id: "p06",
     name: "Demaquilante Aquatic Awe",
     category: "maquiagem",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/demaquilante-aquatic-awe.jpeg"
   },
   {
     id: "p07",
     name: "Demaquilante Sunset Coral",
     category: "maquiagem",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/demaquilante-sunset-coral.jpeg"
   },
   {
     id: "p08",
     name: "Perfume Capilar Atração Fatal",
     category: "acessorio",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/perfume-capilar-atracao-fatal.jpeg"
   },
   {
     id: "p09",
     name: "Perfume Capilar Desejo Secreto",
     category: "acessorio",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/perfume-capilar-desejo-secreto.jpeg"
   },
   {
     id: "p10",
     name: "Delineador Líquido Super Poderes",
     category: "maquiagem",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/delineador-liquido-super-poderes.jpeg"
   },
   {
     id: "p11",
     name: "Folhas Antioliosidade",
     category: "maquiagem",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/folhas-anti-oleosidade.jpeg"
   },
   {
     id: "p12",
     name: "Esfoliante Labial Honey Scrub Vivai",
     category: "maquiagem",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/esfoliante-labial-honey-scrub-vivai.jpeg"
   },
   {
     id: "p13",
     name: "Pó Compacto Efeito Aveludado",
     category: "maquiagem",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/po-compacto-efeito-aveludado.jpeg"
   },
   {
     id: "p14",
     name: "Par de Cílios 6D",
     category: "acessorio",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/par-de-cilios-6d.jpeg"
   },
   {
     id: "p15",
     name: "Batom Bala Matte Lovely",
     category: "batom",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/batom-bala-matte-lovely.jpeg"
   },
   {
     id: "p16",
     name: "Pincel para Esfumar",
     category: "pincel",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/pincel-p-esfumar.jpeg"
   },
   {
     id: "p17",
     name: "Pincel para Corretivo Língua de Gato",
     category: "pincel",
-    price: 10.00,
+    price: 10,
     image: "images/produtos/pincel-p-corretivo-lingua-de-gato.jpeg"
   },
   {
     id: "p18",
     name: "Elástico para Cabelo",
     category: "acessorio",
-    price: 5.00,
+    price: 5,
     image: "images/produtos/elastico-p-cabelo.jpeg"
   },
   {
     id: "p19",
     name: "Kit com 2 Esponjas para Pó",
     category: "acessorio",
-    price: 5.00,
+    price: 5,
     image: "images/produtos/kit-c-2-esponjas-p-po.jpeg"
   },
   {
     id: "p20",
     name: "Máscara Facial Peel Off Total Black",
     category: "maquiagem",
-    price: 5.00,
+    price: 5,
     image: "images/produtos/mascara-facial-peel-off-total-black.jpeg"
   },
   {
     id: "p21",
     name: "Hidratante Facial Rosa Mosqueta",
     category: "maquiagem",
-    price: 5.00,
+    price: 5,
     image: "images/produtos/hidratante-facial-rosa-mosqueta.jpeg"
   },
   {
     id: "p22",
     name: "Mini Batom Princesa",
     category: "batom",
-    price: 5.00,
+    price: 5,
     image: "images/produtos/mini-batom-princesa.jpeg"
   }
 ];
@@ -346,58 +349,6 @@ const FEATURED_CATEGORIES = [
   "pincel",
   "acessorio"
 ];
-
-
-/* =========================================================
-   ESTADO
-   ========================================================= */
-
-const state = {
-  filter: "todos",
-  query: "",
-  cart: [],
-  user: null,
-  profile: null
-};
-
-
-/* =========================================================
-   DOM
-   ========================================================= */
-
-const elements = {
-  catGrid: document.getElementById("catGrid"),
-  productGrid: document.getElementById("productGrid"),
-  offersGrid: document.getElementById("offersGrid"),
-
-  emptyState: document.getElementById("emptyState"),
-  filterLabel: document.getElementById("filterLabel"),
-
-  searchForm: document.getElementById("searchForm"),
-  searchInput: document.getElementById("searchInput"),
-
-  menuToggle: document.getElementById("menuToggle"),
-  mobileMenu: document.getElementById("mobileMenu"),
-  overlay: document.getElementById("overlay"),
-
-  userBtn: document.getElementById("userBtn"),
-  userDropdown: document.getElementById("userDropdown"),
-
-  cartBtn: document.getElementById("cartBtn"),
-  cartCloseBtn: document.getElementById("cartCloseBtn"),
-  cartDrawer: document.getElementById("cartDrawer"),
-  cartOverlay: document.getElementById("cartOverlay"),
-
-  cartCount: document.getElementById("cartCount"),
-  cartItemsList: document.getElementById("cartItemsList"),
-  cartEmptyMsg: document.getElementById("cartEmptyMsg"),
-  cartFooter: document.getElementById("cartFooter"),
-  cartSubtotal: document.getElementById("cartSubtotal"),
-  checkoutBtn: document.getElementById("checkoutBtn"),
-
-  toast: document.getElementById("toast"),
-  anoAtual: document.getElementById("anoAtual")
-};
 
 
 /* =========================================================
@@ -448,6 +399,77 @@ function getProductImage(product) {
 
 
 /* =========================================================
+   ESTADO
+   ========================================================= */
+
+const state = {
+  filter: "todos",
+  query: "",
+  cart: []
+};
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const elements = {
+  catGrid: document.getElementById("catGrid"),
+  productGrid: document.getElementById("productGrid"),
+  offersGrid: document.getElementById("offersGrid"),
+
+  emptyState: document.getElementById("emptyState"),
+  filterLabel: document.getElementById("filterLabel"),
+
+  searchForm: document.getElementById("searchForm"),
+  searchInput: document.getElementById("searchInput"),
+
+  menuToggle: document.getElementById("menuToggle"),
+  mobileMenu: document.getElementById("mobileMenu"),
+  overlay: document.getElementById("overlay"),
+
+  userBtn: document.getElementById("userBtn"),
+  userDropdown: document.getElementById("userDropdown"),
+
+  cartBtn: document.getElementById("cartBtn"),
+  cartCloseBtn: document.getElementById("cartCloseBtn"),
+  cartDrawer: document.getElementById("cartDrawer"),
+  cartOverlay: document.getElementById("cartOverlay"),
+
+  cartCount: document.getElementById("cartCount"),
+  cartItemsList: document.getElementById("cartItemsList"),
+  cartEmptyMsg: document.getElementById("cartEmptyMsg"),
+  cartFooter: document.getElementById("cartFooter"),
+  cartSubtotal: document.getElementById("cartSubtotal"),
+  checkoutBtn: document.getElementById("checkoutBtn"),
+
+  toast: document.getElementById("toast"),
+  anoAtual: document.getElementById("anoAtual"),
+
+  loginModal: document.getElementById("loginModal"),
+  loginForm: document.getElementById("loginForm"),
+  loginEmail: document.getElementById("loginEmail"),
+  loginPassword: document.getElementById("loginPassword"),
+
+  registerModal: document.getElementById("registerModal"),
+  registerForm: document.getElementById("registerForm"),
+  registerName: document.getElementById("registerName"),
+  registerEmail: document.getElementById("registerEmail"),
+  registerPassword: document.getElementById("registerPassword"),
+  registerPasswordConfirm:
+    document.getElementById("registerPasswordConfirm"),
+
+  addressModal: document.getElementById("addressModal"),
+  addressForm: document.getElementById("addressForm"),
+
+  logoutBtn: document.getElementById("logoutBtn"),
+
+  accountName: document.getElementById("accountName"),
+  accountEmail: document.getElementById("accountEmail")
+};
+
+
+/* =========================================================
    TOAST
    ========================================================= */
 
@@ -455,7 +477,7 @@ let toastTimer = null;
 
 function showToast(message) {
   if (!elements.toast) {
-    alert(message);
+    console.log(message);
     return;
   }
 
@@ -486,21 +508,23 @@ function renderCategoryCards() {
   if (!elements.catGrid) return;
 
   elements.catGrid.innerHTML =
-    FEATURED_CATEGORIES.map(category => `
-      <button
-        type="button"
-        class="cat-card"
-        data-filter="${category}"
-      >
-        <span class="cat-card-icon">
-          ${getProductIcon(category)}
-        </span>
+    FEATURED_CATEGORIES
+      .map(category => `
+        <button
+          type="button"
+          class="cat-card"
+          data-filter="${category}"
+        >
+          <span class="cat-card-icon">
+            ${getProductIcon(category)}
+          </span>
 
-        <span class="cat-card-name">
-          ${getCategoryLabel(category)}
-        </span>
-      </button>
-    `).join("");
+          <span class="cat-card-name">
+            ${getCategoryLabel(category)}
+          </span>
+        </button>
+      `)
+      .join("");
 }
 
 
@@ -619,11 +643,11 @@ function renderProducts() {
 function renderOffers() {
   if (!elements.offersGrid) return;
 
-  const featuredProducts =
-    PRODUCTS.slice(0, 6);
-
   elements.offersGrid.innerHTML =
-    featuredProducts.map(createProductCard).join("");
+    PRODUCTS
+      .slice(0, 6)
+      .map(createProductCard)
+      .join("");
 }
 
 
@@ -741,7 +765,12 @@ function closeCart() {
     );
   }
 
-  document.body.style.overflow = "";
+  if (
+    !elements.mobileMenu ||
+    elements.mobileMenu.hidden
+  ) {
+    document.body.style.overflow = "";
+  }
 }
 
 
@@ -758,12 +787,16 @@ function toggleCart() {
 
 function addToCart(productId) {
   const product =
-    PRODUCTS.find(item => item.id === productId);
+    PRODUCTS.find(
+      item => item.id === productId
+    );
 
   if (!product) return;
 
   const existingItem =
-    state.cart.find(item => item.id === productId);
+    state.cart.find(
+      item => item.id === productId
+    );
 
   if (existingItem) {
     existingItem.quantity += 1;
@@ -773,8 +806,6 @@ function addToCart(productId) {
       quantity: 1
     });
   }
-
-  saveCart();
 
   updateCartCount();
   renderCart();
@@ -792,8 +823,6 @@ function removeFromCart(productId) {
     state.cart.filter(
       item => item.id !== productId
     );
-
-  saveCart();
 
   updateCartCount();
   renderCart();
@@ -816,8 +845,6 @@ function changeQuantity(productId, amount) {
     removeFromCart(productId);
     return;
   }
-
-  saveCart();
 
   updateCartCount();
   renderCart();
@@ -855,7 +882,6 @@ function calculateCartSubtotal() {
 
       return total +
         product.price * item.quantity;
-
     },
     0
   );
@@ -892,81 +918,81 @@ function renderCart() {
   }
 
   elements.cartItemsList.innerHTML =
-    state.cart.map(item => {
+    state.cart
+      .map(item => {
 
-      const product =
-        PRODUCTS.find(
-          productItem =>
-            productItem.id === item.id
-        );
+        const product =
+          PRODUCTS.find(
+            productItem =>
+              productItem.id === item.id
+          );
 
-      if (!product) return "";
+        if (!product) return "";
 
-      const itemTotal =
-        product.price * item.quantity;
+        const itemTotal =
+          product.price * item.quantity;
 
-      return `
-        <div class="cart-item">
+        return `
+          <div class="cart-item">
 
-          <div class="cart-item-media">
-            ${getProductImage(product)}
-          </div>
+            <div class="cart-item-media">
+              ${getProductImage(product)}
+            </div>
 
-          <div>
+            <div>
 
-            <p class="cart-item-name">
-              ${product.name}
-            </p>
+              <p class="cart-item-name">
+                ${product.name}
+              </p>
 
-            <p class="cart-item-price">
-              ${formatBRL(itemTotal)}
-            </p>
+              <p class="cart-item-price">
+                ${formatBRL(itemTotal)}
+              </p>
 
-            <div class="cart-item-qty">
+              <div class="cart-item-qty">
 
-              <button
-                type="button"
-                class="qty-btn"
-                data-qty-minus="${product.id}"
-              >
-                −
-              </button>
+                <button
+                  type="button"
+                  class="qty-btn"
+                  data-qty-minus="${product.id}"
+                >
+                  −
+                </button>
 
-              <span>
-                ${item.quantity}
-              </span>
+                <span>
+                  ${item.quantity}
+                </span>
 
-              <button
-                type="button"
-                class="qty-btn"
-                data-qty-plus="${product.id}"
-              >
-                +
-              </button>
+                <button
+                  type="button"
+                  class="qty-btn"
+                  data-qty-plus="${product.id}"
+                >
+                  +
+                </button>
+
+              </div>
 
             </div>
 
+            <button
+              type="button"
+              class="cart-item-remove"
+              data-remove-cart="${product.id}"
+            >
+              Remover
+            </button>
+
           </div>
-
-          <button
-            type="button"
-            class="cart-item-remove"
-            data-remove-cart="${product.id}"
-          >
-            Remover
-          </button>
-
-        </div>
-      `;
-
-    }).join("");
-
-  const subtotal =
-    calculateCartSubtotal();
+        `;
+      })
+      .join("");
 
   if (elements.cartSubtotal) {
     elements.cartSubtotal.textContent =
-      formatBRL(subtotal);
+      formatBRL(
+        calculateCartSubtotal()
+      );
   }
 
   if (elements.cartFooter) {
@@ -977,40 +1003,30 @@ function renderCart() {
 }
 
 
-function saveCart() {
-  localStorage.setItem(
-    "amora_make_cart",
-    JSON.stringify(state.cart)
-  );
-}
+function handleCheckout() {
+  if (state.cart.length === 0) {
+    showToast(
+      "Seu carrinho está vazio."
+    );
+    return;
+  }
 
+  const user =
+    getCurrentUser();
 
-function loadCart() {
-  try {
-
-    const saved =
-      localStorage.getItem(
-        "amora_make_cart"
-      );
-
-    if (!saved) return;
-
-    const parsed =
-      JSON.parse(saved);
-
-    if (Array.isArray(parsed)) {
-      state.cart = parsed;
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao carregar carrinho:",
-      error
+  if (!user) {
+    showToast(
+      "Entre na sua conta para continuar."
     );
 
-    state.cart = [];
+    openLoginModal();
+
+    return;
   }
+
+  showToast(
+    "Checkout será configurado na próxima etapa."
+  );
 }
 
 
@@ -1062,7 +1078,8 @@ function closeMobileMenu() {
     !elements.cartDrawer ||
     elements.cartDrawer.hidden
   ) {
-    document.body.style.overflow = "";
+    document.body.style.overflow =
+      "";
   }
 }
 
@@ -1079,7 +1096,7 @@ function toggleMobileMenu() {
 
 
 /* =========================================================
-   CONTA / LOGIN
+   DROPDOWN DA CONTA
    ========================================================= */
 
 function openUserDropdown() {
@@ -1088,8 +1105,7 @@ function openUserDropdown() {
   closeMobileMenu();
   closeCart();
 
-  elements.userDropdown.hidden =
-    false;
+  elements.userDropdown.hidden = false;
 
   if (elements.userBtn) {
     elements.userBtn.setAttribute(
@@ -1098,15 +1114,14 @@ function openUserDropdown() {
     );
   }
 
-  updateUserDropdown();
+  updateAccountUI();
 }
 
 
 function closeUserDropdown() {
   if (!elements.userDropdown) return;
 
-  elements.userDropdown.hidden =
-    true;
+  elements.userDropdown.hidden = true;
 
   if (elements.userBtn) {
     elements.userBtn.setAttribute(
@@ -1120,7 +1135,9 @@ function closeUserDropdown() {
 function toggleUserDropdown() {
   if (!elements.userDropdown) return;
 
-  if (elements.userDropdown.hidden) {
+  if (
+    elements.userDropdown.hidden
+  ) {
     openUserDropdown();
   } else {
     closeUserDropdown();
@@ -1129,723 +1146,128 @@ function toggleUserDropdown() {
 
 
 /* =========================================================
-   CRIA ÁREA DE LOGIN DINAMICAMENTE
+   MODAIS DE LOGIN
    ========================================================= */
 
-function updateUserDropdown() {
-  if (!elements.userDropdown) return;
+function openLoginModal() {
+  closeUserDropdown();
 
-  if (!state.user) {
-
-    elements.userDropdown.innerHTML = `
-      <div class="user-dropdown-inner">
-
-        <p class="user-dropdown-title">
-          Área da cliente
-        </p>
-
-        <p class="user-dropdown-text">
-          Entre na sua conta ou crie seu cadastro.
-        </p>
-
-        <button
-          type="button"
-          class="btn btn-primary btn-small btn-full"
-          data-login-action="login"
-        >
-          Entrar
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-ghost btn-small btn-full"
-          data-login-action="signup"
-        >
-          Criar conta
-        </button>
-
-      </div>
-    `;
-
+  if (!elements.loginModal) {
+    showToast(
+      "O formulário de login não foi encontrado no HTML."
+    );
     return;
   }
 
-
-  const name =
-    state.profile?.nome ||
-    state.user.user_metadata?.nome ||
-    state.user.email ||
-    "Cliente";
-
-  elements.userDropdown.innerHTML = `
-    <div class="user-dropdown-inner">
-
-      <p class="user-dropdown-title">
-        Olá, ${escapeHTML(name)}
-      </p>
-
-      <p class="user-dropdown-text">
-        Sua conta está conectada.
-      </p>
-
-      <button
-        type="button"
-        class="btn btn-primary btn-small btn-full"
-        data-login-action="profile"
-      >
-        Meu perfil
-      </button>
-
-      <button
-        type="button"
-        class="btn btn-ghost btn-small btn-full"
-        data-login-action="logout"
-      >
-        Sair da conta
-      </button>
-
-    </div>
-  `;
-}
-
-
-function escapeHTML(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-
-/* =========================================================
-   MODAL DE AUTENTICAÇÃO
-   ========================================================= */
-
-function createAuthModal() {
-
-  if (document.getElementById("authModal")) {
-    return;
-  }
-
-  const modal =
-    document.createElement("div");
-
-  modal.id = "authModal";
-  modal.className = "auth-modal";
-  modal.hidden = true;
-
-  modal.innerHTML = `
-    <div
-      class="auth-modal-overlay"
-      data-auth-close
-    ></div>
-
-    <div
-      class="auth-modal-card"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="authModalTitle"
-    >
-
-      <button
-        type="button"
-        class="auth-modal-close"
-        aria-label="Fechar"
-        data-auth-close
-      >
-        ×
-      </button>
-
-      <h2 id="authModalTitle">
-        Entrar
-      </h2>
-
-      <p
-        class="auth-modal-description"
-        id="authModalDescription"
-      >
-        Entre na sua conta Amora Make.
-      </p>
-
-      <form id="authForm">
-
-        <div
-          class="auth-name-field"
-          id="authNameField"
-          hidden
-        >
-
-          <label for="authName">
-            Nome
-          </label>
-
-          <input
-            type="text"
-            id="authName"
-            autocomplete="name"
-          >
-
-        </div>
-
-
-        <div>
-
-          <label for="authEmail">
-            E-mail
-          </label>
-
-          <input
-            type="email"
-            id="authEmail"
-            autocomplete="email"
-            required
-          >
-
-        </div>
-
-
-        <div>
-
-          <label for="authPassword">
-            Senha
-          </label>
-
-          <input
-            type="password"
-            id="authPassword"
-            autocomplete="current-password"
-            minlength="6"
-            required
-          >
-
-        </div>
-
-
-        <div
-          class="auth-address-fields"
-          id="authAddressFields"
-          hidden
-        >
-
-          <h3>
-            Endereço de entrega
-          </h3>
-
-          <div>
-
-            <label for="authCep">
-              CEP
-            </label>
-
-            <input
-              type="text"
-              id="authCep"
-              autocomplete="postal-code"
-              inputmode="numeric"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label for="authRua">
-              Rua
-            </label>
-
-            <input
-              type="text"
-              id="authRua"
-              autocomplete="street-address"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label for="authNumero">
-              Número
-            </label>
-
-            <input
-              type="text"
-              id="authNumero"
-              autocomplete="address-line2"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label for="authComplemento">
-              Complemento
-            </label>
-
-            <input
-              type="text"
-              id="authComplemento"
-              autocomplete="off"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label for="authBairro">
-              Bairro
-            </label>
-
-            <input
-              type="text"
-              id="authBairro"
-              autocomplete="address-level3"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label for="authCidade">
-              Cidade
-            </label>
-
-            <input
-              type="text"
-              id="authCidade"
-              autocomplete="address-level2"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label for="authEstado">
-              Estado
-            </label>
-
-            <input
-              type="text"
-              id="authEstado"
-              maxlength="2"
-              autocomplete="address-level1"
-            >
-
-          </div>
-
-        </div>
-
-
-        <button
-          type="submit"
-          class="btn btn-primary btn-full"
-          id="authSubmit"
-        >
-          Entrar
-        </button>
-
-      </form>
-
-
-      <button
-        type="button"
-        class="auth-switch"
-        id="authSwitch"
-      >
-        Ainda não tenho uma conta
-      </button>
-
-
-      <p
-        class="auth-message"
-        id="authMessage"
-        aria-live="polite"
-      ></p>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  setupAuthModalEvents();
-}
-
-
-let authMode = "login";
-
-
-function openAuthModal(mode = "login") {
-
-  createAuthModal();
-
-  authMode = mode;
-
-  const modal =
-    document.getElementById("authModal");
-
-  if (!modal) return;
-
-  modal.hidden = false;
-
-  updateAuthModal();
+  elements.loginModal.hidden = false;
 
   document.body.style.overflow =
     "hidden";
 }
 
 
-function closeAuthModal() {
+function closeLoginModal() {
+  if (!elements.loginModal) return;
 
-  const modal =
-    document.getElementById("authModal");
+  elements.loginModal.hidden = true;
 
-  if (!modal) return;
-
-  modal.hidden = true;
-
-  document.body.style.overflow = "";
+  restoreBodyScroll();
 }
 
 
-function updateAuthModal() {
+function openRegisterModal() {
+  closeUserDropdown();
 
-  const title =
-    document.getElementById("authModalTitle");
-
-  const description =
-    document.getElementById("authModalDescription");
-
-  const nameField =
-    document.getElementById("authNameField");
-
-  const addressFields =
-    document.getElementById("authAddressFields");
-
-  const submit =
-    document.getElementById("authSubmit");
-
-  const switchButton =
-    document.getElementById("authSwitch");
-
-  if (!title) return;
-
-
-  if (authMode === "signup") {
-
-    title.textContent =
-      "Criar conta";
-
-    description.textContent =
-      "Crie sua conta e salve seu endereço de entrega.";
-
-    nameField.hidden = false;
-
-    addressFields.hidden = false;
-
-    submit.textContent =
-      "Criar minha conta";
-
-    switchButton.textContent =
-      "Já tenho uma conta";
-
+  if (!elements.registerModal) {
+    showToast(
+      "O formulário de cadastro não foi encontrado no HTML."
+    );
     return;
   }
 
+  elements.registerModal.hidden =
+    false;
 
-  title.textContent =
-    "Entrar";
-
-  description.textContent =
-    "Entre na sua conta Amora Make.";
-
-  nameField.hidden = true;
-
-  addressFields.hidden = true;
-
-  submit.textContent =
-    "Entrar";
-
-  switchButton.textContent =
-    "Ainda não tenho uma conta";
+  document.body.style.overflow =
+    "hidden";
 }
 
 
-function setupAuthModalEvents() {
+function closeRegisterModal() {
+  if (!elements.registerModal) return;
 
-  const modal =
-    document.getElementById("authModal");
+  elements.registerModal.hidden =
+    true;
 
-  if (!modal) return;
-
-
-  modal.addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target.matches(
-          "[data-auth-close]"
-        )
-      ) {
-        closeAuthModal();
-      }
-
-    }
-  );
+  restoreBodyScroll();
+}
 
 
-  const switchButton =
-    document.getElementById(
-      "authSwitch"
+function openAddressModal() {
+  if (!elements.addressModal) {
+    showToast(
+      "Formulário de endereço não encontrado."
     );
-
-  if (switchButton) {
-
-    switchButton.addEventListener(
-      "click",
-      () => {
-
-        authMode =
-          authMode === "login"
-            ? "signup"
-            : "login";
-
-        updateAuthModal();
-
-      }
-    );
-
+    return;
   }
 
+  elements.addressModal.hidden =
+    false;
 
-  const form =
-    document.getElementById(
-      "authForm"
-    );
+  document.body.style.overflow =
+    "hidden";
+}
 
-  if (form) {
 
-    form.addEventListener(
-      "submit",
-      handleAuthSubmit
-    );
+function closeAddressModal() {
+  if (!elements.addressModal) return;
 
+  elements.addressModal.hidden =
+    true;
+
+  restoreBodyScroll();
+}
+
+
+function restoreBodyScroll() {
+  const modalOpen =
+    (elements.loginModal &&
+      !elements.loginModal.hidden) ||
+    (elements.registerModal &&
+      !elements.registerModal.hidden) ||
+    (elements.addressModal &&
+      !elements.addressModal.hidden);
+
+  const cartOpen =
+    elements.cartDrawer &&
+    !elements.cartDrawer.hidden;
+
+  const menuOpen =
+    elements.mobileMenu &&
+    !elements.mobileMenu.hidden;
+
+  if (
+    !modalOpen &&
+    !cartOpen &&
+    !menuOpen
+  ) {
+    document.body.style.overflow =
+      "";
   }
 }
 
 
 /* =========================================================
-   LOGIN / CADASTRO
+   SUPABASE — LOGIN
    ========================================================= */
 
-async function handleAuthSubmit(event) {
-
-  event.preventDefault();
-
+async function loginUser(email, password) {
   if (!supabaseClient) {
-
-    showAuthMessage(
+    showToast(
       "Supabase não está conectado."
     );
-
     return;
   }
-
-
-  const email =
-    document
-      .getElementById("authEmail")
-      ?.value
-      .trim();
-
-  const password =
-    document
-      .getElementById("authPassword")
-      ?.value;
-
-
-  if (!email || !password) {
-
-    showAuthMessage(
-      "Preencha e-mail e senha."
-    );
-
-    return;
-  }
-
-
-  if (authMode === "login") {
-
-    await loginUser(
-      email,
-      password
-    );
-
-    return;
-  }
-
-
-  await signupUser(
-    email,
-    password
-  );
-}
-
-
-/* =========================================================
-   CRIAR CONTA
-   ========================================================= */
-
-async function signupUser(
-  email,
-  password
-) {
-
-  const submit =
-    document.getElementById(
-      "authSubmit"
-    );
-
-  if (submit) {
-    submit.disabled = true;
-    submit.textContent =
-      "Criando conta...";
-  }
-
-
-  try {
-
-    const nome =
-      document
-        .getElementById("authName")
-        ?.value
-        .trim();
-
-
-    if (!nome) {
-
-      showAuthMessage(
-        "Informe seu nome."
-      );
-
-      return;
-    }
-
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            nome
-          }
-        }
-      });
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    if (!data.user) {
-      throw new Error(
-        "Não foi possível criar o usuário."
-      );
-    }
-
-
-    state.user =
-      data.user;
-
-
-    /*
-     * Caso o projeto esteja configurado
-     * para exigir confirmação de e-mail,
-     * o usuário ainda não estará autenticado.
-     */
-
-    if (!data.session) {
-
-      showAuthMessage(
-        "Conta criada! Verifique seu e-mail para confirmar a conta antes de entrar."
-      );
-
-      return;
-    }
-
-
-    await saveUserProfile(
-      data.user.id
-    );
-
-
-    await loadUserProfile();
-
-
-    closeAuthModal();
-    updateUserDropdown();
-
-    showToast(
-      "Conta criada com sucesso!"
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao criar conta:",
-      error
-    );
-
-    showAuthMessage(
-      translateSupabaseError(
-        error
-      )
-    );
-
-  } finally {
-
-    if (submit) {
-      submit.disabled = false;
-
-      submit.textContent =
-        "Criar minha conta";
-    }
-
-  }
-}
-
-
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-async function loginUser(
-  email,
-  password
-) {
-
-  const submit =
-    document.getElementById(
-      "authSubmit"
-    );
-
-  if (submit) {
-    submit.disabled = true;
-    submit.textContent =
-      "Entrando...";
-  }
-
 
   try {
 
@@ -1858,466 +1280,417 @@ async function loginUser(
         password
       });
 
-
     if (error) {
-      throw error;
+      console.error(
+        "Erro no login:",
+        error
+      );
+
+      showToast(
+        getAuthErrorMessage(
+          error.message
+        )
+      );
+
+      return;
     }
 
-
-    state.user =
-      data.user;
-
-
-    await loadUserProfile();
-
-
-    closeAuthModal();
-
-    updateUserDropdown();
+    console.log(
+      "Login realizado:",
+      data.user
+    );
 
     showToast(
       "Login realizado com sucesso!"
     );
 
+    closeLoginModal();
+
+    await loadUserProfile();
+
+    updateAccountUI();
+
   } catch (error) {
 
     console.error(
-      "Erro ao entrar:",
+      "Erro inesperado no login:",
       error
     );
 
-    showAuthMessage(
-      translateSupabaseError(
-        error
-      )
+    showToast(
+      "Não foi possível entrar na conta."
     );
-
-  } finally {
-
-    if (submit) {
-      submit.disabled = false;
-      submit.textContent =
-        "Entrar";
-    }
-
   }
 }
 
 
 /* =========================================================
-   SALVAR PERFIL E ENDEREÇO
+   SUPABASE — CADASTRO
    ========================================================= */
 
-async function saveUserProfile(
-  userId
-) {
+async function registerUser({
+  name,
+  email,
+  password,
+  passwordConfirm
+}) {
 
-  if (!supabaseClient) return;
-
-
-  const nome =
-    document
-      .getElementById("authName")
-      ?.value
-      .trim() || "";
-
-
-  const cep =
-    document
-      .getElementById("authCep")
-      ?.value
-      .trim() || "";
-
-
-  const rua =
-    document
-      .getElementById("authRua")
-      ?.value
-      .trim() || "";
-
-
-  const numero =
-    document
-      .getElementById("authNumero")
-      ?.value
-      .trim() || "";
-
-
-  const complemento =
-    document
-      .getElementById("authComplemento")
-      ?.value
-      .trim() || "";
-
-
-  const bairro =
-    document
-      .getElementById("authBairro")
-      ?.value
-      .trim() || "";
-
-
-  const cidade =
-    document
-      .getElementById("authCidade")
-      ?.value
-      .trim() || "";
-
-
-  const estado =
-    document
-      .getElementById("authEstado")
-      ?.value
-      .trim()
-      .toUpperCase() || "";
-
-
-  /*
-   * Tabela profiles
-   */
-
-  const {
-    error: profileError
-  } =
-    await supabaseClient
-      .from("profiles")
-      .upsert(
-        {
-          id: userId,
-          nome
-        },
-        {
-          onConflict: "id"
-        }
-      );
-
-
-  if (profileError) {
-    console.error(
-      "Erro ao salvar perfil:",
-      profileError
+  if (!supabaseClient) {
+    showToast(
+      "Supabase não está conectado."
     );
-  }
-
-
-  /*
-   * Tabela addresses
-   */
-
-  const {
-    error: addressError
-  } =
-    await supabaseClient
-      .from("addresses")
-      .upsert(
-        {
-          user_id: userId,
-          cep,
-          rua,
-          numero,
-          complemento,
-          bairro,
-          cidade,
-          estado
-        },
-        {
-          onConflict: "user_id"
-        }
-      );
-
-
-  if (addressError) {
-
-    console.error(
-      "Erro ao salvar endereço:",
-      addressError
-    );
-
-    /*
-     * Não interrompe o cadastro inteiro
-     * caso a tabela de endereço ainda
-     * esteja sendo configurada.
-     */
-  }
-}
-
-
-/* =========================================================
-   CARREGAR PERFIL
-   ========================================================= */
-
-async function loadUserProfile() {
-
-  if (
-    !supabaseClient ||
-    !state.user
-  ) {
     return;
   }
 
+  if (
+    !name ||
+    !email ||
+    !password
+  ) {
+    showToast(
+      "Preencha todos os campos."
+    );
+    return;
+  }
+
+  if (password.length < 6) {
+    showToast(
+      "A senha precisa ter pelo menos 6 caracteres."
+    );
+    return;
+  }
+
+  if (
+    password !== passwordConfirm
+  ) {
+    showToast(
+      "As senhas não são iguais."
+    );
+    return;
+  }
 
   try {
 
     const {
-      data: profile,
-      error: profileError
+      data,
+      error
     } =
-      await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("id", state.user.id)
-        .maybeSingle();
+      await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name
+          }
+        }
+      });
 
-
-    if (profileError) {
+    if (error) {
       console.error(
-        "Erro ao carregar perfil:",
-        profileError
+        "Erro no cadastro:",
+        error
       );
-    }
 
-
-    const {
-      data: address,
-      error: addressError
-    } =
-      await supabaseClient
-        .from("addresses")
-        .select("*")
-        .eq(
-          "user_id",
-          state.user.id
+      showToast(
+        getAuthErrorMessage(
+          error.message
         )
-        .maybeSingle();
+      );
 
+      return;
+    }
 
-    if (addressError) {
-      console.error(
-        "Erro ao carregar endereço:",
-        addressError
+    console.log(
+      "Cadastro realizado:",
+      data
+    );
+
+    if (data.user) {
+
+      await createProfile(
+        data.user,
+        name
       );
     }
 
+    if (
+      data.session
+    ) {
 
-    state.profile = {
-      ...(profile || {}),
-      address:
-        address || {}
-    };
+      showToast(
+        "Conta criada com sucesso!"
+      );
+
+      closeRegisterModal();
+
+      await loadUserProfile();
+
+      updateAccountUI();
+
+    } else {
+
+      showToast(
+        "Conta criada! Verifique seu e-mail para confirmar o cadastro."
+      );
+
+      closeRegisterModal();
+    }
 
   } catch (error) {
 
     console.error(
-      "Erro ao carregar dados do usuário:",
+      "Erro inesperado no cadastro:",
       error
     );
 
+    showToast(
+      "Não foi possível criar a conta."
+    );
   }
 }
 
 
 /* =========================================================
-   PERFIL
+   CRIAR PERFIL
    ========================================================= */
 
-function showProfile() {
+async function createProfile(
+  user,
+  name
+) {
 
-  if (!state.user) {
-    openAuthModal("login");
+  if (!supabaseClient || !user) {
     return;
   }
 
+  try {
 
-  const profile =
-    state.profile || {};
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("profiles")
+        .upsert(
+          {
+            id: user.id,
+            full_name:
+              name ||
+              user.user_metadata?.full_name ||
+              "",
+            email:
+              user.email || ""
+          },
+          {
+            onConflict: "id"
+          }
+        );
 
-  const address =
-    profile.address || {};
+    if (error) {
+      console.error(
+        "Erro ao criar perfil:",
+        error
+      );
+    }
 
+  } catch (error) {
 
-  const modal =
-    document.getElementById(
-      "authModal"
+    console.error(
+      "Erro inesperado ao criar perfil:",
+      error
     );
+  }
+}
 
 
-  if (!modal) {
-    createAuthModal();
+/* =========================================================
+   PERFIL DO USUÁRIO
+   ========================================================= */
+
+let currentProfile = null;
+
+async function loadUserProfile() {
+
+  if (!supabaseClient) {
+    return null;
   }
 
+  const user =
+    await getCurrentUser();
 
-  const currentModal =
-    document.getElementById(
-      "authModal"
-    );
+  if (!user) {
+    currentProfile = null;
+    return null;
+  }
 
+  try {
 
-  const card =
-    currentModal?.querySelector(
-      ".auth-modal-card"
-    );
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
 
+    if (error) {
 
-  if (!card) return;
-
-
-  card.innerHTML = `
-
-    <button
-      type="button"
-      class="auth-modal-close"
-      aria-label="Fechar"
-      data-auth-close
-    >
-      ×
-    </button>
-
-    <h2>
-      Meu perfil
-    </h2>
-
-    <p class="auth-modal-description">
-      Seus dados cadastrados.
-    </p>
-
-
-    <div class="profile-info">
-
-      <div>
-        <strong>
-          Nome
-        </strong>
-
-        <span>
-          ${escapeHTML(
-            profile.nome ||
-            state.user.email ||
-            "Não informado"
-          )}
-        </span>
-      </div>
-
-
-      <div>
-        <strong>
-          E-mail
-        </strong>
-
-        <span>
-          ${escapeHTML(
-            state.user.email || ""
-          )}
-        </span>
-      </div>
-
-
-      <h3>
-        Endereço de entrega
-      </h3>
-
-
-      <div>
-        <strong>
-          CEP
-        </strong>
-
-        <span>
-          ${escapeHTML(
-            address.cep || "Não informado"
-          )}
-        </span>
-      </div>
-
-
-      <div>
-        <strong>
-          Endereço
-        </strong>
-
-        <span>
-          ${escapeHTML(
-            address.rua
-              ? `${address.rua}, ${address.numero || "s/n"}`
-              : "Não informado"
-          )}
-        </span>
-      </div>
-
-
-      <div>
-        <strong>
-          Bairro
-        </strong>
-
-        <span>
-          ${escapeHTML(
-            address.bairro ||
-            "Não informado"
-          )}
-        </span>
-      </div>
-
-
-      <div>
-        <strong>
-          Cidade / Estado
-        </strong>
-
-        <span>
-          ${escapeHTML(
-            address.cidade
-              ? `${address.cidade} - ${address.estado || ""}`
-              : "Não informado"
-          )}
-        </span>
-      </div>
-
-
-      ${
-        address.complemento
-          ? `
-            <div>
-              <strong>
-                Complemento
-              </strong>
-
-              <span>
-                ${escapeHTML(
-                  address.complemento
-                )}
-              </span>
-            </div>
-          `
-          : ""
-      }
-
-    </div>
-
-
-    <button
-      type="button"
-      class="btn btn-ghost btn-small btn-full"
-      data-auth-close
-    >
-      Fechar
-    </button>
-  `;
-
-
-  currentModal.hidden = false;
-
-  currentModal
-    .querySelectorAll(
-      "[data-auth-close]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        closeAuthModal
+      console.error(
+        "Erro ao buscar perfil:",
+        error
       );
 
-    });
+      return null;
+    }
+
+    currentProfile =
+      data || {
+        id: user.id,
+        email: user.email,
+        full_name:
+          user.user_metadata?.full_name ||
+          ""
+      };
+
+    return currentProfile;
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao carregar perfil:",
+      error
+    );
+
+    return null;
+  }
+}
+
+
+/* =========================================================
+   USUÁRIO ATUAL
+   ========================================================= */
+
+async function getCurrentUser() {
+
+  if (!supabaseClient) {
+    return null;
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.getUser();
+
+    if (error) {
+      return null;
+    }
+
+    return data?.user || null;
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao buscar usuário:",
+      error
+    );
+
+    return null;
+  }
+}
+
+
+/* =========================================================
+   ATUALIZAR INTERFACE DA CONTA
+   ========================================================= */
+
+async function updateAccountUI() {
+
+  if (!elements.userDropdown) {
+    return;
+  }
+
+  const user =
+    await getCurrentUser();
+
+  const title =
+    elements.userDropdown.querySelector(
+      ".user-dropdown-title"
+    );
+
+  const text =
+    elements.userDropdown.querySelector(
+      ".user-dropdown-text"
+    );
+
+  if (!user) {
+
+    if (title) {
+      title.textContent =
+        "Área da cliente";
+    }
+
+    if (text) {
+      text.textContent =
+        "Entre na sua conta ou crie seu cadastro para salvar seus dados e endereço.";
+    }
+
+    if (elements.userBtn) {
+      const label =
+        elements.userBtn.querySelector(
+          ".icon-btn-label"
+        );
+
+      if (label) {
+        label.textContent =
+          "Entrar";
+      }
+    }
+
+    return;
+  }
+
+  const name =
+    currentProfile?.full_name ||
+    user.user_metadata?.full_name ||
+    user.email?.split("@")[0] ||
+    "Cliente";
+
+  if (title) {
+    title.textContent =
+      `Olá, ${name}!`;
+  }
+
+  if (text) {
+    text.textContent =
+      user.email || "";
+  }
+
+  if (elements.userBtn) {
+
+    const label =
+      elements.userBtn.querySelector(
+        ".icon-btn-label"
+      );
+
+    if (label) {
+      label.textContent =
+        name;
+    }
+  }
+
+  if (elements.accountName) {
+    elements.accountName.textContent =
+      name;
+  }
+
+  if (elements.accountEmail) {
+    elements.accountEmail.textContent =
+      user.email || "";
+  }
 }
 
 
@@ -2327,7 +1700,9 @@ function showProfile() {
 
 async function logoutUser() {
 
-  if (!supabaseClient) return;
+  if (!supabaseClient) {
+    return;
+  }
 
   try {
 
@@ -2337,62 +1712,161 @@ async function logoutUser() {
       await supabaseClient.auth.signOut();
 
     if (error) {
-      throw error;
+
+      console.error(
+        "Erro ao sair:",
+        error
+      );
+
+      showToast(
+        "Não foi possível sair da conta."
+      );
+
+      return;
     }
 
-
-    state.user = null;
-    state.profile = null;
-
-    updateUserDropdown();
-
-    closeUserDropdown();
+    currentProfile = null;
 
     showToast(
       "Você saiu da sua conta."
     );
 
+    closeUserDropdown();
+
+    updateAccountUI();
+
   } catch (error) {
 
     console.error(
-      "Erro ao sair:",
+      "Erro inesperado ao sair:",
       error
-    );
-
-    showToast(
-      "Não foi possível sair da conta."
     );
   }
 }
 
 
 /* =========================================================
-   MENSAGEM DE AUTENTICAÇÃO
+   ENDEREÇO
    ========================================================= */
 
-function showAuthMessage(message) {
+async function saveAddress(event) {
 
-  const element =
-    document.getElementById(
-      "authMessage"
+  event.preventDefault();
+
+  if (!supabaseClient) {
+    showToast(
+      "Supabase não está conectado."
+    );
+    return;
+  }
+
+  const user =
+    await getCurrentUser();
+
+  if (!user) {
+
+    showToast(
+      "Entre na sua conta primeiro."
     );
 
-  if (!element) return;
+    closeAddressModal();
+    openLoginModal();
 
-  element.textContent =
-    message;
+    return;
+  }
+
+  const form =
+    elements.addressForm;
+
+  if (!form) return;
+
+  const formData =
+    new FormData(form);
+
+  const addressData = {
+    user_id: user.id,
+
+    cep:
+      formData.get("cep") || "",
+
+    rua:
+      formData.get("rua") || "",
+
+    numero:
+      formData.get("numero") || "",
+
+    complemento:
+      formData.get("complemento") || "",
+
+    bairro:
+      formData.get("bairro") || "",
+
+    cidade:
+      formData.get("cidade") || "",
+
+    estado:
+      formData.get("estado") || ""
+  };
+
+  try {
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("addresses")
+        .upsert(
+          addressData,
+          {
+            onConflict: "user_id"
+          }
+        );
+
+    if (error) {
+
+      console.error(
+        "Erro ao salvar endereço:",
+        error
+      );
+
+      showToast(
+        "Não foi possível salvar o endereço."
+      );
+
+      return;
+    }
+
+    showToast(
+      "Endereço salvo com sucesso!"
+    );
+
+    closeAddressModal();
+
+  } catch (error) {
+
+    console.error(
+      "Erro inesperado ao salvar endereço:",
+      error
+    );
+
+    showToast(
+      "Erro ao salvar endereço."
+    );
+  }
 }
 
 
-function translateSupabaseError(error) {
+/* =========================================================
+   TRADUÇÃO DE ERROS DO SUPABASE
+   ========================================================= */
 
-  const message =
-    error?.message ||
-    "Ocorreu um erro.";
+function getAuthErrorMessage(
+  message
+) {
 
   const normalized =
-    normalizeText(message);
-
+    String(message)
+      .toLowerCase();
 
   if (
     normalized.includes(
@@ -2402,15 +1876,13 @@ function translateSupabaseError(error) {
     return "E-mail ou senha incorretos.";
   }
 
-
   if (
     normalized.includes(
       "user already registered"
     )
   ) {
-    return "Esse e-mail já possui uma conta.";
+    return "Este e-mail já possui uma conta.";
   }
-
 
   if (
     normalized.includes(
@@ -2420,15 +1892,13 @@ function translateSupabaseError(error) {
     return "A senha precisa ter pelo menos 6 caracteres.";
   }
 
-
   if (
     normalized.includes(
       "email not confirmed"
     )
   ) {
-    return "Seu e-mail ainda não foi confirmado.";
+    return "Confirme seu e-mail antes de entrar.";
   }
-
 
   if (
     normalized.includes(
@@ -2438,152 +1908,90 @@ function translateSupabaseError(error) {
     return "Muitas tentativas. Aguarde um pouco e tente novamente.";
   }
 
-
-  return message;
-}
-
-
-/* =========================================================
-   SESSÃO DO SUPABASE
-   ========================================================= */
-
-async function loadCurrentUser() {
-
-  if (!supabaseClient) {
-    return;
-  }
-
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient.auth.getSession();
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    state.user =
-      data.session?.user || null;
-
-
-    if (state.user) {
-      await loadUserProfile();
-    }
-
-
-    updateUserDropdown();
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao verificar sessão:",
-      error
-    );
-
-  }
-}
-
-
-/* =========================================================
-   OBSERVAR LOGIN / LOGOUT
-   ========================================================= */
-
-function setupAuthListener() {
-
-  if (!supabaseClient) return;
-
-  supabaseClient.auth.onAuthStateChange(
-    async (_event, session) => {
-
-      state.user =
-        session?.user || null;
-
-      if (state.user) {
-        await loadUserProfile();
-      } else {
-        state.profile = null;
-      }
-
-      updateUserDropdown();
-    }
+  return (
+    message ||
+    "Ocorreu um erro. Tente novamente."
   );
 }
 
 
 /* =========================================================
-   CHECKOUT
+   LINKS DE LOGIN/CADASTRO
    ========================================================= */
 
-function handleCheckout() {
+function handleAccountAction(event) {
 
-  if (state.cart.length === 0) {
-
-    showToast(
-      "Seu carrinho está vazio."
+  const loginButton =
+    event.target.closest(
+      "[data-login]"
     );
+
+  if (loginButton) {
+
+    event.preventDefault();
+
+    closeUserDropdown();
+    openLoginModal();
 
     return;
   }
 
-
-  if (!state.user) {
-
-    closeCart();
-
-    openAuthModal("login");
-
-    showToast(
-      "Entre na sua conta para continuar."
+  const registerButton =
+    event.target.closest(
+      "[data-register]"
     );
+
+  if (registerButton) {
+
+    event.preventDefault();
+
+    closeUserDropdown();
+    openRegisterModal();
 
     return;
   }
 
+  const addressButton =
+    event.target.closest(
+      "[data-address]"
+    );
 
-  showToast(
-    "Checkout será configurado na próxima etapa."
-  );
+  if (addressButton) {
+
+    event.preventDefault();
+
+    closeUserDropdown();
+    openAddressModal();
+
+    return;
+  }
+
+  const logoutButton =
+    event.target.closest(
+      "[data-logout]"
+    );
+
+  if (logoutButton) {
+
+    event.preventDefault();
+
+    logoutUser();
+
+    return;
+  }
 }
 
 
 /* =========================================================
-   LINKS PLACEHOLDER
+   PLACEHOLDER
    ========================================================= */
 
 function handlePlaceholderLink(event) {
-
   event.preventDefault();
 
   showToast(
     "Esta área ainda faz parte da demonstração."
   );
-}
-
-
-/* =========================================================
-   BOTÃO INÍCIO
-   ========================================================= */
-
-function goToHome(event) {
-
-  if (event) {
-    event.preventDefault();
-  }
-
-  closeMobileMenu();
-  closeUserDropdown();
-  closeCart();
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
 }
 
 
@@ -2601,7 +2009,6 @@ function setupEvents() {
       "submit",
       handleSearch
     );
-
   }
 
 
@@ -2613,11 +2020,8 @@ function setupEvents() {
       "click",
       toggleMobileMenu
     );
-
   }
 
-
-  /* Overlay */
 
   if (elements.overlay) {
 
@@ -2625,7 +2029,6 @@ function setupEvents() {
       "click",
       closeMobileMenu
     );
-
   }
 
 
@@ -2637,7 +2040,6 @@ function setupEvents() {
       "click",
       toggleCart
     );
-
   }
 
 
@@ -2647,7 +2049,6 @@ function setupEvents() {
       "click",
       closeCart
     );
-
   }
 
 
@@ -2657,7 +2058,6 @@ function setupEvents() {
       "click",
       closeCart
     );
-
   }
 
 
@@ -2669,7 +2069,75 @@ function setupEvents() {
       "click",
       toggleUserDropdown
     );
+  }
 
+
+  /* Formulário de login */
+
+  if (elements.loginForm) {
+
+    elements.loginForm.addEventListener(
+      "submit",
+      async event => {
+
+        event.preventDefault();
+
+        const email =
+          elements.loginEmail?.value
+            .trim();
+
+        const password =
+          elements.loginPassword?.value;
+
+        await loginUser(
+          email,
+          password
+        );
+      }
+    );
+  }
+
+
+  /* Formulário de cadastro */
+
+  if (elements.registerForm) {
+
+    elements.registerForm.addEventListener(
+      "submit",
+      async event => {
+
+        event.preventDefault();
+
+        await registerUser({
+          name:
+            elements.registerName?.value
+              .trim(),
+
+          email:
+            elements.registerEmail?.value
+              .trim(),
+
+          password:
+            elements.registerPassword?.value,
+
+          passwordConfirm:
+            elements
+              .registerPasswordConfirm
+              ?.value
+        });
+      }
+    );
+  }
+
+
+  /* Formulário de endereço */
+
+  if (elements.addressForm) {
+
+    elements.addressForm.addEventListener(
+      "submit",
+      saveAddress
+    );
   }
 
 
@@ -2681,7 +2149,6 @@ function setupEvents() {
       "click",
       handleCheckout
     );
-
   }
 
 
@@ -2708,25 +2175,8 @@ function setupEvents() {
         if (filter) {
 
           setFilter(filter);
-
           closeMobileMenu();
-
         }
-
-        return;
-      }
-
-
-      /* Início */
-
-      const homeLink =
-        event.target.closest(
-          "[data-home-link]"
-        );
-
-      if (homeLink) {
-
-        goToHome(event);
 
         return;
       }
@@ -2766,7 +2216,7 @@ function setupEvents() {
       }
 
 
-      /* Menos */
+      /* Quantidade - */
 
       const minusButton =
         event.target.closest(
@@ -2784,7 +2234,7 @@ function setupEvents() {
       }
 
 
-      /* Mais */
+      /* Quantidade + */
 
       const plusButton =
         event.target.closest(
@@ -2802,50 +2252,9 @@ function setupEvents() {
       }
 
 
-      /* Ações da conta */
+      /* Login / cadastro / endereço / logout */
 
-      const loginAction =
-        event.target.closest(
-          "[data-login-action]"
-        );
-
-      if (loginAction) {
-
-        const action =
-          loginAction.dataset.loginAction;
-
-        if (action === "login") {
-
-          openAuthModal("login");
-
-          return;
-        }
-
-
-        if (action === "signup") {
-
-          openAuthModal("signup");
-
-          return;
-        }
-
-
-        if (action === "profile") {
-
-          showProfile();
-
-          return;
-        }
-
-
-        if (action === "logout") {
-
-          logoutUser();
-
-          return;
-        }
-
-      }
+      handleAccountAction(event);
 
 
       /* Fechar dropdown */
@@ -2858,6 +2267,87 @@ function setupEvents() {
       if (closeDropdownButton) {
 
         closeUserDropdown();
+
+        return;
+      }
+
+
+      /* Fechar modal login */
+
+      const closeLoginButton =
+        event.target.closest(
+          "[data-close-login]"
+        );
+
+      if (closeLoginButton) {
+
+        closeLoginModal();
+
+        return;
+      }
+
+
+      /* Fechar modal cadastro */
+
+      const closeRegisterButton =
+        event.target.closest(
+          "[data-close-register]"
+        );
+
+      if (closeRegisterButton) {
+
+        closeRegisterModal();
+
+        return;
+      }
+
+
+      /* Fechar endereço */
+
+      const closeAddressButton =
+        event.target.closest(
+          "[data-close-address]"
+        );
+
+      if (closeAddressButton) {
+
+        closeAddressModal();
+
+        return;
+      }
+
+
+      /* Abrir cadastro */
+
+      const goRegisterButton =
+        event.target.closest(
+          "[data-open-register]"
+        );
+
+      if (goRegisterButton) {
+
+        event.preventDefault();
+
+        closeLoginModal();
+        openRegisterModal();
+
+        return;
+      }
+
+
+      /* Abrir login */
+
+      const goLoginButton =
+        event.target.closest(
+          "[data-open-login]"
+        );
+
+      if (goLoginButton) {
+
+        event.preventDefault();
+
+        closeRegisterModal();
+        openLoginModal();
 
         return;
       }
@@ -2878,7 +2368,7 @@ function setupEvents() {
       }
 
 
-      /* Placeholder */
+      /* Links placeholder */
 
       const placeholder =
         event.target.closest(
@@ -2887,15 +2377,13 @@ function setupEvents() {
 
       if (placeholder) {
 
-        handlePlaceholderLink(
-          event
-        );
+        handlePlaceholderLink(event);
 
         return;
       }
 
 
-      /* Fora do dropdown */
+      /* Clique fora do dropdown */
 
       if (
         elements.userDropdown &&
@@ -2909,9 +2397,7 @@ function setupEvents() {
       ) {
 
         closeUserDropdown();
-
       }
-
     }
   );
 
@@ -2922,15 +2408,51 @@ function setupEvents() {
     "keydown",
     event => {
 
-      if (event.key !== "Escape") {
+      if (
+        event.key !== "Escape"
+      ) {
         return;
       }
 
       closeCart();
       closeMobileMenu();
       closeUserDropdown();
-      closeAuthModal();
+      closeLoginModal();
+      closeRegisterModal();
+      closeAddressModal();
+    }
+  );
+}
 
+
+/* =========================================================
+   SUPABASE — OBSERVAR LOGIN
+   ========================================================= */
+
+function setupAuthListener() {
+
+  if (!supabaseClient) {
+    return;
+  }
+
+  supabaseClient.auth.onAuthStateChange(
+    async (event, session) => {
+
+      console.log(
+        "Estado de autenticação:",
+        event
+      );
+
+      if (session?.user) {
+
+        await loadUserProfile();
+
+      } else {
+
+        currentProfile = null;
+      }
+
+      updateAccountUI();
     }
   );
 }
@@ -2942,7 +2464,9 @@ function setupEvents() {
 
 function updateCurrentYear() {
 
-  if (!elements.anoAtual) return;
+  if (!elements.anoAtual) {
+    return;
+  }
 
   elements.anoAtual.textContent =
     new Date().getFullYear();
@@ -2955,37 +2479,40 @@ function updateCurrentYear() {
 
 async function init() {
 
-  loadCart();
-
   renderCategoryCards();
+
   renderProducts();
+
   renderOffers();
+
   renderCart();
 
   updateCartCount();
-  updateActiveFilters();
-  updateCurrentYear();
 
-  createAuthModal();
+  updateActiveFilters();
+
+  updateCurrentYear();
 
   setupEvents();
 
-  await loadCurrentUser();
-
   setupAuthListener();
 
+  if (supabaseClient) {
+
+    await loadUserProfile();
+
+    updateAccountUI();
+  }
+
   console.log(
-    "Amora Make inicializada."
+    "Amora Make inicializado."
   );
 }
 
 
-/* =========================================================
-   START
-   ========================================================= */
-
 if (
-  document.readyState === "loading"
+  document.readyState ===
+  "loading"
 ) {
 
   document.addEventListener(
@@ -2996,6 +2523,4 @@ if (
 } else {
 
   init();
-
 }
-```
