@@ -416,6 +416,8 @@ function getProductImage(product) {
    ESTADO
    ========================================================= */
 
+const CART_STORAGE_KEY = "amora_make_cart";
+
 const state = {
   filter: "todos",
   query: "",
@@ -425,6 +427,96 @@ const state = {
 
 let currentProfile = null;
 let toastTimer = null;
+
+
+/* =========================================================
+   PERSISTÊNCIA DO CARRINHO
+   ========================================================= */
+
+function saveCart() {
+  try {
+    if (state.cart.length === 0) {
+      localStorage.removeItem(
+        CART_STORAGE_KEY
+      );
+
+      return;
+    }
+
+    localStorage.setItem(
+      CART_STORAGE_KEY,
+      JSON.stringify(state.cart)
+    );
+
+  } catch (error) {
+    console.error(
+      "Erro ao salvar carrinho:",
+      error
+    );
+  }
+}
+
+
+function loadCart() {
+  try {
+    const savedCart =
+      localStorage.getItem(
+        CART_STORAGE_KEY
+      );
+
+    if (!savedCart) {
+      state.cart = [];
+      return;
+    }
+
+    const parsedCart =
+      JSON.parse(savedCart);
+
+    if (!Array.isArray(parsedCart)) {
+      state.cart = [];
+      return;
+    }
+
+    state.cart =
+      parsedCart
+        .filter(item =>
+          item &&
+          typeof item.id === "string" &&
+          PRODUCTS.some(
+            product =>
+              product.id === item.id
+          )
+        )
+        .map(item => ({
+          id: item.id,
+          quantity: Math.max(
+            1,
+            Number(item.quantity) || 1
+          )
+        }));
+
+    saveCart();
+
+  } catch (error) {
+    console.error(
+      "Erro ao carregar carrinho:",
+      error
+    );
+
+    state.cart = [];
+
+    try {
+      localStorage.removeItem(
+        CART_STORAGE_KEY
+      );
+    } catch (storageError) {
+      console.error(
+        "Erro ao limpar carrinho salvo:",
+        storageError
+      );
+    }
+  }
+}
 
 
 /* =========================================================
@@ -824,6 +916,8 @@ function addToCart(productId) {
     });
   }
 
+  saveCart();
+
   updateCartCount();
   renderCart();
   renderProducts();
@@ -840,6 +934,8 @@ function removeFromCart(productId) {
     state.cart.filter(
       item => item.id !== productId
     );
+
+  saveCart();
 
   updateCartCount();
   renderCart();
@@ -864,6 +960,8 @@ function changeQuantity(productId, amount) {
     removeFromCart(productId);
     return;
   }
+
+  saveCart();
 
   updateCartCount();
   renderCart();
@@ -922,6 +1020,7 @@ function renderCart() {
 
   if (validItems.length !== state.cart.length) {
     state.cart = validItems;
+    saveCart();
   }
 
   const hasItems =
@@ -2531,6 +2630,9 @@ function updateCurrentYear() {
    ========================================================= */
 
 async function init() {
+
+  /* Restaurar carrinho salvo antes de renderizar */
+  loadCart();
 
   renderCategoryCards();
 
