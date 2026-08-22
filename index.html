@@ -1,6 +1,3 @@
-# Amora Make — index.html
-
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -870,7 +867,7 @@
         <div>
 
           <p class="eyebrow">
-            Área da cliente
+            Eu
           </p>
 
           <h2 id="accountModalTitle">
@@ -908,11 +905,76 @@
       </div>
 
 
+      <!-- ===================== BOAS-VINDAS / ÁREA "EU" ===================== -->
+
+      <div
+        class="account-welcome"
+        id="accountWelcome"
+      >
+
+        <div class="account-welcome-icon">
+
+          <svg
+            width="36"
+            height="36"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+
+            <circle
+              cx="12"
+              cy="8"
+              r="4"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+
+            <path
+              d="M4 20c1.8-4 5-6 8-6s6.2 2 8 6"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+
+          </svg>
+
+        </div>
+
+        <h3 class="account-welcome-title">
+          Sua área na Amora Make
+        </h3>
+
+        <p class="account-welcome-text">
+          Entre na sua conta para ver seus dados
+          e, em breve, acompanhar seus pedidos.
+        </p>
+
+        <button
+          type="button"
+          class="btn btn-primary btn-full"
+          id="welcomeLoginBtn"
+        >
+          Entrar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline btn-full"
+          id="welcomeRegisterBtn"
+        >
+          Criar conta
+        </button>
+
+      </div>
+
+
       <!-- ===================== LOGIN ===================== -->
 
       <form
         id="loginForm"
         class="account-form"
+        hidden
       >
 
         <label for="loginEmail">
@@ -1188,7 +1250,7 @@
       </form>
 
 
-      <!-- ===================== CONTA LOGADA ===================== -->
+      <!-- ===================== CONTA LOGADA / "EU" ===================== -->
 
       <div
         id="loggedAccount"
@@ -1226,28 +1288,92 @@
         </div>
 
 
-        <p class="eyebrow">
-          Bem-vinda
-        </p>
-
         <h3 id="loggedUserName">
           Cliente
         </h3>
 
-        <p id="loggedUserEmail">
-          —
-        </p>
 
+        <div class="account-section">
 
-        <div class="logged-address">
-
-          <h4>
-            Endereço de entrega
+          <h4 class="account-section-title">
+            Minha conta
           </h4>
 
-          <p id="loggedUserAddress">
-            Endereço não informado.
-          </p>
+          <div class="account-info-list">
+
+            <div class="account-info-row">
+
+              <span class="account-info-label">
+                E-mail
+              </span>
+
+              <span
+                class="account-info-value"
+                id="loggedUserEmail"
+              >
+                —
+              </span>
+
+            </div>
+
+            <div class="account-info-row">
+
+              <span class="account-info-label">
+                Endereço
+              </span>
+
+              <span
+                class="account-info-value"
+                id="loggedUserAddress"
+              >
+                Endereço não informado.
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="account-section">
+
+          <h4 class="account-section-title">
+            Meus pedidos
+          </h4>
+
+          <div
+            class="account-orders-empty"
+            id="ordersEmpty"
+          >
+            <p id="ordersEmptyText">
+              Você ainda não possui pedidos.
+            </p>
+          </div>
+
+          <div
+            class="orders-list"
+            id="ordersList"
+            hidden
+          ></div>
+
+          <div
+            class="order-detail"
+            id="orderDetail"
+            hidden
+          >
+
+            <button
+              type="button"
+              class="order-detail-back"
+              id="orderDetailBack"
+            >
+              ← Voltar para meus pedidos
+            </button>
+
+            <div id="orderDetailContent"></div>
+
+          </div>
 
         </div>
 
@@ -1270,6 +1396,117 @@
   <div
     class="account-overlay"
     id="accountOverlay"
+    hidden
+  ></div>
+
+
+  <!-- ===================== CONFIRMAÇÃO DE PEDIDO ===================== -->
+
+  <div
+    class="account-modal"
+    id="orderConfirmModal"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="orderConfirmTitle"
+  >
+
+    <div class="account-modal-content order-confirm-content">
+
+      <div class="order-confirm-icon">
+
+        <svg
+          width="30"
+          height="30"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M5 12.5l4.5 4.5L19 7.5"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+        </svg>
+
+      </div>
+
+      <h2
+        id="orderConfirmTitle"
+        class="order-confirm-title"
+      >
+        Pedido realizado com sucesso!
+      </h2>
+
+      <div class="order-confirm-summary">
+
+        <div class="order-confirm-row">
+          <span class="account-info-label">Pedido</span>
+          <span
+            class="account-info-value"
+            id="orderConfirmNumber"
+          >
+            —
+          </span>
+        </div>
+
+        <div class="order-confirm-row">
+          <span class="account-info-label">Total</span>
+          <span
+            class="account-info-value"
+            id="orderConfirmTotal"
+          >
+            —
+          </span>
+        </div>
+
+        <div class="order-confirm-row">
+          <span class="account-info-label">Itens</span>
+          <span
+            class="account-info-value"
+            id="orderConfirmItems"
+          >
+            —
+          </span>
+        </div>
+
+        <div class="order-confirm-row">
+          <span class="account-info-label">Status</span>
+          <span class="order-status-badge order-status-aguardando_pagamento">
+            Aguardando pagamento
+          </span>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary btn-full"
+        id="orderConfirmViewBtn"
+      >
+        Ver meu pedido
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline btn-full"
+        id="orderConfirmContinueBtn"
+      >
+        Continuar comprando
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="account-overlay"
+    id="orderConfirmOverlay"
     hidden
   ></div>
 
@@ -1703,4 +1940,3 @@
 
 </body>
 </html>
-```
