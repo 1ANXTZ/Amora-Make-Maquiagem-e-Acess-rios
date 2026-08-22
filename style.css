@@ -196,6 +196,10 @@ p {
   border-bottom: 1px solid var(--color-border);
 }
 
+.site-header::after {
+  content: none;
+}
+
 .header-top {
   padding: 18px 0;
 }
@@ -1701,28 +1705,59 @@ main {
     grid-row: 2;
 
     max-width: none;
+
+    margin-top: 2px;
   }
 
-  /* ---------- Nav fixa ---------- */
+  /* ---------- Nav removida no mobile ----------
+
+     No mobile o NAV de categorias some e o menu
+     mobile assume a navegação. Para o cabeçalho
+     não parecer "cortado", ele ganha mais respiro
+     vertical, sombra e uma linha de destaque —
+     ocupando uma presença visual parecida com a
+     que o NAV tinha.
+  */
 
   .category-nav {
-    display: flex;
-
-    height: var(--category-nav-height);
+    display: none;
   }
 
-  .category-nav-list {
-    width: 100%;
-
-    padding-inline: 14px;
-
-    justify-content: flex-start;
+  main {
+    padding-top: 0;
   }
 
-  .category-nav-list a {
-    padding: 0 12px;
+  .site-header {
+    padding-bottom: 14px;
 
-    font-size: 0.76rem;
+    box-shadow: 0 10px 26px rgba(36, 28, 32, 0.07);
+  }
+
+  .site-header::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 3px;
+
+    background: linear-gradient(
+      90deg,
+      var(--color-berry-bright),
+      var(--color-gold)
+    );
+
+    opacity: 0.9;
+  }
+
+  .header-top {
+    padding: 16px 0 18px;
+  }
+
+  .header-inner {
+    row-gap: 12px;
   }
 
   .user-dropdown {
@@ -2269,6 +2304,563 @@ main {
   margin: 0;
 
   line-height: 1.5;
+}
+
+/* =========================================================
+   ÁREA "EU" — BOAS-VINDAS (DESLOGADO)
+   ========================================================= */
+
+.account-welcome {
+  text-align: center;
+}
+
+.account-welcome-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 68px;
+  height: 68px;
+
+  margin: 0 auto 16px;
+
+  border-radius: 50%;
+
+  background: #f7e8ee;
+  color: #6B1E3C;
+}
+
+.account-welcome-title {
+  margin: 0 0 8px;
+
+  font-family: "Fraunces", serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+
+  color: #4a2033;
+}
+
+.account-welcome-text {
+  margin: 0 0 22px;
+
+  color: #6c5961;
+
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.account-welcome .btn + .btn {
+  margin-top: 10px;
+}
+
+/* =========================================================
+   ÁREA "EU" — MINHA CONTA / MEUS PEDIDOS (LOGADO)
+   ========================================================= */
+
+.account-section {
+  margin-top: 22px;
+  padding-top: 18px;
+
+  border-top: 1px solid #eee2e7;
+
+  text-align: left;
+}
+
+.account-section-title {
+  margin: 0 0 12px;
+
+  font-family: "Fraunces", serif;
+  font-size: 1rem;
+  font-weight: 500;
+
+  color: #6B1E3C;
+}
+
+.account-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.account-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  background: #faf5f7;
+}
+
+.account-info-label {
+  color: #a3899a;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.account-info-value {
+  color: #3d2430;
+
+  font-size: 14px;
+  line-height: 1.45;
+
+  word-break: break-word;
+}
+
+.account-orders-empty {
+  padding: 26px 16px;
+
+  border-radius: 12px;
+
+  background: #faf5f7;
+
+  color: #806c75;
+
+  font-size: 14px;
+  text-align: center;
+}
+
+.account-orders-empty p {
+  margin: 0;
+}
+
+.logged-account .btn-full {
+  margin-top: 22px;
+}
+
+/* =========================================================
+   MEUS PEDIDOS
+   ========================================================= */
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  width: 100%;
+
+  padding: 14px;
+
+  border: 1px solid #eee2e7;
+  border-radius: 14px;
+
+  background: #fff;
+  text-align: left;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.order-card:hover {
+  border-color: #d9c3cc;
+  box-shadow: 0 6px 18px rgba(36, 28, 32, 0.06);
+}
+
+.order-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.order-card-id {
+  font-weight: 800;
+  font-size: 13px;
+  color: #4a2033;
+}
+
+.order-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+
+  color: #806c75;
+  font-size: 12px;
+}
+
+/* ---------- Badge de status ---------- */
+
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  background: #f3e6ea;
+  color: #6B1E3C;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+
+  white-space: nowrap;
+}
+
+.order-status-aguardando_pagamento {
+  background: #faf1de;
+  color: #8a6a1f;
+}
+
+.order-status-pagamento_confirmado {
+  background: #f5e3ea;
+  color: #8e2f55;
+}
+
+.order-status-preparando {
+  background: #f7e3ec;
+  color: #a3355e;
+}
+
+.order-status-enviado {
+  background: #f3d9e4;
+  color: #8e2f55;
+}
+
+.order-status-entregue {
+  background: #6B1E3C;
+  color: #fff;
+}
+
+.order-status-cancelado {
+  background: #f4e2e2;
+  color: #8a2f2f;
+}
+
+/* ---------- Detalhe do pedido ---------- */
+
+.order-detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 16px;
+  padding: 0;
+
+  border: 0;
+
+  background: none;
+  color: #6B1E3C;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.order-detail-back:hover {
+  text-decoration: underline;
+}
+
+.order-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 18px;
+}
+
+.order-detail-id {
+  margin: 0;
+
+  color: #4a2033;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.order-detail-date {
+  margin: 2px 0 0;
+
+  color: #806c75;
+
+  font-size: 12px;
+}
+
+/* ---------- Acompanhamento (stepper) ---------- */
+
+.order-tracking {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 22px;
+}
+
+.order-tracking-step {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 7px 0;
+}
+
+.order-tracking-step:not(:last-child)::after {
+  content: "";
+
+  position: absolute;
+  left: 5px;
+  top: 24px;
+  bottom: -7px;
+
+  width: 2px;
+
+  background: #eee2e7;
+}
+
+.order-tracking-dot {
+  flex: 0 0 12px;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+
+  background: #eee2e7;
+
+  position: relative;
+  z-index: 1;
+}
+
+.order-tracking-label {
+  color: #a3899a;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.order-tracking-step-done .order-tracking-dot {
+  background: var(--color-berry-bright);
+}
+
+.order-tracking-step-done:not(:last-child)::after {
+  background: var(--color-berry-bright);
+}
+
+.order-tracking-step-done .order-tracking-label {
+  color: #4a2033;
+}
+
+.order-tracking-step-current .order-tracking-dot {
+  background: #6B1E3C;
+  box-shadow: 0 0 0 4px rgba(107, 30, 60, 0.15);
+}
+
+.order-tracking-step-current .order-tracking-label {
+  color: #6B1E3C;
+  font-weight: 800;
+}
+
+.order-tracking-cancelled {
+  margin-bottom: 18px;
+}
+
+/* ---------- Itens e endereço do pedido ---------- */
+
+.order-detail-section {
+  margin-top: 20px;
+  padding-top: 16px;
+
+  border-top: 1px solid #eee2e7;
+}
+
+.order-detail-section h5 {
+  margin: 0 0 10px;
+
+  color: #6B1E3C;
+
+  font-family: "Fraunces", serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.order-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background: #faf5f7;
+}
+
+.order-item-name {
+  margin: 0;
+
+  color: #3d2430;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.order-item-qty {
+  margin: 2px 0 0;
+
+  color: #806c75;
+
+  font-size: 12px;
+}
+
+.order-item-subtotal {
+  color: #6B1E3C;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.order-detail-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 12px;
+  padding-top: 12px;
+
+  border-top: 1px dashed #eee2e7;
+
+  color: #4a2033;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.order-detail-address {
+  margin: 0;
+
+  color: #3d2430;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.order-payment-status {
+  margin: 0;
+
+  color: #3d2430;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.order-payment-method {
+  margin: 4px 0 0;
+
+  color: #806c75;
+
+  font-size: 12px;
+}
+
+.order-reorder-btn {
+  margin-bottom: 20px;
+}
+
+.order-cancel-btn {
+  margin-bottom: 20px;
+
+  border-color: #a51d3d;
+  color: #a51d3d;
+}
+
+.order-cancel-btn:hover {
+  background: #a51d3d;
+  color: #fff;
+}
+
+/* ---------- Botão desabilitado (pedido em criação) ---------- */
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================================
+   CONFIRMAÇÃO DE PEDIDO
+   ========================================================= */
+
+.order-confirm-content {
+  text-align: center;
+}
+
+.order-confirm-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 64px;
+  height: 64px;
+
+  margin: 0 auto 16px;
+
+  border-radius: 50%;
+
+  background: #f7e8ee;
+  color: #6B1E3C;
+}
+
+.order-confirm-title {
+  margin: 0 0 20px;
+
+  color: #4a2033;
+
+  font-family: "Fraunces", serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.order-confirm-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-bottom: 22px;
+
+  text-align: left;
+}
+
+.order-confirm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+
+  background: #faf5f7;
+}
+
+.order-confirm-row .account-info-label {
+  flex: 0 0 auto;
+}
+
+.order-confirm-content .btn + .btn {
+  margin-top: 10px;
 }
 
 /* Evita scroll da página quando o popup está aberto */
