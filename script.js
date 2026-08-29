@@ -359,27 +359,16 @@ const FEATURED_CATEGORIES = [
    ========================================================= */
 
 const ORDER_STATUS_LABELS = {
-  aguardando_pagamento: "Aguardando pagamento",
-  pagamento_confirmado: "Pagamento confirmado",
-  preparando: "Preparando",
-  enviado: "Enviado",
-  entregue: "Entregue",
-  cancelado: "Cancelado"
-};
-
-const PAYMENT_STATUS_LABELS = {
-  pendente: "Pagamento pendente",
-  pago: "Pagamento confirmado",
-  recusado: "Pagamento recusado",
-  estornado: "Pagamento estornado"
+  pending: "Aguardando pagamento",
+  approved: "Pagamento aprovado",
+  rejected: "Pagamento recusado",
+  cancelled: "Pedido cancelado",
+  expired: "Pagamento expirado"
 };
 
 const ORDER_TRACKING_STEPS = [
-  { status: "aguardando_pagamento", label: "Pedido realizado" },
-  { status: "pagamento_confirmado", label: "Pagamento confirmado" },
-  { status: "preparando", label: "Preparando produto" },
-  { status: "enviado", label: "Enviado" },
-  { status: "entregue", label: "Entregue" }
+  { status: "pending", label: "Pedido realizado" },
+  { status: "approved", label: "Pagamento aprovado" }
 ];
 
 
@@ -578,6 +567,14 @@ const elements = {
   loginEmail: document.getElementById("loginEmail"),
   loginPassword: document.getElementById("loginPassword"),
   loginError: document.getElementById("loginError"),
+  loginSubmitBtn: document.getElementById("loginSubmitBtn"),
+  showForgotPasswordBtn: document.getElementById("showForgotPasswordBtn"),
+
+  forgotPasswordForm: document.getElementById("forgotPasswordForm"),
+  forgotPasswordEmail: document.getElementById("forgotPasswordEmail"),
+  forgotPasswordError: document.getElementById("forgotPasswordError"),
+  forgotPasswordSubmitBtn: document.getElementById("forgotPasswordSubmitBtn"),
+  backToLoginBtn: document.getElementById("backToLoginBtn"),
 
   registerForm: document.getElementById("registerForm"),
   registerName: document.getElementById("registerName"),
@@ -592,6 +589,7 @@ const elements = {
   registerCity: document.getElementById("registerCity"),
   registerState: document.getElementById("registerState"),
   registerError: document.getElementById("registerError"),
+  registerSubmitBtn: document.getElementById("registerSubmitBtn"),
 
   showRegisterBtn: document.getElementById("showRegisterBtn"),
   showLoginBtn: document.getElementById("showLoginBtn"),
@@ -1188,29 +1186,41 @@ function renderCart() {
 }
 
 
+let isCheckoutInProgress = false;
+
+
 async function handleCheckout() {
-  if (state.cart.length === 0) {
-    showToast(
-      "Seu carrinho está vazio."
-    );
-    return;
+  if (isCheckoutInProgress) return;
+
+  isCheckoutInProgress = true;
+
+  try {
+    if (state.cart.length === 0) {
+      showToast(
+        "Seu carrinho está vazio."
+      );
+      return;
+    }
+
+    const user =
+      await getCurrentUser();
+
+    if (!user) {
+      showToast(
+        "Entre na sua conta para continuar."
+      );
+
+      closeCart();
+      await openAccountModal("login");
+
+      return;
+    }
+
+    await createOrderFromCart(user);
+
+  } finally {
+    isCheckoutInProgress = false;
   }
-
-  const user =
-    await getCurrentUser();
-
-  if (!user) {
-    showToast(
-      "Entre na sua conta para continuar."
-    );
-
-    closeCart();
-    await openAccountModal("login");
-
-    return;
-  }
-
-  await createOrderFromCart(user);
 }
 
 
@@ -1241,7 +1251,7 @@ async function createOrderFromCart(user) {
 
   try {
 
-    /* 1. Buscar endereço cadastrado */
+    /* 1. Buscar o endereço padrão do usuário */
 
     const {
       data: addressData,
@@ -1251,6 +1261,7 @@ async function createOrderFromCart(user) {
         .from("addresses")
         .select("*")
         .eq("user_id", user.id)
+        .eq("is_default", true)
         .maybeSingle();
 
     if (addressError) {
@@ -1295,17 +1306,11 @@ async function createOrderFromCart(user) {
           const unitPrice =
             Number(product.price);
 
-          const subtotal =
-            Number(
-              (unitPrice * quantity).toFixed(2)
-            );
-
           return {
             product_id: product.id,
             product_name: product.name,
             unit_price: unitPrice,
-            quantity,
-            subtotal
+            quantity
           };
         })
         .filter(Boolean);
@@ -1318,17 +1323,13 @@ async function createOrderFromCart(user) {
       return;
     }
 
-    const total =
-      Number(
-        orderItemsPayload
-          .reduce(
-            (sum, item) => sum + item.subtotal,
-            0
-          )
-          .toFixed(2)
-      );
-
-    /* 3. Criar o pedido (com snapshot do endereço) */
+    /* 3. Criar o pedido.
+       subtotal/total só recebem 0 para satisfazer os
+       NOT NULL da tabela — o trigger do banco
+       (recalculate_order_totals) recalcula os valores
+       reais assim que os order_items forem inseridos.
+       shipping e payment_provider ficam de fora para
+       usar os defaults já definidos no banco. */
 
     const {
       data: orderData,
@@ -1338,16 +1339,18 @@ async function createOrderFromCart(user) {
         .from("orders")
         .insert({
           user_id: user.id,
-          status: "aguardando_pagamento",
-          payment_status: "pendente",
-          total,
+          status: "pending",
+          subtotal: 0,
+          total: 0,
+
+          recipient_name: addressData.recipient_name || null,
           cep: addressData.cep || null,
-          rua: addressData.rua || null,
-          numero: addressData.numero || null,
-          complemento: addressData.complemento || null,
-          bairro: addressData.bairro || null,
-          cidade: addressData.cidade || null,
-          estado: addressData.estado || null
+          street: addressData.street || null,
+          number: addressData.number || null,
+          complement: addressData.complement || null,
+          neighborhood: addressData.neighborhood || null,
+          city: addressData.city || null,
+          state: addressData.state || null
         })
         .select()
         .single();
@@ -1365,12 +1368,17 @@ async function createOrderFromCart(user) {
       return;
     }
 
-    /* 4. Criar os itens do pedido */
+    /* 4. Criar os itens do pedido.
+       Somente as colunas reais de order_items — sem
+       "subtotal", que não existe nessa tabela. */
 
     const itemsToInsert =
       orderItemsPayload.map(item => ({
-        ...item,
-        order_id: orderData.id
+        order_id: orderData.id,
+        product_id: item.product_id,
+        product_name: item.product_name,
+        unit_price: item.unit_price,
+        quantity: item.quantity
       }));
 
     const {
@@ -1386,6 +1394,37 @@ async function createOrderFromCart(user) {
         itemsError
       );
 
+      /* O pedido em orders já foi criado, mas os itens
+         falharam. Só tenta cancelar pela RPC existente se
+         ele ainda estiver "pending" — evita deixar um
+         pedido vazio/órfão ativo no histórico do cliente. */
+      if (orderData.status === "pending") {
+        try {
+          const {
+            error: cancelError
+          } =
+            await supabaseClient.rpc(
+              "cancel_order",
+              {
+                p_order_id: orderData.id
+              }
+            );
+
+          if (cancelError) {
+            console.error(
+              "Erro ao cancelar pedido órfão após falha nos itens:",
+              cancelError
+            );
+          }
+
+        } catch (cancelException) {
+          console.error(
+            "Erro inesperado ao cancelar pedido órfão após falha nos itens:",
+            cancelException
+          );
+        }
+      }
+
       showToast(
         "Não foi possível concluir seu pedido. Tente novamente."
       );
@@ -1393,7 +1432,32 @@ async function createOrderFromCart(user) {
       return;
     }
 
-    /* 5. Limpar o carrinho somente após o sucesso */
+    /* 5. Buscar o pedido novamente para obter os valores
+       oficiais (subtotal, shipping, total) já recalculados
+       pelo trigger do banco — nunca usar o total calculado
+       no navegador como fonte de verdade. */
+
+    const {
+      data: refreshedOrder,
+      error: refreshError
+    } =
+      await supabaseClient
+        .from("orders")
+        .select("*")
+        .eq("id", orderData.id)
+        .single();
+
+    if (refreshError) {
+      console.error(
+        "Erro ao buscar total oficial do pedido:",
+        refreshError
+      );
+    }
+
+    const finalOrder =
+      refreshedOrder || orderData;
+
+    /* 6. Limpar o carrinho somente após o sucesso */
 
     state.cart = [];
     saveCart();
@@ -1408,8 +1472,8 @@ async function createOrderFromCart(user) {
     await loadUserOrders(user);
 
     openOrderConfirmModal({
-      id: orderData.id,
-      total,
+      id: finalOrder.id,
+      total: finalOrder.total,
       itemCount: orderItemsPayload.reduce(
         (sum, item) => sum + item.quantity,
         0
@@ -1661,6 +1725,10 @@ function showWelcomeView() {
     elements.registerForm.hidden = true;
   }
 
+  if (elements.forgotPasswordForm) {
+    elements.forgotPasswordForm.hidden = true;
+  }
+
   if (elements.loggedAccount) {
     elements.loggedAccount.hidden = true;
   }
@@ -1685,6 +1753,10 @@ function showLoginView() {
 
   if (elements.registerForm) {
     elements.registerForm.hidden = true;
+  }
+
+  if (elements.forgotPasswordForm) {
+    elements.forgotPasswordForm.hidden = true;
   }
 
   if (elements.loggedAccount) {
@@ -1715,6 +1787,10 @@ function showRegisterView() {
     elements.registerForm.hidden = false;
   }
 
+  if (elements.forgotPasswordForm) {
+    elements.forgotPasswordForm.hidden = true;
+  }
+
   if (elements.loggedAccount) {
     elements.loggedAccount.hidden = true;
   }
@@ -1730,10 +1806,43 @@ function showRegisterView() {
 }
 
 
+function showForgotPasswordView() {
+  if (elements.accountWelcome) {
+    elements.accountWelcome.hidden = true;
+  }
+
+  if (elements.loginForm) {
+    elements.loginForm.hidden = true;
+  }
+
+  if (elements.registerForm) {
+    elements.registerForm.hidden = true;
+  }
+
+  if (elements.loggedAccount) {
+    elements.loggedAccount.hidden = true;
+  }
+
+  if (elements.forgotPasswordForm) {
+    elements.forgotPasswordForm.hidden = false;
+  }
+
+  if (elements.accountModalTitle) {
+    elements.accountModalTitle.textContent =
+      "Recuperar senha";
+  }
+
+  clearAccountErrors();
+
+  elements.forgotPasswordEmail?.focus();
+}
+
+
 function clearAccountErrors() {
   [
     elements.loginError,
-    elements.registerError
+    elements.registerError,
+    elements.forgotPasswordError
   ].forEach(error => {
     if (error) {
       error.textContent = "";
@@ -1776,6 +1885,7 @@ async function loadAddressForUser(user) {
         .from("addresses")
         .select("*")
         .eq("user_id", user.id)
+        .eq("is_default", true)
         .maybeSingle();
 
     if (error) {
@@ -1798,12 +1908,12 @@ async function loadAddressForUser(user) {
     }
 
     const parts = [
-      data.rua,
-      data.numero,
-      data.complemento,
-      data.bairro,
-      data.cidade,
-      data.estado,
+      data.street,
+      data.number,
+      data.complement,
+      data.neighborhood,
+      data.city,
+      data.state,
       data.cep
     ].filter(Boolean);
 
@@ -1855,12 +1965,13 @@ function formatOrderDate(value) {
 
 function formatOrderAddress(order) {
   const parts = [
-    order?.rua,
-    order?.numero,
-    order?.complemento,
-    order?.bairro,
-    order?.cidade,
-    order?.estado,
+    order?.recipient_name,
+    order?.street,
+    order?.number,
+    order?.complement,
+    order?.neighborhood,
+    order?.city,
+    order?.state,
     order?.cep
   ].filter(Boolean);
 
@@ -2064,8 +2175,10 @@ function renderOrderDetail(order) {
     ORDER_STATUS_LABELS[order.status] ||
     order.status;
 
-  const isCancelled =
-    order.status === "cancelado";
+  const isFinalAlternateState =
+    order.status === "cancelled" ||
+    order.status === "rejected" ||
+    order.status === "expired";
 
   const currentIndex =
     ORDER_TRACKING_STEPS.findIndex(
@@ -2090,20 +2203,15 @@ function renderOrderDetail(order) {
           </div>
 
           <span class="order-item-subtotal">
-            ${formatBRL(item.subtotal)}
+            ${formatBRL(Number(item.unit_price || 0) * Number(item.quantity || 0))}
           </span>
 
         </div>
       `)
       .join("");
 
-  const paymentStatusLabel =
-    PAYMENT_STATUS_LABELS[order.payment_status] ||
-    order.payment_status ||
-    "Pagamento pendente";
-
   const canCancel =
-    order.status === "aguardando_pagamento";
+    order.status === "pending";
 
   const cancelButtonHTML = canCancel
     ? `
@@ -2117,11 +2225,11 @@ function renderOrderDetail(order) {
     `
     : "";
 
-  const trackingHTML = isCancelled
+  const trackingHTML = isFinalAlternateState
     ? `
       <div class="order-tracking order-tracking-cancelled">
-        <span class="order-status-badge order-status-cancelado">
-          Pedido cancelado
+        <span class="order-status-badge order-status-${escapeHTML(order.status)}">
+          ${escapeHTML(statusLabel)}
         </span>
       </div>
     `
@@ -2182,22 +2290,6 @@ function renderOrderDetail(order) {
     ${cancelButtonHTML}
 
     ${trackingHTML}
-
-    <div class="order-detail-section">
-
-      <h5>Pagamento</h5>
-
-      <p class="order-payment-status">
-        ${escapeHTML(paymentStatusLabel)}
-      </p>
-
-      ${
-        order.payment_method
-          ? `<p class="order-payment-method">Método: ${escapeHTML(order.payment_method)}</p>`
-          : ""
-      }
-
-    </div>
 
     <div class="order-detail-section">
 
@@ -2346,6 +2438,127 @@ function reorderItems(order) {
 }
 
 
+/* =========================================================
+   PEDIDOS — CANCELAR
+   ========================================================= */
+
+const cancellingOrderIds = new Set();
+
+
+async function cancelOrder(orderId, triggerButton) {
+  if (!supabaseClient) {
+    showToast(
+      "Supabase não está conectado."
+    );
+
+    return;
+  }
+
+  if (!orderId) return;
+
+  /* Evita cliques múltiplos enquanto já está em andamento */
+  if (cancellingOrderIds.has(orderId)) {
+    return;
+  }
+
+  /* Usa o sistema de autenticação já existente */
+  const user =
+    await getCurrentUser();
+
+  if (!user) {
+    showToast(
+      "Entre na sua conta para continuar."
+    );
+
+    return;
+  }
+
+  const confirmed =
+    window.confirm(
+      "Tem certeza que deseja cancelar este pedido? Essa ação não pode ser desfeita."
+    );
+
+  if (!confirmed) return;
+
+  cancellingOrderIds.add(orderId);
+
+  if (triggerButton) {
+    triggerButton.disabled = true;
+  }
+
+  try {
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.rpc(
+        "cancel_order",
+        {
+          p_order_id: orderId
+        }
+      );
+
+    if (error) {
+      console.error(
+        "Erro ao cancelar pedido:",
+        error
+      );
+
+      showToast(
+        "Não foi possível cancelar o pedido. Tente novamente."
+      );
+
+      return;
+    }
+
+    const newStatus =
+      data?.status || "cancelled";
+
+    const index =
+      currentOrders.findIndex(
+        order => order.id === orderId
+      );
+
+    if (index !== -1) {
+      currentOrders[index] = {
+        ...currentOrders[index],
+        status: newStatus
+      };
+    }
+
+    renderOrdersList();
+
+    if (
+      elements.orderDetail &&
+      !elements.orderDetail.hidden
+    ) {
+      showOrderDetail(orderId);
+    }
+
+    showToast(
+      "Pedido cancelado."
+    );
+
+  } catch (error) {
+    console.error(
+      "Erro inesperado ao cancelar pedido:",
+      error
+    );
+
+    showToast(
+      "Não foi possível cancelar o pedido. Tente novamente."
+    );
+
+  } finally {
+    cancellingOrderIds.delete(orderId);
+
+    if (triggerButton) {
+      triggerButton.disabled = false;
+    }
+  }
+}
+
+
 function restoreBodyScroll() {
   const modalOpen =
     elements.accountModal &&
@@ -2445,6 +2658,77 @@ async function loginUser(
     showAccountError(
       elements.loginError,
       "Não foi possível entrar na conta."
+    );
+  }
+}
+
+
+/* =========================================================
+   SUPABASE — RECUPERAÇÃO DE SENHA
+   ========================================================= */
+
+async function requestPasswordReset(
+  email
+) {
+  if (!supabaseClient) {
+    showAccountError(
+      elements.forgotPasswordError,
+      "Supabase não está conectado."
+    );
+
+    return;
+  }
+
+  if (!email) {
+    showAccountError(
+      elements.forgotPasswordError,
+      "Digite seu e-mail."
+    );
+
+    return;
+  }
+
+  clearAccountErrors();
+
+  try {
+    const {
+      error
+    } =
+      await supabaseClient.auth.resetPasswordForEmail(
+        email
+      );
+
+    if (error) {
+      console.error(
+        "Erro ao solicitar recuperação de senha:",
+        error
+      );
+
+      showAccountError(
+        elements.forgotPasswordError,
+        getAuthErrorMessage(
+          error.message
+        )
+      );
+
+      return;
+    }
+
+    showToast(
+      "Enviamos um link de recuperação para o seu e-mail."
+    );
+
+    showLoginView();
+
+  } catch (error) {
+    console.error(
+      "Erro inesperado ao solicitar recuperação de senha:",
+      error
+    );
+
+    showAccountError(
+      elements.forgotPasswordError,
+      "Não foi possível enviar o link de recuperação. Tente novamente."
     );
   }
 }
@@ -2610,25 +2894,33 @@ async function registerUser({
       data.session &&
       data.user
     ) {
-      await saveAddressData(
-        data.user,
-        {
-          cep,
-          rua: street,
-          numero: number,
-          complemento: complement,
-          bairro: neighborhood,
-          cidade: city,
-          estado: state
-        }
-      );
+      const addressResult =
+        await saveAddressData(
+          data.user,
+          {
+            recipient_name: name,
+            cep,
+            street,
+            number,
+            complement,
+            neighborhood,
+            city,
+            state
+          }
+        );
 
       await loadUserProfile();
       await updateAccountUI();
 
-      showToast(
-        "Conta criada com sucesso!"
-      );
+      if (!addressResult.success) {
+        showToast(
+          "Conta criada, mas não foi possível salvar seu endereço de entrega. Tente novamente mais tarde."
+        );
+      } else {
+        showToast(
+          "Conta criada com sucesso!"
+        );
+      }
 
     } else {
       showToast(
@@ -2658,7 +2950,8 @@ async function registerUser({
 
 async function createProfile(
   user,
-  name
+  name,
+  phone
 ) {
   if (
     !supabaseClient ||
@@ -2668,24 +2961,29 @@ async function createProfile(
   }
 
   try {
+    const profilePayload = {
+      id: user.id,
+
+      full_name:
+        name ||
+        user.user_metadata?.full_name ||
+        ""
+    };
+
+    /* Só envia "phone" quando houver um valor real,
+       para não sobrescrever um telefone já salvo com
+       vazio (o fluxo atual ainda não coleta telefone). */
+    if (phone) {
+      profilePayload.phone = phone;
+    }
+
     const {
       error
     } =
       await supabaseClient
         .from("profiles")
         .upsert(
-          {
-            id: user.id,
-
-            full_name:
-              name ||
-              user.user_metadata?.full_name ||
-              "",
-
-            email:
-              user.email ||
-              ""
-          },
+          profilePayload,
           {
             onConflict: "id"
           }
@@ -2868,6 +3166,10 @@ async function updateAccountUI() {
     elements.registerForm.hidden = true;
   }
 
+  if (elements.forgotPasswordForm) {
+    elements.forgotPasswordForm.hidden = true;
+  }
+
   if (elements.loggedAccount) {
     elements.loggedAccount.hidden = false;
   }
@@ -2953,24 +3255,43 @@ async function saveAddressData(
     !supabaseClient ||
     !user
   ) {
-    return false;
+    return {
+      success: false,
+      error: "missing_client_or_user"
+    };
   }
 
   try {
+    /* Insere um novo endereço para o usuário.
+       O schema real permite múltiplos endereços por
+       usuário (com um índice único parcial garantindo
+       só um "is_default = true" por usuário). Como esta
+       função hoje só é chamada uma vez, logo após o
+       cadastro, um INSERT simples é o comportamento
+       correto: cria o primeiro/endereço padrão do
+       cliente sem apagar nada existente. */
+
     const {
       error
     } =
       await supabaseClient
         .from("addresses")
-        .upsert(
-          {
-            user_id: user.id,
-            ...addressData
-          },
-          {
-            onConflict: "user_id"
-          }
-        );
+        .insert({
+          user_id: user.id,
+
+          recipient_name:
+            addressData.recipient_name || "",
+
+          cep: addressData.cep || "",
+          street: addressData.street || "",
+          number: addressData.number || "",
+          complement: addressData.complement || null,
+          neighborhood: addressData.neighborhood || "",
+          city: addressData.city || "",
+          state: addressData.state || "",
+
+          is_default: true
+        });
 
     if (error) {
       console.error(
@@ -2978,10 +3299,16 @@ async function saveAddressData(
         error
       );
 
-      return false;
+      return {
+        success: false,
+        error
+      };
     }
 
-    return true;
+    return {
+      success: true,
+      error: null
+    };
 
   } catch (error) {
     console.error(
@@ -2989,7 +3316,10 @@ async function saveAddressData(
       error
     );
 
-    return false;
+    return {
+      success: false,
+      error
+    };
   }
 }
 
@@ -3050,6 +3380,17 @@ function getAuthErrorMessage(
 
   if (
     normalized.includes(
+      "for security purposes"
+    ) &&
+    normalized.includes(
+      "after"
+    )
+  ) {
+    return "Por segurança, aguarde alguns segundos antes de tentar novamente.";
+  }
+
+  if (
+    normalized.includes(
       "email address"
     ) &&
     normalized.includes(
@@ -3059,10 +3400,7 @@ function getAuthErrorMessage(
     return "Digite um endereço de e-mail válido.";
   }
 
-  return (
-    message ||
-    "Ocorreu um erro. Tente novamente."
-  );
+  return "Ocorreu um erro. Tente novamente.";
 }
 
 
@@ -3264,6 +3602,20 @@ function setupEvents() {
     );
   }
 
+  if (elements.showForgotPasswordBtn) {
+    elements.showForgotPasswordBtn.addEventListener(
+      "click",
+      showForgotPasswordView
+    );
+  }
+
+  if (elements.backToLoginBtn) {
+    elements.backToLoginBtn.addEventListener(
+      "click",
+      showLoginView
+    );
+  }
+
   if (elements.welcomeLoginBtn) {
     elements.welcomeLoginBtn.addEventListener(
       "click",
@@ -3303,10 +3655,48 @@ function setupEvents() {
       async event => {
         event.preventDefault();
 
-        await loginUser(
-          elements.loginEmail?.value?.trim() || "",
-          elements.loginPassword?.value || ""
-        );
+        if (elements.loginSubmitBtn) {
+          elements.loginSubmitBtn.disabled = true;
+        }
+
+        try {
+          await loginUser(
+            elements.loginEmail?.value?.trim() || "",
+            elements.loginPassword?.value || ""
+          );
+        } finally {
+          if (elements.loginSubmitBtn) {
+            elements.loginSubmitBtn.disabled = false;
+          }
+        }
+      }
+    );
+  }
+
+
+  /* =======================================================
+     RECUPERAR SENHA
+     ======================================================= */
+
+  if (elements.forgotPasswordForm) {
+    elements.forgotPasswordForm.addEventListener(
+      "submit",
+      async event => {
+        event.preventDefault();
+
+        if (elements.forgotPasswordSubmitBtn) {
+          elements.forgotPasswordSubmitBtn.disabled = true;
+        }
+
+        try {
+          await requestPasswordReset(
+            elements.forgotPasswordEmail?.value?.trim() || ""
+          );
+        } finally {
+          if (elements.forgotPasswordSubmitBtn) {
+            elements.forgotPasswordSubmitBtn.disabled = false;
+          }
+        }
       }
     );
   }
@@ -3322,42 +3712,52 @@ function setupEvents() {
       async event => {
         event.preventDefault();
 
-        await registerUser({
-          name:
-            elements.registerName?.value?.trim() || "",
+        if (elements.registerSubmitBtn) {
+          elements.registerSubmitBtn.disabled = true;
+        }
 
-          email:
-            elements.registerEmail?.value?.trim() || "",
+        try {
+          await registerUser({
+            name:
+              elements.registerName?.value?.trim() || "",
 
-          password:
-            elements.registerPassword?.value || "",
+            email:
+              elements.registerEmail?.value?.trim() || "",
 
-          passwordConfirm:
-            elements.registerPasswordConfirm?.value || "",
+            password:
+              elements.registerPassword?.value || "",
 
-          cep:
-            elements.registerCep?.value?.trim() || "",
+            passwordConfirm:
+              elements.registerPasswordConfirm?.value || "",
 
-          street:
-            elements.registerStreet?.value?.trim() || "",
+            cep:
+              elements.registerCep?.value?.trim() || "",
 
-          number:
-            elements.registerNumber?.value?.trim() || "",
+            street:
+              elements.registerStreet?.value?.trim() || "",
 
-          complement:
-            elements.registerComplement?.value?.trim() || "",
+            number:
+              elements.registerNumber?.value?.trim() || "",
 
-          neighborhood:
-            elements.registerNeighborhood?.value?.trim() || "",
+            complement:
+              elements.registerComplement?.value?.trim() || "",
 
-          city:
-            elements.registerCity?.value?.trim() || "",
+            neighborhood:
+              elements.registerNeighborhood?.value?.trim() || "",
 
-          state:
-            elements.registerState?.value
-              ?.trim()
-              .toUpperCase() || ""
-        });
+            city:
+              elements.registerCity?.value?.trim() || "",
+
+            state:
+              elements.registerState?.value
+                ?.trim()
+                .toUpperCase() || ""
+          });
+        } finally {
+          if (elements.registerSubmitBtn) {
+            elements.registerSubmitBtn.disabled = false;
+          }
+        }
       }
     );
   }
@@ -3571,6 +3971,27 @@ function setupEvents() {
         if (order) {
           reorderItems(order);
         }
+
+        return;
+      }
+
+
+      /* -----------------------------------------------------
+         CANCELAR PEDIDO
+         ----------------------------------------------------- */
+
+      const cancelBtn =
+        event.target.closest(
+          "[data-cancel-order-id]"
+        );
+
+      if (cancelBtn) {
+        event.preventDefault();
+
+        cancelOrder(
+          cancelBtn.dataset.cancelOrderId,
+          cancelBtn
+        );
 
         return;
       }
