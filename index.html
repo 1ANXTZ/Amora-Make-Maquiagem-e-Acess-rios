@@ -1035,6 +1035,74 @@
           </button>
         </p>
 
+        <p class="account-switch">
+          <button
+            type="button"
+            class="account-link"
+            id="showForgotPasswordBtn"
+          >
+            Esqueceu a senha?
+          </button>
+        </p>
+
+      </form>
+
+
+      <!-- ===================== RECUPERAR SENHA ===================== -->
+
+      <form
+        id="forgotPasswordForm"
+        class="account-form"
+        hidden
+      >
+
+        <label for="forgotPasswordEmail">
+          E-mail
+        </label>
+
+        <input
+          type="email"
+          id="forgotPasswordEmail"
+          name="email"
+          autocomplete="email"
+          placeholder="seuemail@exemplo.com"
+          required
+        >
+
+        <small class="account-field-help">
+          Enviaremos um link para você redefinir sua senha.
+        </small>
+
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-full"
+          id="forgotPasswordSubmitBtn"
+        >
+          Enviar link de recuperação
+        </button>
+
+
+        <p
+          class="account-error"
+          id="forgotPasswordError"
+          hidden
+          role="alert"
+        ></p>
+
+
+        <p class="account-switch">
+          Lembrou a senha?
+
+          <button
+            type="button"
+            class="account-link"
+            id="backToLoginBtn"
+          >
+            Entrar
+          </button>
+        </p>
+
       </form>
 
 
