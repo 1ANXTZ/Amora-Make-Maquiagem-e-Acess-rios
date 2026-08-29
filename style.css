@@ -2540,6 +2540,33 @@ main {
   color: #8a2f2f;
 }
 
+/* ---------- Badge de status (enum real) ---------- */
+
+.order-status-pending {
+  background: #faf1de;
+  color: #8a6a1f;
+}
+
+.order-status-approved {
+  background: #6B1E3C;
+  color: #fff;
+}
+
+.order-status-rejected {
+  background: #fbe4e4;
+  color: #9c2b2b;
+}
+
+.order-status-cancelled {
+  background: #f4e2e2;
+  color: #8a2f2f;
+}
+
+.order-status-expired {
+  background: #ece6e8;
+  color: #6c5961;
+}
+
 /* ---------- Detalhe do pedido ---------- */
 
 .order-detail-back {
