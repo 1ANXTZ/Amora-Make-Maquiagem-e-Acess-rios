@@ -1216,7 +1216,7 @@ async function handleCheckout() {
       return;
     }
 
-    await createOrderFromCart(user);
+    await checkoutWithWhatsApp(user);
 
   } finally {
     isCheckoutInProgress = false;
@@ -1228,7 +1228,7 @@ async function handleCheckout() {
    PEDIDOS — CRIAÇÃO
    ========================================================= */
 
-async function createOrderFromCart(user) {
+async function checkoutWithMercadoPago(user) {
   if (!supabaseClient) {
     showToast(
       "Supabase não está conectado."
@@ -1251,213 +1251,65 @@ async function createOrderFromCart(user) {
 
   try {
 
-    /* 1. Buscar o endereço padrão do usuário */
+    /* O preço final é calculado exclusivamente pela
+       Edge Function (que recalcula a partir do seu
+       próprio catálogo de produtos no servidor). O
+       frontend envia só id + quantidade, nunca preço
+       ou total. */
 
-    const {
-      data: addressData,
-      error: addressError
-    } =
-      await supabaseClient
-        .from("addresses")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("is_default", true)
-        .maybeSingle();
-
-    if (addressError) {
-      console.error(
-        "Erro ao buscar endereço para o pedido:",
-        addressError
-      );
-
-      showToast(
-        "Não foi possível confirmar seu endereço. Tente novamente."
-      );
-
-      return;
-    }
-
-    if (!addressData) {
-      showToast(
-        "Cadastre um endereço de entrega antes de finalizar o pedido."
-      );
-
-      closeCart();
-      await openAccountModal();
-
-      return;
-    }
-
-    /* 2. Montar itens usando os preços atuais do sistema */
-
-    const orderItemsPayload =
-      state.cart
-        .map(cartItem => {
-          const product =
-            PRODUCTS.find(
-              item => item.id === cartItem.id
-            );
-
-          if (!product) return null;
-
-          const quantity =
-            Number(cartItem.quantity || 0);
-
-          const unitPrice =
-            Number(product.price);
-
-          return {
-            product_id: product.id,
-            product_name: product.name,
-            unit_price: unitPrice,
-            quantity
-          };
-        })
-        .filter(Boolean);
-
-    if (!orderItemsPayload.length) {
-      showToast(
-        "Seu carrinho está vazio."
-      );
-
-      return;
-    }
-
-    /* 3. Criar o pedido.
-       subtotal/total só recebem 0 para satisfazer os
-       NOT NULL da tabela — o trigger do banco
-       (recalculate_order_totals) recalcula os valores
-       reais assim que os order_items forem inseridos.
-       shipping e payment_provider ficam de fora para
-       usar os defaults já definidos no banco. */
-
-    const {
-      data: orderData,
-      error: orderError
-    } =
-      await supabaseClient
-        .from("orders")
-        .insert({
-          user_id: user.id,
-          status: "pending",
-          subtotal: 0,
-          total: 0,
-
-          recipient_name: addressData.recipient_name || null,
-          cep: addressData.cep || null,
-          street: addressData.street || null,
-          number: addressData.number || null,
-          complement: addressData.complement || null,
-          neighborhood: addressData.neighborhood || null,
-          city: addressData.city || null,
-          state: addressData.state || null
-        })
-        .select()
-        .single();
-
-    if (orderError || !orderData) {
-      console.error(
-        "Erro ao criar pedido:",
-        orderError
-      );
-
-      showToast(
-        "Não foi possível criar seu pedido. Tente novamente."
-      );
-
-      return;
-    }
-
-    /* 4. Criar os itens do pedido.
-       Somente as colunas reais de order_items — sem
-       "subtotal", que não existe nessa tabela. */
-
-    const itemsToInsert =
-      orderItemsPayload.map(item => ({
-        order_id: orderData.id,
-        product_id: item.product_id,
-        product_name: item.product_name,
-        unit_price: item.unit_price,
-        quantity: item.quantity
+    const itemsPayload =
+      state.cart.map(cartItem => ({
+        id: cartItem.id,
+        quantity: Number(cartItem.quantity || 0)
       }));
 
     const {
-      error: itemsError
+      data,
+      error
     } =
-      await supabaseClient
-        .from("order_items")
-        .insert(itemsToInsert);
-
-    if (itemsError) {
-      console.error(
-        "Erro ao criar itens do pedido:",
-        itemsError
+      await supabaseClient.functions.invoke(
+        "create-mercadopago-preference",
+        {
+          body: {
+            items: itemsPayload,
+            returnPath: "/"
+          }
+        }
       );
 
-      /* O pedido em orders já foi criado, mas os itens
-         falharam. Só tenta cancelar pela RPC existente se
-         ele ainda estiver "pending" — evita deixar um
-         pedido vazio/órfão ativo no histórico do cliente. */
-      if (orderData.status === "pending") {
-        try {
-          const {
-            error: cancelError
-          } =
-            await supabaseClient.rpc(
-              "cancel_order",
-              {
-                p_order_id: orderData.id
-              }
-            );
-
-          if (cancelError) {
-            console.error(
-              "Erro ao cancelar pedido órfão após falha nos itens:",
-              cancelError
-            );
-          }
-
-        } catch (cancelException) {
-          console.error(
-            "Erro inesperado ao cancelar pedido órfão após falha nos itens:",
-            cancelException
-          );
-        }
-      }
+    if (error) {
+      console.error(
+        "Erro ao criar preferência de pagamento:",
+        error
+      );
 
       showToast(
-        "Não foi possível concluir seu pedido. Tente novamente."
+        "Não foi possível iniciar o pagamento. Tente novamente."
       );
 
       return;
     }
 
-    /* 5. Buscar o pedido novamente para obter os valores
-       oficiais (subtotal, shipping, total) já recalculados
-       pelo trigger do banco — nunca usar o total calculado
-       no navegador como fonte de verdade. */
+    const redirectUrl =
+      data?.initPoint ||
+      data?.sandboxInitPoint;
 
-    const {
-      data: refreshedOrder,
-      error: refreshError
-    } =
-      await supabaseClient
-        .from("orders")
-        .select("*")
-        .eq("id", orderData.id)
-        .single();
-
-    if (refreshError) {
+    if (!data?.orderId || !redirectUrl) {
       console.error(
-        "Erro ao buscar total oficial do pedido:",
-        refreshError
+        "Resposta inesperada da Edge Function de pagamento:",
+        data
       );
+
+      showToast(
+        "Não foi possível iniciar o pagamento. Tente novamente."
+      );
+
+      return;
     }
 
-    const finalOrder =
-      refreshedOrder || orderData;
-
-    /* 6. Limpar o carrinho somente após o sucesso */
+    /* Só limpar o carrinho depois de confirmar que o
+       pedido e a preferência de pagamento foram criados
+       com sucesso no backend. */
 
     state.cart = [];
     saveCart();
@@ -1469,20 +1321,177 @@ async function createOrderFromCart(user) {
 
     closeCart();
 
-    await loadUserOrders(user);
+    showToast(
+      "Redirecionando para o pagamento..."
+    );
 
-    openOrderConfirmModal({
-      id: finalOrder.id,
-      total: finalOrder.total,
-      itemCount: orderItemsPayload.reduce(
-        (sum, item) => sum + item.quantity,
-        0
-      )
-    });
+    window.location.href = redirectUrl;
 
   } catch (error) {
     console.error(
-      "Erro inesperado ao criar pedido:",
+      "Erro inesperado ao iniciar o pagamento:",
+      error
+    );
+
+    showToast(
+      "Não foi possível iniciar o pagamento. Tente novamente."
+    );
+
+  } finally {
+    if (elements.checkoutBtn) {
+      elements.checkoutBtn.disabled = false;
+    }
+  }
+}
+
+
+/* =========================================================
+   CHECKOUT — WHATSAPP (fluxo ativo nesta fase)
+   ========================================================= */
+
+const WHATSAPP_NUMBER = "5511970206617";
+
+
+function buildWhatsAppOrderMessage(order) {
+  const productLines =
+    order.items
+      .map(item =>
+        `- ${item.name} — ${item.quantity} — ${formatBRL(item.lineTotal)}`
+      )
+      .join("\n");
+
+  const address = order.address;
+
+  const complementLine =
+    address.complement
+      ? `Complemento: ${address.complement}\n`
+      : "";
+
+  return (
+    `Olá! Gostaria de finalizar um pedido na Amora Make.\n\n` +
+    `Pedido: #${formatOrderNumber(order.orderId)}\n\n` +
+    `🛍️ Produtos:\n${productLines}\n\n` +
+    `Subtotal: ${formatBRL(order.subtotal)}\n` +
+    `Frete: ${formatBRL(order.shipping)}\n` +
+    `Total: ${formatBRL(order.total)}\n\n` +
+    `📍 Endereço de entrega:\n` +
+    `Nome: ${address.recipientName}\n` +
+    `Rua: ${address.street}, Número: ${address.number}\n` +
+    complementLine +
+    `Bairro: ${address.neighborhood}\n` +
+    `Cidade: ${address.city} - ${address.state}\n` +
+    `CEP: ${address.cep}\n\n` +
+    `Gostaria de confirmar o pedido e saber as formas de pagamento disponíveis.`
+  );
+}
+
+
+async function checkoutWithWhatsApp(user) {
+  if (!supabaseClient) {
+    showToast(
+      "Supabase não está conectado."
+    );
+
+    return;
+  }
+
+  if (state.cart.length === 0) {
+    showToast(
+      "Seu carrinho está vazio."
+    );
+
+    return;
+  }
+
+  if (elements.checkoutBtn) {
+    elements.checkoutBtn.disabled = true;
+  }
+
+  try {
+
+    /* O preço final é calculado exclusivamente pela
+       Edge Function (que recalcula a partir do seu
+       próprio catálogo de produtos no servidor). O
+       frontend envia só id + quantidade, nunca preço
+       ou total. */
+
+    const itemsPayload =
+      state.cart.map(cartItem => ({
+        id: cartItem.id,
+        quantity: Number(cartItem.quantity || 0)
+      }));
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.functions.invoke(
+        "create-whatsapp-order",
+        {
+          body: {
+            items: itemsPayload
+          }
+        }
+      );
+
+    if (error) {
+      console.error(
+        "Erro ao criar pedido para WhatsApp:",
+        error
+      );
+
+      showToast(
+        "Não foi possível criar seu pedido. Tente novamente."
+      );
+
+      return;
+    }
+
+    if (!data?.orderId) {
+      console.error(
+        "Resposta inesperada da Edge Function de pedido:",
+        data
+      );
+
+      showToast(
+        "Não foi possível criar seu pedido. Tente novamente."
+      );
+
+      return;
+    }
+
+    /* Só limpar o carrinho depois de confirmar que o
+       pedido foi criado com sucesso no backend. */
+
+    state.cart = [];
+    saveCart();
+
+    updateCartCount();
+    renderCart();
+    renderProducts();
+    renderOffers();
+
+    closeCart();
+
+    const message =
+      buildWhatsAppOrderMessage(data);
+
+    const whatsappUrl =
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+    showToast(
+      "Pedido criado! Abrindo o WhatsApp..."
+    );
+
+    window.open(
+      whatsappUrl,
+      "_blank",
+      "noopener,noreferrer"
+    );
+
+  } catch (error) {
+    console.error(
+      "Erro inesperado ao criar pedido para WhatsApp:",
       error
     );
 
@@ -2326,7 +2335,15 @@ function showOrderDetail(orderId) {
       item => item.id === orderId
     );
 
-  if (!order) return;
+  if (!order) {
+    showToast(
+      "Não foi possível abrir este pedido."
+    );
+
+    showOrdersListView();
+
+    return;
+  }
 
   renderOrderDetail(order);
 
@@ -4118,6 +4135,49 @@ function updateCurrentYear() {
    INICIALIZAÇÃO
    ========================================================= */
 
+/* =========================================================
+   RETORNO DO MERCADO PAGO
+   ========================================================= */
+
+function handleMercadoPagoReturn() {
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const status =
+    params.get("status") ||
+    params.get("collection_status");
+
+  if (!status) return;
+
+  const MERCADO_PAGO_RETURN_MESSAGES = {
+    approved:
+      "Pagamento aprovado! Seu pedido foi confirmado.",
+    pending:
+      "Pagamento em análise. Assim que for confirmado, seu pedido será atualizado.",
+    in_process:
+      "Pagamento em análise. Assim que for confirmado, seu pedido será atualizado.",
+    rejected:
+      "Pagamento recusado. Você pode tentar novamente."
+  };
+
+  const message =
+    MERCADO_PAGO_RETURN_MESSAGES[status];
+
+  if (message) {
+    showToast(message);
+  }
+
+  const cleanUrl = new URL(window.location.href);
+  cleanUrl.search = "";
+
+  window.history.replaceState(
+    {},
+    "",
+    cleanUrl.toString()
+  );
+}
+
+
 async function init() {
 
   /* Restaurar carrinho salvo antes de renderizar */
@@ -4141,10 +4201,13 @@ async function init() {
 
   setupAuthListener();
 
-  if (supabaseClient) {
-    await loadUserProfile();
-    await updateAccountUI();
-  }
+  handleMercadoPagoReturn();
+
+  /* O carregamento inicial de perfil/conta (logado ou
+     deslogado) já é feito pelo próprio onAuthStateChange,
+     que dispara o evento INITIAL_SESSION assim que o
+     listener acima é registrado — chamar de novo aqui
+     duplicava as requisições ao Supabase. */
 
   console.log(
     "Amora Make inicializado."
