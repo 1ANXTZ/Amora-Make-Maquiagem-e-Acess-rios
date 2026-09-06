@@ -2930,16 +2930,15 @@ async function registerUser({
       neighborhood,
       city,
       state
-    }
-  }
-}
-
+     }
+   }
+ }
+);
     if (error) {
       console.error(
         "Erro no cadastro:",
         error
       );
-
       showAccountError(
         elements.registerError,
         getAuthErrorMessage(
