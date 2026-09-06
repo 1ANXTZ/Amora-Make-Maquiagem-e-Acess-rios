@@ -2913,15 +2913,25 @@ async function registerUser({
       data,
       error
     } =
-      await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name
-          }
-        }
-      });
+    await supabaseClient.auth.signUp({
+  email,
+  password,
+  options: {
+    data: {
+      full_name: name,
+      pending_address: {
+        recipient_name: name,
+        cep,
+        street,
+        number,
+        complement,
+        neighborhood,
+        city,
+        state
+      }
+    }
+  }
+});
 
     if (error) {
       console.error(
@@ -4128,6 +4138,79 @@ function setupEvents() {
    SUPABASE — OBSERVAR LOGIN
    ========================================================= */
 
+async function savePendingAddressForUser(user) {
+  if (!supabaseClient || !user) {
+    return;
+  }
+
+  const pendingAddress = user.user_metadata?.pending_address;
+
+  if (!pendingAddress) {
+    return;
+  }
+
+  try {
+    const {
+      data: existingAddress,
+      error: existingError
+    } = await supabaseClient
+      .from("addresses")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("is_default", true)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingError) {
+      console.error(
+        "Erro ao verificar endereço existente:",
+        existingError
+      );
+      return;
+    }
+
+    if (existingAddress) {
+      return;
+    }
+
+    const addressResult = await saveAddressData(
+      user,
+      pendingAddress
+    );
+
+    if (!addressResult.success) {
+      console.error(
+        "Não foi possível salvar o endereço pendente:",
+        addressResult.error
+      );
+      return;
+    }
+
+    const { error: updateError } =
+      await supabaseClient.auth.updateUser({
+        data: {
+          pending_address: null
+        }
+      });
+
+    if (updateError) {
+      console.warn(
+        "Endereço salvo, mas não foi possível limpar os dados temporários:",
+        updateError
+      );
+    } else {
+      console.log(
+        "Endereço de cadastro salvo com sucesso."
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Erro ao salvar endereço pendente:",
+      error
+    );
+  }
+}
+
 function setupAuthListener() {
   if (!supabaseClient) {
     return;
@@ -4146,6 +4229,12 @@ function setupAuthListener() {
 
       if (session?.user) {
         await loadUserProfile();
+
+        if (event === "SIGNED_IN") {
+          await savePendingAddressForUser(
+            session.user
+          );
+        }
       } else {
         currentProfile = null;
       }
