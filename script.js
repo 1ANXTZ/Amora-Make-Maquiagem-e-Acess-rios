@@ -2906,34 +2906,34 @@ async function registerUser({
     return;
   }
 
-  clearAccountErrors();
+    clearAccountErrors();
 
   try {
     const {
       data,
       error
-    } =
-    await supabaseClient.auth.signUp({
-  email,
-  password,
-  options: {
-  emailRedirectTo:
-    "https://1anxtz.github.io/Amora-Make-Maquiagem-e-Acess-rios/",
-  data: {
-    full_name: name,
-    pending_address: {
-      recipient_name: name,
-      cep,
-      street,
-      number,
-      complement,
-      neighborhood,
-      city,
-      state
-     }
-   }
- }
-);
+    } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo:
+          "https://1anxtz.github.io/Amora-Make-Maquiagem-e-Acess-rios/",
+        data: {
+          full_name: name,
+          pending_address: {
+            recipient_name: name,
+            cep,
+            street,
+            number,
+            complement,
+            neighborhood,
+            city,
+            state
+          }
+        }
+      }
+    });
+
     if (error) {
       console.error(
         "Erro no cadastro:",
