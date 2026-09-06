@@ -192,6 +192,7 @@ p {
 .site-header {
   position: relative;
   z-index: 100;
+  padding-top: var(--category-nav-height);
   background: var(--color-white);
   border-bottom: 1px solid var(--color-border);
 }
@@ -518,12 +519,12 @@ p {
 }
 
 /*
-   Como o nav é fixed, criamos espaço no conteúdo.
-   Assim ele não tampa o topo da página.
+   O espaço do nav fixo é reservado no próprio header.
+   Assim busca, conta e carrinho não ficam atrás do nav.
 */
 
 main {
-  padding-top: var(--category-nav-height);
+  padding-top: 0;
 }
 
 /* =========================================================
@@ -1723,11 +1724,8 @@ main {
     display: none;
   }
 
-  main {
-    padding-top: 0;
-  }
-
   .site-header {
+    padding-top: 0;
     padding-bottom: 14px;
 
     box-shadow: 0 10px 26px rgba(36, 28, 32, 0.07);
