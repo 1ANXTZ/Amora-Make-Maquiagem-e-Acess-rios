@@ -2990,9 +2990,9 @@ async function registerUser({
       }
 
     } else {
-      showToast(
-        "Conta criada! Verifique seu e-mail para confirmar o cadastro."
-      );
+     showToast(
+       "Conta criada! 💖 Enviamos um e-mail de confirmação. Verifique sua caixa de entrada e também a pasta de spam."
+     );
 
       showLoginView();
     }
@@ -3430,13 +3430,12 @@ function getAuthErrorMessage(
   }
 
   if (
-    normalized.includes(
-      "email not confirmed"
-    )
-  ) {
-    return "Confirme seu e-mail antes de entrar.";
-  }
-
+  normalized.includes(
+    "email not confirmed"
+  )
+) {
+  return "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada e também a pasta de spam ou lixo eletrônico.";
+}
   if (
     normalized.includes(
       "rate limit"
