@@ -2917,21 +2917,22 @@ async function registerUser({
   email,
   password,
   options: {
-    data: {
-      full_name: name,
-      pending_address: {
-        recipient_name: name,
-        cep,
-        street,
-        number,
-        complement,
-        neighborhood,
-        city,
-        state
-      }
+  emailRedirectTo:
+    "https://1anxtz.github.io/Amora-Make-Maquiagem-e-Acess-rios/",
+  data: {
+    full_name: name,
+    pending_address: {
+      recipient_name: name,
+      cep,
+      street,
+      number,
+      complement,
+      neighborhood,
+      city,
+      state
     }
   }
-});
+}
 
     if (error) {
       console.error(
