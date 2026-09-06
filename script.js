@@ -1407,6 +1407,28 @@ async function checkoutWithWhatsApp(user) {
     elements.checkoutBtn.disabled = true;
   }
 
+  /* A aba do WhatsApp precisa abrir já na interação direta
+     do clique, antes de qualquer "await" — se abrirmos só
+     depois da chamada à Edge Function, o navegador trata
+     como popup sem interação do usuário e bloqueia. */
+
+  const whatsappWindow =
+    window.open("about:blank", "_blank");
+
+  if (!whatsappWindow) {
+    showToast(
+      "O navegador bloqueou a abertura do WhatsApp. Permita pop-ups para continuar."
+    );
+
+    if (elements.checkoutBtn) {
+      elements.checkoutBtn.disabled = false;
+    }
+
+    return;
+  }
+
+  whatsappWindow.opener = null;
+
   try {
 
     /* O preço final é calculado exclusivamente pela
@@ -1444,6 +1466,13 @@ async function checkoutWithWhatsApp(user) {
         "Não foi possível criar seu pedido. Tente novamente."
       );
 
+      if (
+        whatsappWindow &&
+        !whatsappWindow.closed
+      ) {
+        whatsappWindow.close();
+      }
+
       return;
     }
 
@@ -1456,6 +1485,13 @@ async function checkoutWithWhatsApp(user) {
       showToast(
         "Não foi possível criar seu pedido. Tente novamente."
       );
+
+      if (
+        whatsappWindow &&
+        !whatsappWindow.closed
+      ) {
+        whatsappWindow.close();
+      }
 
       return;
     }
@@ -1483,11 +1519,7 @@ async function checkoutWithWhatsApp(user) {
       "Pedido criado! Abrindo o WhatsApp..."
     );
 
-    window.open(
-      whatsappUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    whatsappWindow.location.href = whatsappUrl;
 
   } catch (error) {
     console.error(
@@ -1498,6 +1530,13 @@ async function checkoutWithWhatsApp(user) {
     showToast(
       "Não foi possível criar seu pedido. Tente novamente."
     );
+
+    if (
+      whatsappWindow &&
+      !whatsappWindow.closed
+    ) {
+      whatsappWindow.close();
+    }
 
   } finally {
     if (elements.checkoutBtn) {
