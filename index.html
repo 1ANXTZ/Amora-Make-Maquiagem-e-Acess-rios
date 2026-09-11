@@ -1155,45 +1155,67 @@
 
 
         <label for="registerPassword">
-          Senha
+            Senha
         </label>
 
-        <input
-          type="password"
-          id="registerPassword"
-          name="password"
-          autocomplete="new-password"
-          placeholder="Mínimo de 6 caracteres"
-          minlength="6"
-          required
-        >
+         <div class="password-field">
+          <input
+            type="password"
+            id="registerPassword"
+            name="password"
+            autocomplete="new-password"
+            placeholder="Mínimo de 6 caracteres"
+            minlength="6"
+             required
+           >
+
+          <button
+           type="button"
+           class="password-toggle"
+           data-password-toggle="registerPassword"
+           aria-label="Mostrar senha"
+         >
+          👁️
+        </button>
+      </div>
 
 
         <!-- ===================== CONFIRMAR SENHA ===================== -->
 
-        <label for="registerPasswordConfirm">
-          Confirmar senha
-        </label>
 
-        <input
-          type="password"
-          id="registerPasswordConfirm"
-          name="passwordConfirm"
-          autocomplete="new-password"
-          placeholder="Digite a senha novamente"
-          minlength="6"
-          required
-          aria-describedby="registerPasswordConfirmHelp"
-        >
+         <label for="registerPasswordConfirm">
+           Confirmar senha
+         </label>
 
-        <small
-          id="registerPasswordConfirmHelp"
-          class="account-field-help"
-        >
-          Digite novamente a senha para confirmar.
-        </small>
+         <div class="password-field">
+          <input
+            type="password"
+            id="registerPasswordConfirm"
+           name="passwordConfirm"
+           autocomplete="new-password"
+           placeholder="Digite a senha novamente"
+           minlength="6"
+           required
+           aria-describedby="registerPasswordConfirmHelp"
+          >
 
+          <button
+            type="button"
+            class="password-toggle"
+            data-password-toggle="registerPasswordConfirm"
+            aria-label="Mostrar senha"
+          >
+           👁️
+          </button>
+        </div>
 
+<small
+  id="registerPasswordConfirmHelp"
+  class="account-field-help"
+>
+  Digite novamente a senha para confirmar.
+</small>
+        
         <h3 class="account-form-section-title">
           Endereço de entrega
         </h3>
