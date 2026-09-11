@@ -2914,16 +2914,17 @@ async function registerUser({
       data,
       error
     } =
-      await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name
-          }
-        }
-      });
-
+    await supabaseClient.auth.signUp({
+  email,
+  password,
+  options: {
+    emailRedirectTo:
+      "https://1anxtz.github.io/Amora-Make-Maquiagem-e-Acess-rios/",
+    data: {
+      full_name: name
+    }
+  }
+});
     if (error) {
       console.error(
         "Erro no cadastro:",
