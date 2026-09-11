@@ -603,6 +603,7 @@ const elements = {
   loggedUserEmail: document.getElementById("loggedUserEmail"),
   loggedUserAddress: document.getElementById("loggedUserAddress"),
   logoutBtn: document.getElementById("logoutBtn"),
+  deleteAccountBtn: document.getElementById("deleteAccountBtn"),
 
   ordersEmpty: document.getElementById("ordersEmpty"),
   ordersEmptyText: document.getElementById("ordersEmptyText"),
@@ -2906,39 +2907,29 @@ async function registerUser({
     return;
   }
 
-    clearAccountErrors();
+  clearAccountErrors();
 
   try {
     const {
       data,
       error
-    } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo:
-          "https://1anxtz.github.io/Amora-Make-Maquiagem-e-Acess-rios/",
-        data: {
-          full_name: name,
-          pending_address: {
-            recipient_name: name,
-            cep,
-            street,
-            number,
-            complement,
-            neighborhood,
-            city,
-            state
+    } =
+      await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name
           }
         }
-      }
-    });
+      });
 
     if (error) {
       console.error(
         "Erro no cadastro:",
         error
       );
+
       showAccountError(
         elements.registerError,
         getAuthErrorMessage(
@@ -2989,9 +2980,9 @@ async function registerUser({
       }
 
     } else {
-     showToast(
-       "Conta criada! 💖 Enviamos um e-mail de confirmação. Verifique sua caixa de entrada e também a pasta de spam."
-     );
+      showToast(
+        "Conta criada! Verifique seu e-mail para confirmar o cadastro."
+      );
 
       showLoginView();
     }
@@ -3310,6 +3301,84 @@ async function logoutUser() {
 
 
 /* =========================================================
+   EXCLUIR CONTA
+   ========================================================= */
+
+async function deleteAccount() {
+  if (!supabaseClient) {
+    return;
+  }
+
+  const confirmed =
+    window.confirm(
+      "Tem certeza que deseja excluir sua conta? Essa ação é permanente e todos os seus dados serão removidos."
+    );
+
+  if (!confirmed) return;
+
+  if (elements.deleteAccountBtn) {
+    elements.deleteAccountBtn.disabled = true;
+  }
+
+  try {
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.functions.invoke(
+        "delete-account",
+        {
+          body: {}
+        }
+      );
+
+    if (error || !data?.success) {
+      console.error(
+        "Erro ao excluir conta:",
+        error || data
+      );
+
+      showToast(
+        "Não foi possível excluir sua conta. Tente novamente."
+      );
+
+      return;
+    }
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+    currentProfile = null;
+    currentOrders = [];
+
+    showToast(
+      "Sua conta foi excluída."
+    );
+
+    closeAccountModal();
+
+    await updateAccountUI();
+
+  } catch (error) {
+    console.error(
+      "Erro inesperado ao excluir conta:",
+      error
+    );
+
+    showToast(
+      "Não foi possível excluir sua conta. Tente novamente."
+    );
+
+  } finally {
+    if (elements.deleteAccountBtn) {
+      elements.deleteAccountBtn.disabled = false;
+    }
+  }
+}
+
+
+/* =========================================================
    ENDEREÇO
    ========================================================= */
 
@@ -3429,12 +3498,13 @@ function getAuthErrorMessage(
   }
 
   if (
-  normalized.includes(
-    "email not confirmed"
-  )
-) {
-  return "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada e também a pasta de spam ou lixo eletrônico.";
-}
+    normalized.includes(
+      "email not confirmed"
+    )
+  ) {
+    return "Confirme seu e-mail antes de entrar.";
+  }
+
   if (
     normalized.includes(
       "rate limit"
@@ -3699,6 +3769,13 @@ function setupEvents() {
     elements.logoutBtn.addEventListener(
       "click",
       logoutUser
+    );
+  }
+
+  if (elements.deleteAccountBtn) {
+    elements.deleteAccountBtn.addEventListener(
+      "click",
+      deleteAccount
     );
   }
 
@@ -4137,79 +4214,6 @@ function setupEvents() {
    SUPABASE — OBSERVAR LOGIN
    ========================================================= */
 
-async function savePendingAddressForUser(user) {
-  if (!supabaseClient || !user) {
-    return;
-  }
-
-  const pendingAddress = user.user_metadata?.pending_address;
-
-  if (!pendingAddress) {
-    return;
-  }
-
-  try {
-    const {
-      data: existingAddress,
-      error: existingError
-    } = await supabaseClient
-      .from("addresses")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("is_default", true)
-      .limit(1)
-      .maybeSingle();
-
-    if (existingError) {
-      console.error(
-        "Erro ao verificar endereço existente:",
-        existingError
-      );
-      return;
-    }
-
-    if (existingAddress) {
-      return;
-    }
-
-    const addressResult = await saveAddressData(
-      user,
-      pendingAddress
-    );
-
-    if (!addressResult.success) {
-      console.error(
-        "Não foi possível salvar o endereço pendente:",
-        addressResult.error
-      );
-      return;
-    }
-
-    const { error: updateError } =
-      await supabaseClient.auth.updateUser({
-        data: {
-          pending_address: null
-        }
-      });
-
-    if (updateError) {
-      console.warn(
-        "Endereço salvo, mas não foi possível limpar os dados temporários:",
-        updateError
-      );
-    } else {
-      console.log(
-        "Endereço de cadastro salvo com sucesso."
-      );
-    }
-  } catch (error) {
-    console.error(
-      "Erro ao salvar endereço pendente:",
-      error
-    );
-  }
-}
-
 function setupAuthListener() {
   if (!supabaseClient) {
     return;
@@ -4228,12 +4232,6 @@ function setupAuthListener() {
 
       if (session?.user) {
         await loadUserProfile();
-
-        if (event === "SIGNED_IN") {
-          await savePendingAddressForUser(
-            session.user
-          );
-        }
       } else {
         currentProfile = null;
       }
