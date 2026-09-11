@@ -519,8 +519,8 @@ p {
 }
 
 /*
-   O espaço do nav fixo é reservado no próprio header.
-   Assim busca, conta e carrinho não ficam atrás do nav.
+   Como o nav é fixed, criamos espaço no conteúdo.
+   Assim ele não tampa o topo da página.
 */
 
 main {
@@ -2811,6 +2811,18 @@ main {
 }
 
 .order-cancel-btn:hover {
+  background: #a51d3d;
+  color: #fff;
+}
+
+.account-delete-btn {
+  margin-top: 10px;
+
+  border-color: #a51d3d;
+  color: #a51d3d;
+}
+
+.account-delete-btn:hover {
   background: #a51d3d;
   color: #fff;
 }
