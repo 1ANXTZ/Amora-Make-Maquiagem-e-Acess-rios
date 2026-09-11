@@ -2827,6 +2827,27 @@ main {
   color: #fff;
 }
 
+/* Campo de senha com botão de mostrar/ocultar */
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 18px;
+  line-height: 1;
+}
 /* ---------- Botão desabilitado (pedido em criação) ---------- */
 
 .btn:disabled {
