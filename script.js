@@ -3817,6 +3817,48 @@ function setupEvents() {
   }
 
 
+     /* =======================================================
+     MOSTRAR/OCULTAR SENHAS
+     ======================================================= */
+
+  document
+    .querySelectorAll("[data-password-toggle]")
+    .forEach(button => {
+      button.addEventListener(
+        "click",
+        () => {
+          const inputId =
+            button.dataset.passwordToggle;
+
+          const input =
+            document.getElementById(inputId);
+
+          if (!input) return;
+
+          const showing =
+            input.type === "text";
+
+          input.type =
+            showing
+              ? "password"
+              : "text";
+
+          button.textContent =
+            showing
+              ? "👁️"
+              : "🙈";
+
+          button.setAttribute(
+            "aria-label",
+            showing
+              ? "Mostrar senha"
+              : "Ocultar senha"
+          );
+        }
+      );
+    });
+
+   
   /* =======================================================
      RECUPERAR SENHA
      ======================================================= */
