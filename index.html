@@ -995,15 +995,27 @@
           Senha
         </label>
 
-        <input
-          type="password"
-          id="loginPassword"
-          name="password"
-          autocomplete="current-password"
-          placeholder="Sua senha"
-          minlength="6"
-          required
-        >
+       <div class="password-field">
+ 
+  <input
+    type="password"
+    id="loginPassword"
+    name="password"
+    autocomplete="current-password"
+    placeholder="Sua senha"
+    minlength="6"
+    required
+  >
+
+  <button
+    type="button"
+    class="password-toggle"
+    data-password-toggle="loginPassword"
+    aria-label="Mostrar senha"
+  >
+    👁️
+  </button>
+</div>
 
 
         <button
