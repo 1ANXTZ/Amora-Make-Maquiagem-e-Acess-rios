@@ -1368,6 +1368,29 @@ function buildWhatsAppOrderMessage(order) {
       ? `Complemento: ${address.complement}\n`
       : "";
 
+  /* Gera link do Google Maps se houver coordenadas
+     A Edge Function pode retornar tanto camelCase quanto
+     snake_case dependendo da configuração */
+  const lat = address.latitude ?? address.lat;
+  const lng = address.longitude ?? address.lon ?? address.lng;
+
+  const mapsLine =
+    lat != null && lng != null
+      ? `\n📍 Ver no mapa: https://www.google.com/maps?q=${lat},${lng}\n`
+      : "";
+
+  /* Suporta tanto camelCase quanto snake_case nos campos
+     do endereço, já que a Edge Function pode retornar em
+     qualquer formato */
+  const recipientName =
+    address.recipientName ?? address.recipient_name ?? "";
+  const street = address.street ?? "";
+  const number = address.number ?? "";
+  const neighborhood = address.neighborhood ?? "";
+  const city = address.city ?? "";
+  const state = address.state ?? "";
+  const cep = address.cep ?? "";
+
   return (
     `Olá! Gostaria de finalizar um pedido na Amora Make.\n\n` +
     `Pedido: #${formatOrderNumber(order.orderId)}\n\n` +
@@ -1376,13 +1399,14 @@ function buildWhatsAppOrderMessage(order) {
     `Frete: ${formatBRL(order.shipping)}\n` +
     `Total: ${formatBRL(order.total)}\n\n` +
     `📍 Endereço de entrega:\n` +
-    `Nome: ${address.recipientName}\n` +
-    `Rua: ${address.street}, Número: ${address.number}\n` +
+    `Nome: ${recipientName}\n` +
+    `Rua: ${street}, Número: ${number}\n` +
     complementLine +
-    `Bairro: ${address.neighborhood}\n` +
-    `Cidade: ${address.city} - ${address.state}\n` +
-    `CEP: ${address.cep}\n\n` +
-    `Gostaria de confirmar o pedido e saber as formas de pagamento disponíveis.`
+    `Bairro: ${neighborhood}\n` +
+    `Cidade: ${city} - ${state}\n` +
+    `CEP: ${cep}` +
+    mapsLine +
+    `\nGostaria de confirmar o pedido e saber as formas de pagamento disponíveis.`
   );
 }
 
@@ -1399,6 +1423,18 @@ async function checkoutWithWhatsApp(user) {
   if (state.cart.length === 0) {
     showToast(
       "Seu carrinho está vazio."
+    );
+
+    return;
+  }
+
+  /* Verifica se o usuário tem endereço cadastrado */
+  const userAddress =
+    await loadAddressForUser(user);
+
+  if (!userAddress) {
+    showToast(
+      "Cadastre um endereço de entrega antes de finalizar o pedido."
     );
 
     return;
@@ -1913,16 +1949,134 @@ function showAccountError(element, message) {
 
 
 /* =========================================================
+   GEOCODIFICAÇÃO
+   ========================================================= */
+
+let lastGeocodeTime = 0;
+
+async function geocodeAddress({
+  street,
+  number,
+  neighborhood,
+  city,
+  state,
+  cep
+}) {
+  try {
+    const addressParts = [
+      street,
+      number,
+      neighborhood,
+      city,
+      state,
+      cep
+    ].filter(Boolean);
+
+    if (addressParts.length === 0) {
+      return {
+        success: false,
+        latitude: null,
+        longitude: null
+      };
+    }
+
+    /* Rate limiting: Nominatim requer no mínimo 1 segundo
+       entre requisições */
+    const now = Date.now();
+    const timeSinceLastRequest = now - lastGeocodeTime;
+
+    if (timeSinceLastRequest < 1000) {
+      await new Promise(resolve =>
+        setTimeout(resolve, 1000 - timeSinceLastRequest)
+      );
+    }
+
+    lastGeocodeTime = Date.now();
+
+    const addressString =
+      addressParts.join(", ");
+
+    const encodedAddress =
+      encodeURIComponent(addressString);
+
+    /* API Nominatim do OpenStreetMap — gratuita, sem chave */
+    const response =
+      await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodedAddress}&format=json&limit=1&countrycodes=br`,
+        {
+          headers: {
+            "User-Agent": "AmoraMake/1.0"
+          }
+        }
+      );
+
+    if (!response.ok) {
+      return {
+        success: false,
+        latitude: null,
+        longitude: null
+      };
+    }
+
+    const data =
+      await response.json();
+
+    if (!data || data.length === 0) {
+      return {
+        success: false,
+        latitude: null,
+        longitude: null
+      };
+    }
+
+    const latitude =
+      parseFloat(data[0].lat);
+
+    const longitude =
+      parseFloat(data[0].lon);
+
+    if (
+      isNaN(latitude) ||
+      isNaN(longitude)
+    ) {
+      return {
+        success: false,
+        latitude: null,
+        longitude: null
+      };
+    }
+
+    return {
+      success: true,
+      latitude,
+      longitude
+    };
+
+  } catch (error) {
+    console.error(
+      "Erro ao geocodificar endereço:",
+      error
+    );
+
+    return {
+      success: false,
+      latitude: null,
+      longitude: null
+    };
+  }
+}
+
+
+/* =========================================================
    ENDEREÇO DO USUÁRIO
    ========================================================= */
 
 async function loadAddressForUser(user) {
   if (
     !supabaseClient ||
-    !user ||
-    !elements.loggedUserAddress
+    !user
   ) {
-    return;
+    return null;
   }
 
   try {
@@ -1943,33 +2097,43 @@ async function loadAddressForUser(user) {
         error
       );
 
-      elements.loggedUserAddress.textContent =
-        "Endereço não informado.";
+      if (elements.loggedUserAddress) {
+        elements.loggedUserAddress.textContent =
+          "Endereço não informado.";
+      }
 
-      return;
+      return null;
     }
 
     if (!data) {
-      elements.loggedUserAddress.textContent =
-        "Endereço não informado.";
+      if (elements.loggedUserAddress) {
+        elements.loggedUserAddress.textContent =
+          "Endereço não informado.";
+      }
 
-      return;
+      return null;
     }
 
-    const parts = [
-      data.street,
-      data.number,
-      data.complement,
-      data.neighborhood,
-      data.city,
-      data.state,
-      data.cep
-    ].filter(Boolean);
+    /* Atualiza a UI se o elemento existir */
+    if (elements.loggedUserAddress) {
+      const parts = [
+        data.street,
+        data.number,
+        data.complement,
+        data.neighborhood,
+        data.city,
+        data.state,
+        data.cep
+      ].filter(Boolean);
 
-    elements.loggedUserAddress.textContent =
-      parts.length
-        ? parts.join(", ")
-        : "Endereço não informado.";
+      elements.loggedUserAddress.textContent =
+        parts.length
+          ? parts.join(", ")
+          : "Endereço não informado.";
+    }
+
+    /* Retorna os dados do endereço para uso no checkout */
+    return data;
 
   } catch (error) {
     console.error(
@@ -1977,8 +2141,12 @@ async function loadAddressForUser(user) {
       error
     );
 
-    elements.loggedUserAddress.textContent =
-      "Endereço não informado.";
+    if (elements.loggedUserAddress) {
+      elements.loggedUserAddress.textContent =
+        "Endereço não informado.";
+    }
+
+    return null;
   }
 }
 
@@ -2948,44 +3116,79 @@ async function registerUser({
       );
     }
 
-    if (
-      data.session &&
-      data.user
-    ) {
-      const addressResult =
-        await saveAddressData(
-          data.user,
+    if (data.user) {
+      /* Tenta geocodificar o endereço para obter
+         latitude e longitude */
+      const geoResult =
+        await geocodeAddress({
+          street,
+          number,
+          neighborhood,
+          city,
+          state,
+          cep
+        });
+
+      const addressPayload = {
+        recipient_name: name,
+        cep,
+        street,
+        number,
+        complement,
+        neighborhood,
+        city,
+        state
+      };
+
+      /* Adiciona coordenadas se a geocodificação
+         foi bem-sucedida (preparado para quando o
+         schema aceitar latitude/longitude) */
+      if (geoResult.success) {
+        addressPayload.latitude = geoResult.latitude;
+        addressPayload.longitude = geoResult.longitude;
+
+        console.log(
+          "Endereço geocodificado:",
           {
-            recipient_name: name,
-            cep,
-            street,
-            number,
-            complement,
-            neighborhood,
-            city,
-            state
+            latitude: geoResult.latitude,
+            longitude: geoResult.longitude
           }
-        );
-
-      await loadUserProfile();
-      await updateAccountUI();
-
-      if (!addressResult.success) {
-        showToast(
-          "Conta criada, mas não foi possível salvar seu endereço de entrega. Tente novamente mais tarde."
-        );
-      } else {
-        showToast(
-          "Conta criada com sucesso!"
         );
       }
 
-    } else {
-      showToast(
-        "Conta criada! Verifique seu e-mail para confirmar o cadastro."
-      );
+      const addressResult =
+        await saveAddressData(
+          data.user,
+          addressPayload
+        );
 
-      showLoginView();
+      if (data.session) {
+        await loadUserProfile();
+        await updateAccountUI();
+
+        if (!addressResult.success) {
+          showToast(
+            "Conta criada, mas não foi possível salvar seu endereço de entrega. Tente novamente mais tarde."
+          );
+        } else {
+          showToast(
+            "Conta criada com sucesso!"
+          );
+        }
+
+      } else {
+        if (!addressResult.success) {
+          showToast(
+            "Conta criada! Verifique seu e-mail para confirmar o cadastro. Não foi possível salvar seu endereço de entrega."
+          );
+        } else {
+          showToast(
+            "Conta criada! Verifique seu e-mail para confirmar o cadastro."
+          );
+        }
+
+        showLoginView();
+      }
     }
 
   } catch (error) {
@@ -3407,27 +3610,40 @@ async function saveAddressData(
        correto: cria o primeiro/endereço padrão do
        cliente sem apagar nada existente. */
 
+    const insertPayload = {
+      user_id: user.id,
+
+      recipient_name:
+        addressData.recipient_name || "",
+
+      cep: addressData.cep || "",
+      street: addressData.street || "",
+      number: addressData.number || "",
+      complement: addressData.complement || null,
+      neighborhood: addressData.neighborhood || "",
+      city: addressData.city || "",
+      state: addressData.state || "",
+
+      is_default: true
+    };
+
+    /* Adiciona latitude e longitude se forem fornecidas.
+       Se as colunas ainda não existirem no schema, o
+       Supabase irá ignorá-las silenciosamente. */
+    if (
+      addressData.latitude != null &&
+      addressData.longitude != null
+    ) {
+      insertPayload.latitude = addressData.latitude;
+      insertPayload.longitude = addressData.longitude;
+    }
+
     const {
       error
     } =
       await supabaseClient
         .from("addresses")
-        .insert({
-          user_id: user.id,
-
-          recipient_name:
-            addressData.recipient_name || "",
-
-          cep: addressData.cep || "",
-          street: addressData.street || "",
-          number: addressData.number || "",
-          complement: addressData.complement || null,
-          neighborhood: addressData.neighborhood || "",
-          city: addressData.city || "",
-          state: addressData.state || "",
-
-          is_default: true
-        });
+        .insert(insertPayload);
 
     if (error) {
       console.error(
@@ -3949,7 +4165,7 @@ function setupEvents() {
 
 
   /* =======================================================
-     MÁSCARA DE CEP
+     MÁSCARA DE CEP E PREENCHIMENTO AUTOMÁTICO
      ======================================================= */
 
   if (elements.registerCep) {
@@ -3965,6 +4181,67 @@ function setupEvents() {
           value.length > 5
             ? `${value.slice(0, 5)}-${value.slice(5)}`
             : value;
+      }
+    );
+
+    elements.registerCep.addEventListener(
+      "blur",
+      async event => {
+        const cep =
+          event.target.value
+            .replace(/\D/g, "");
+
+        if (cep.length !== 8) {
+          return;
+        }
+
+        try {
+          const response =
+            await fetch(
+              `https://viacep.com.br/ws/${cep}/json/`
+            );
+
+          if (!response.ok) {
+            return;
+          }
+
+          const data =
+            await response.json();
+
+          if (data.erro) {
+            return;
+          }
+
+          if (elements.registerStreet && data.logradouro) {
+            elements.registerStreet.value =
+              data.logradouro;
+          }
+
+          if (elements.registerNeighborhood && data.bairro) {
+            elements.registerNeighborhood.value =
+              data.bairro;
+          }
+
+          if (elements.registerCity && data.localidade) {
+            elements.registerCity.value =
+              data.localidade;
+          }
+
+          if (elements.registerState && data.uf) {
+            elements.registerState.value =
+              data.uf.toUpperCase();
+          }
+
+          if (elements.registerNumber) {
+            elements.registerNumber.focus();
+          }
+
+        } catch (error) {
+          console.error(
+            "Erro ao buscar CEP:",
+            error
+          );
+        }
       }
     );
   }
