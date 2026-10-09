@@ -605,6 +605,14 @@ const elements = {
   logoutBtn: document.getElementById("logoutBtn"),
   deleteAccountBtn: document.getElementById("deleteAccountBtn"),
 
+  changePasswordBtn: document.getElementById("changePasswordBtn"),
+  changePasswordForm: document.getElementById("changePasswordForm"),
+  changePasswordNew: document.getElementById("changePasswordNew"),
+  changePasswordConfirm: document.getElementById("changePasswordConfirm"),
+  changePasswordSubmitBtn: document.getElementById("changePasswordSubmitBtn"),
+  changePasswordCancelBtn: document.getElementById("changePasswordCancelBtn"),
+  changePasswordError: document.getElementById("changePasswordError"),
+
   ordersEmpty: document.getElementById("ordersEmpty"),
   ordersEmptyText: document.getElementById("ordersEmptyText"),
   ordersList: document.getElementById("ordersList"),
@@ -1927,7 +1935,8 @@ function clearAccountErrors() {
   [
     elements.loginError,
     elements.registerError,
-    elements.forgotPasswordError
+    elements.forgotPasswordError,
+    elements.changePasswordError
   ].forEach(error => {
     if (error) {
       error.textContent = "";
@@ -2916,11 +2925,18 @@ async function requestPasswordReset(
   clearAccountErrors();
 
   try {
+    const redirectTo =
+      window.location.origin +
+      window.location.pathname;
+
     const {
       error
     } =
       await supabaseClient.auth.resetPasswordForEmail(
-        email
+        email,
+        {
+          redirectTo
+        }
       );
 
     if (error) {
@@ -2955,6 +2971,99 @@ async function requestPasswordReset(
       elements.forgotPasswordError,
       "Não foi possível enviar o link de recuperação. Tente novamente."
     );
+  }
+}
+
+
+/* =========================================================
+   SUPABASE — ALTERAR SENHA
+   ========================================================= */
+
+async function changePassword({
+  newPassword,
+  confirmPassword
+}) {
+  if (!supabaseClient) {
+    showAccountError(
+      elements.changePasswordError,
+      "Supabase não está conectado."
+    );
+
+    return false;
+  }
+
+  const user =
+    await getCurrentUser();
+
+  if (!user) {
+    showAccountError(
+      elements.changePasswordError,
+      "Você precisa estar logado para alterar sua senha."
+    );
+
+    return false;
+  }
+
+  if (!newPassword || newPassword.length < 6) {
+    showAccountError(
+      elements.changePasswordError,
+      "A nova senha deve ter no mínimo 6 caracteres."
+    );
+
+    return false;
+  }
+
+  if (newPassword !== confirmPassword) {
+    showAccountError(
+      elements.changePasswordError,
+      "As senhas não coincidem."
+    );
+
+    return false;
+  }
+
+  try {
+    const {
+      error
+    } =
+      await supabaseClient.auth.updateUser({
+        password: newPassword
+      });
+
+    if (error) {
+      console.error(
+        "Erro ao alterar senha:",
+        error
+      );
+
+      showAccountError(
+        elements.changePasswordError,
+        getAuthErrorMessage(
+          error.message
+        )
+      );
+
+      return false;
+    }
+
+    showToast(
+      "Sua senha foi alterada com sucesso!"
+    );
+
+    return true;
+
+  } catch (error) {
+    console.error(
+      "Erro inesperado ao alterar senha:",
+      error
+    );
+
+    showAccountError(
+      elements.changePasswordError,
+      "Não foi possível alterar sua senha. Tente novamente."
+    );
+
+    return false;
   }
 }
 
@@ -4260,6 +4369,114 @@ function setupEvents() {
             .replace(/[^a-zA-Z]/g, "")
             .slice(0, 2)
             .toUpperCase();
+      }
+    );
+  }
+
+
+  /* =======================================================
+     ALTERAR SENHA
+     ======================================================= */
+
+  if (elements.changePasswordBtn) {
+    elements.changePasswordBtn.addEventListener(
+      "click",
+      () => {
+        if (elements.changePasswordBtn) {
+          elements.changePasswordBtn.hidden = true;
+        }
+
+        if (elements.changePasswordForm) {
+          elements.changePasswordForm.hidden = false;
+        }
+
+        if (elements.changePasswordNew) {
+          elements.changePasswordNew.value = "";
+        }
+
+        if (elements.changePasswordConfirm) {
+          elements.changePasswordConfirm.value = "";
+        }
+
+        if (elements.changePasswordError) {
+          elements.changePasswordError.textContent = "";
+          elements.changePasswordError.hidden = true;
+        }
+
+        elements.changePasswordNew?.focus();
+      }
+    );
+  }
+
+  if (elements.changePasswordCancelBtn) {
+    elements.changePasswordCancelBtn.addEventListener(
+      "click",
+      () => {
+        if (elements.changePasswordForm) {
+          elements.changePasswordForm.hidden = true;
+        }
+
+        if (elements.changePasswordBtn) {
+          elements.changePasswordBtn.hidden = false;
+        }
+
+        if (elements.changePasswordNew) {
+          elements.changePasswordNew.value = "";
+        }
+
+        if (elements.changePasswordConfirm) {
+          elements.changePasswordConfirm.value = "";
+        }
+
+        if (elements.changePasswordError) {
+          elements.changePasswordError.textContent = "";
+          elements.changePasswordError.hidden = true;
+        }
+      }
+    );
+  }
+
+  if (elements.changePasswordForm) {
+    elements.changePasswordForm.addEventListener(
+      "submit",
+      async event => {
+        event.preventDefault();
+
+        if (elements.changePasswordSubmitBtn) {
+          elements.changePasswordSubmitBtn.disabled = true;
+        }
+
+        try {
+          const success = await changePassword({
+            newPassword:
+              elements.changePasswordNew?.value || "",
+
+            confirmPassword:
+              elements.changePasswordConfirm?.value || ""
+          });
+
+          if (success) {
+            if (elements.changePasswordForm) {
+              elements.changePasswordForm.hidden = true;
+            }
+
+            if (elements.changePasswordBtn) {
+              elements.changePasswordBtn.hidden = false;
+            }
+
+            if (elements.changePasswordNew) {
+              elements.changePasswordNew.value = "";
+            }
+
+            if (elements.changePasswordConfirm) {
+              elements.changePasswordConfirm.value = "";
+            }
+          }
+        } finally {
+          if (elements.changePasswordSubmitBtn) {
+            elements.changePasswordSubmitBtn.disabled = false;
+          }
+        }
       }
     );
   }

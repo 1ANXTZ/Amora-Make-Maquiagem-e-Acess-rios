@@ -1441,6 +1441,115 @@
         <div class="account-section">
 
           <h4 class="account-section-title">
+            Segurança
+          </h4>
+
+          <button
+            type="button"
+            class="btn btn-outline btn-full"
+            id="changePasswordBtn"
+          >
+            Alterar senha
+          </button>
+
+          <form
+            id="changePasswordForm"
+            class="account-form"
+            hidden
+          >
+
+            <label for="changePasswordNew">
+              Nova senha
+            </label>
+
+            <div class="password-field">
+
+              <input
+                type="password"
+                id="changePasswordNew"
+                name="newPassword"
+                autocomplete="new-password"
+                placeholder="Mínimo de 6 caracteres"
+                minlength="6"
+                required
+              >
+
+              <button
+                type="button"
+                class="password-toggle"
+                data-password-toggle="changePasswordNew"
+                aria-label="Mostrar senha"
+              >
+                👁️
+              </button>
+
+            </div>
+
+
+            <label for="changePasswordConfirm">
+              Confirmar nova senha
+            </label>
+
+            <div class="password-field">
+
+              <input
+                type="password"
+                id="changePasswordConfirm"
+                name="confirmPassword"
+                autocomplete="new-password"
+                placeholder="Digite a senha novamente"
+                minlength="6"
+                required
+              >
+
+              <button
+                type="button"
+                class="password-toggle"
+                data-password-toggle="changePasswordConfirm"
+                aria-label="Mostrar senha"
+              >
+                👁️
+              </button>
+
+            </div>
+
+            <small class="account-field-help">
+              A senha deve ter no mínimo 6 caracteres.
+            </small>
+
+
+            <button
+              type="submit"
+              class="btn btn-primary btn-full"
+              id="changePasswordSubmitBtn"
+            >
+              Alterar senha
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline btn-full"
+              id="changePasswordCancelBtn"
+            >
+              Cancelar
+            </button>
+
+
+            <p
+              class="account-error"
+              id="changePasswordError"
+              hidden
+              role="alert"
+            ></p>
+
+          </form>
+
+        </div>
+
+
+        <div class="account-section">
+
+          <h4 class="account-section-title">
             Meus pedidos
           </h4>
 
