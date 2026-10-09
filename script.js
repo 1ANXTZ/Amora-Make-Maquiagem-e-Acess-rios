@@ -4557,6 +4557,37 @@ function setupAuthListener() {
       }
 
       await updateAccountUI();
+
+      if (event === "PASSWORD_RECOVERY") {
+        await openAccountModal();
+
+        if (elements.changePasswordBtn) {
+          elements.changePasswordBtn.hidden = true;
+        }
+
+        if (elements.changePasswordForm) {
+          elements.changePasswordForm.hidden = false;
+        }
+
+        if (elements.changePasswordNew) {
+          elements.changePasswordNew.value = "";
+        }
+
+        if (elements.changePasswordConfirm) {
+          elements.changePasswordConfirm.value = "";
+        }
+
+        if (elements.changePasswordError) {
+          elements.changePasswordError.textContent = "";
+          elements.changePasswordError.hidden = true;
+        }
+
+        showToast(
+          "Defina sua nova senha para concluir a recuperação."
+        );
+
+        elements.changePasswordNew?.focus();
+      }
     }
   );
 }
